@@ -26,6 +26,12 @@ import AppLayout from '../layouts/AppLayout.astro';
     <div id="my-list"><p class="empty">Loading...</p></div>
   </div>
 
+  <div class="card" style="margin-top:1rem;">
+    <h2>🏖️ Upcoming Time Off</h2>
+    <p style="color:var(--color-muted);font-size:0.875rem;">All your approved time off on the schedule.</p>
+    <div id="upcoming-list"><p class="empty">Loading...</p></div>
+  </div>
+
   <div class="card" id="all-card">
     <h2>👥 All Time-Off Requests <span style="font-size:0.75rem;color:var(--color-muted);font-weight:400;">(manager / admin only)</span></h2>
     <div id="all-list"><p class="empty">Loading...</p></div>
@@ -176,7 +182,38 @@ import AppLayout from '../layouts/AppLayout.astro';
           });
         }
       }
+      function renderUpcoming() {
+        const list = document.getElementById('upcoming-list');
+        // Approved time-off from localStorage (pending ones for this user, with status approved)
+        const mine = s.getPending().filter(function(p) {
+          return p.kind === 'time_off' && p.requester_id === t.user_id && p.status === 'approved' && p.start_date && p.end_date;
+        });
+        // Also from data.json time_off
+        const seeded = s.getTimeOffForUser(data, t.user_id).filter(function(x) { return x.status === 'approved'; });
+        // Merge
+        const all = mine.concat(seeded).filter(function(x) { return x.end_date >= today; }).sort(function(a, b) { return a.start_date.localeCompare(b.start_date); });
+        if (all.length === 0) {
+          list.innerHTML = '<p class="empty">No upcoming time off scheduled.</p>';
+          return;
+        }
+        list.innerHTML = all.map(function(it) {
+          const days = daysBetween(it.start_date, it.end_date) + 1;
+          return '<div class="list-item" style="align-items:flex-start;padding:0.75rem 0;">' +
+            '<div style="flex:1;min-width:0;">' +
+              '<div class="who">🏖️ ' + s.formatDate(it.start_date, {short: true}) + ' – ' + s.formatDate(it.end_date, {short: true}) + '</div>' +
+              '<div class="meta">' + days + ' day' + (days === 1 ? '' : 's') + ' · ' + (it.reason || 'on leave') + '</div>' +
+            '</div>' +
+            '<span class="badge badge-approved">approved</span>' +
+          '</div>';
+        }).join('');
+      }
+      function daysBetween(startISO, endISO) {
+        const s = new Date(startISO + 'T00:00:00');
+        const e = new Date(endISO + 'T00:00:00');
+        return Math.round((e - s) / 86400000);
+      }
+
       renderAll();
-    })();
+      renderUpcoming();
   </script>
 </AppLayout>

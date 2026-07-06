@@ -129,19 +129,28 @@ import AppLayout from '../layouts/AppLayout.astro';
           const body = cells.map(function(c) {
             const dayShifts = s.getShiftsForDate(data, c.iso);
             const dayBlocks = blocks.filter(function(b) { return b.date === c.iso; });
+            // Find time-off block for THIS cell that's a continuation
+            // (only show the bar starting at the first day of a run, but
+            // mark the start day and continuation days differently)
+            const prev = new Date(c.iso + 'T00:00:00');
+            prev.setDate(prev.getDate() - 1);
+            const prevISO = prev.toISOString().slice(0, 10);
+            const blockStartsHere = dayBlocks.length > 0 && !s.isBlocked(blocks, prevISO, dayBlocks[0].user_id);
+            const blockHTML = dayBlocks.length > 0
+              ? (blockStartsHere
+                  ? '<div class="time-off-bar" title="' + dayBlocks[0].reason + '">🏖️ ' + s.getUserName(data, dayBlocks[0].user_id) + ' — ' + (dayBlocks[0].reason || 'on leave') + '</div>'
+                  : '<div class="time-off-bar time-off-cont" title="(cont.) ' + dayBlocks[0].reason + '">🏖️ cont.</div>')
+              : '';
             const lines = dayShifts.slice(0, 3).map(function(sh) {
               const blocked = s.isBlocked(blocks, c.iso, sh.user_id);
               const firstName = s.getUserName(data, sh.user_id).split(' ')[0];
               return '<div class="shift-line ' + sh.role.toLowerCase() + (blocked ? ' on-leave' : '') + '"><strong>' + firstName + '</strong> ' + s.formatTime12(sh.start) + '–' + s.formatTime12(sh.end) + (blocked ? ' 🏖️' : '') + '</div>';
             }).join('');
             const more = dayShifts.length > 3 ? '<div class="shift-line">+' + (dayShifts.length - 3) + ' more</div>' : '';
-            const blockHTML = dayBlocks.length > 0
-              ? '<div class="time-off-block" title="' + dayBlocks[0].reason + '">🏖️ ' + dayBlocks.length + ' on leave</div>'
-              : '';
             const isToday = c.iso === today;
             return '<div class="calendar-day' + (c.other ? ' other-month' : '') + (isToday ? ' today' : '') + (dayBlocks.length > 0 ? ' has-timeoff' : '') + '" data-iso="' + c.iso + '">' +
               '<span class="day-num">' + parseInt(c.iso.slice(8,10), 10) + '</span>' +
-              lines + more + blockHTML +
+              blockHTML + lines + more +
             '</div>';
           }).join('');
           container.innerHTML = '<div class="calendar-grid">' + head + body + '</div>';
