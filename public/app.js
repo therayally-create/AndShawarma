@@ -11,7 +11,7 @@ window.shawarma = (function() {
   // The Sheet is the database. Reads on every page load, writes on
   // every action. Paste your deployed Web App URL below.
   // ============================================================
-  const SHEET_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbwATWqLND-AHF3Y8de0SIRSwhgKjrkoM6Y-cg6NELECR5pm0ONgHsnaSh8HCAoAYm8S4w/exec';
+  const SHEET_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbyPoW6Qo_NbLf9-39OAgtuBtOenEsN9M6XwQBsN9zBPvyDtIIOJjrePgyBcu74tb7GN6Q/exec';
 
   async function callSheet(method, body) {
     if (!SHEET_WEBHOOK_URL) return null;
@@ -80,13 +80,15 @@ window.shawarma = (function() {
   }
 
   async function loadData() {
-    // Try the Sheet first (live, shared database)
+    // Force a fresh fetch from the Sheet every time. No localStorage cache.
+    // The Sheet is the source of truth for users, shifts, time_off, etc.
+    window.__dataCache = null;
     const result = await callSheet('GET');
     if (result && result.ok && result.data) {
       window.__dataCache = result.data;
       return result.data;
     }
-    // Fallback: local data.json
+    // Fallback: local data.json (only if Sheet is unreachable)
     const res = await fetch(baseUrl('/data.json'));
     if (!res.ok) throw new Error('Failed to load data: HTTP ' + res.status);
     const data = await res.json();
@@ -111,6 +113,12 @@ window.shawarma = (function() {
   }
   function setPending(arr) {
     localStorage.setItem(PENDING_KEY, JSON.stringify(arr));
+  }
+  // Wipe all cached pending requests. Used once on page load to clear
+  // stale localStorage from before the Sheet webhook was wired.
+  function clearAllPending() {
+    localStorage.removeItem(PENDING_KEY);
+    window.__dataCache = null;
   }
   function findOrCreate(req) {
     const all = getPending();
