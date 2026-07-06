@@ -1,0 +1,65 @@
+---
+import AppLayout from '../layouts/AppLayout.astro';
+---
+<AppLayout title="&Shawarma — Shift Swap" active="swap">
+  <div class="card">
+    <h2>🔄 My Upcoming Shifts</h2>
+    <p style="color:var(--color-muted);font-size:0.875rem;">Tap a shift to request a swap with another staff member.</p>
+    <div id="my-shifts"><p class="empty">Loading...</p></div>
+  </div>
+
+  <div class="card">
+    <h2>📋 Swap Requests</h2>
+    <div id="swap-list"><p class="empty">Loading...</p></div>
+  </div>
+
+  <script type="module">
+    import { requireAuth } from '../lib/auth.js';
+    import { loadData, getShiftsForUser, getSwapsForUser, getUserName, todayISO, formatDate, formatTime12 } from '../lib/data.js';
+
+    const t = requireAuth();
+    if (!t) throw new Error('not authed');
+
+    const data = await loadData();
+    const today = todayISO();
+    const myShifts = getShiftsForUser(data, t.user_id).filter(s => s.date >= today);
+
+    const list = document.getElementById('my-shifts');
+    if (myShifts.length === 0) {
+      list.innerHTML = '<p class="empty">No upcoming shifts.</p>';
+    } else {
+      list.innerHTML = myShifts.map(s => `
+        <div class="list-item" data-shift="${s.id}">
+          <div>
+            <div class="who">${formatDate(s.date, {short: true})}</div>
+            <div class="meta">${formatTime12(s.start)} – ${formatTime12(s.end)} · ${s.role}</div>
+          </div>
+          <button class="btn-secondary" data-swap="${s.id}">Request swap</button>
+        </div>
+      `).join('');
+      list.querySelectorAll('[data-swap]').forEach(b => b.addEventListener('click', () => {
+        window.__toast('Coming soon — backend not connected in v1');
+      }));
+    }
+
+    const swaps = getSwapsForUser(data, t.user_id);
+    const swapList = document.getElementById('swap-list');
+    if (swaps.length === 0) {
+      swapList.innerHTML = '<p class="empty">No swap requests.</p>';
+    } else {
+      swapList.innerHTML = swaps.map(sw => {
+        const role = sw.requester_id === t.user_id ? 'You →' : 'You ←';
+        const other = sw.requester_id === t.user_id ? getUserName(data, sw.target_user_id) : getUserName(data, sw.requester_id);
+        return `
+          <div class="list-item">
+            <div>
+              <div class="who">${role} ${other}</div>
+              <div class="meta">Shift on ${formatDate(data.shifts.find(s=>s.id===sw.shift_id)?.date, {short:true}) || '—'}</div>
+            </div>
+            <span class="badge badge-${sw.status}">${sw.status}</span>
+          </div>
+        `;
+      }).join('');
+    }
+  </script>
+</AppLayout>

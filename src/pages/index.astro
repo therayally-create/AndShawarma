@@ -1,0 +1,74 @@
+---
+import AppLayout from '../layouts/AppLayout.astro';
+---
+<AppLayout title="&Shawarma — My Shifts" active="home">
+  <div id="app-content">
+    <div class="card">
+      <h1>Welcome, <span id="user-name">...</span></h1>
+      <p style="color:var(--color-muted);margin:0;">Your role: <span id="user-role" class="badge badge-staff"></span></p>
+    </div>
+
+    <div class="card">
+      <h2>📅 My Upcoming Shifts</h2>
+      <div id="shifts-list"><p class="empty">Loading...</p></div>
+    </div>
+
+    <div class="grid-2">
+      <a href="/AndShawarma/schedule" class="tile">
+        <div class="tile-icon">📅</div>
+        <div class="tile-title">Full Schedule</div>
+        <div class="tile-sub">View all shifts</div>
+      </a>
+      <a href="/AndShawarma/shift-swap" class="tile">
+        <div class="tile-icon">🔄</div>
+        <div class="tile-title">Shift Swap</div>
+        <div class="tile-sub">Request a swap</div>
+      </a>
+      <a href="/AndShawarma/time-off" class="tile">
+        <div class="tile-icon">🏖️</div>
+        <div class="tile-title">Time Off</div>
+        <div class="tile-sub">Request / view</div>
+      </a>
+      <a href="/AndShawarma/admin" class="tile" id="admin-tile" style="display:none;">
+        <div class="tile-icon">⚙️</div>
+        <div class="tile-title">Manage</div>
+        <div class="tile-sub">Admin tools</div>
+      </a>
+    </div>
+  </div>
+
+  <script type="module">
+    import { getToken, requireAuth, baseUrl } from '../lib/auth.js';
+    import { loadData, getShiftsForUser, getUserName, todayISO, formatDate, formatTime12 } from '../lib/data.js';
+
+    const t = requireAuth();
+    if (!t) throw new Error('not authed');
+
+    document.getElementById('user-name').textContent = t.display_name;
+    const roleEl = document.getElementById('user-role');
+    roleEl.textContent = t.role;
+    roleEl.className = 'badge badge-' + t.role;
+
+    if (t.role === 'admin' || t.role === 'manager') {
+      document.getElementById('admin-tile').style.display = 'block';
+    }
+
+    const data = await loadData();
+    const today = todayISO();
+    const myShifts = getShiftsForUser(data, t.user_id).filter(s => s.date >= today).slice(0, 5);
+    const list = document.getElementById('shifts-list');
+    if (myShifts.length === 0) {
+      list.innerHTML = '<p class="empty">No upcoming shifts scheduled.</p>';
+    } else {
+      list.innerHTML = myShifts.map(s => `
+        <div class="list-item">
+          <div>
+            <div class="who">${formatDate(s.date, { short: true })}</div>
+            <div class="meta">${formatTime12(s.start)} – ${formatTime12(s.end)} · ${s.role}</div>
+          </div>
+          <span class="badge badge-${s.role.toLowerCase()}">${s.role}</span>
+        </div>
+      `).join('');
+    }
+  </script>
+</AppLayout>

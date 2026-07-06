@@ -1,0 +1,74 @@
+---
+import AppLayout from '../layouts/AppLayout.astro';
+---
+<AppLayout title="&Shawarma — Schedule" active="schedule">
+  <div class="week-nav">
+    <button class="btn-secondary" id="prev-week">← Prev</button>
+    <h2 id="week-label">Loading...</h2>
+    <button class="btn-secondary" id="next-week">Next →</button>
+  </div>
+
+  <div class="schedule-grid" id="schedule-grid">
+    <p class="empty">Loading...</p>
+  </div>
+
+  <script type="module">
+    import { requireAuth } from '../lib/auth.js';
+    import { loadData, getShiftsForDate, getMondayOf, getWeekRange, todayISO, formatDayHeader, formatTime12, getUserName } from '../lib/data.js';
+
+    const t = requireAuth();
+    if (!t) throw new Error('not authed');
+
+    const data = await loadData();
+    let weekStart = getMondayOf(todayISO());
+
+    function render() {
+      const range = getWeekRange(weekStart);
+      const startD = new Date(range.start + 'T00:00:00');
+      const endD = new Date(range.end + 'T00:00:00');
+      document.getElementById('week-label').innerHTML = `
+        ${startD.toLocaleDateString('en-US',{month:'short',day:'numeric'})} – ${endD.toLocaleDateString('en-US',{month:'short',day:'numeric'})}
+        <div class="range">${startD.getFullYear()}</div>
+      `;
+
+      const grid = document.getElementById('schedule-grid');
+      grid.innerHTML = range.days.map(date => {
+        const header = formatDayHeader(date);
+        const shifts = getShiftsForDate(data, date);
+        return `
+          <div class="day-col ${header.isToday ? 'today' : ''}">
+            <div class="day-col-head">
+              ${header.weekday}
+              <span class="date">${header.day}</span>
+            </div>
+            ${shifts.length === 0 ? '<p class="empty" style="padding:0.5rem 0;font-size:0.75rem;">—</p>' :
+              shifts.map(s => {
+                const mine = s.user_id === t.user_id;
+                return `
+                  <div class="shift-chip ${s.role.toLowerCase()} ${mine ? 'mine' : ''}">
+                    <span class="who">${getUserName(data, s.user_id)}</span>
+                    <span class="time">${formatTime12(s.start)} – ${formatTime12(s.end)}</span>
+                  </div>
+                `;
+              }).join('')}
+          </div>
+        `;
+      }).join('');
+    }
+
+    document.getElementById('prev-week').addEventListener('click', () => {
+      const d = new Date(weekStart + 'T00:00:00');
+      d.setDate(d.getDate() - 7);
+      weekStart = d.toISOString().slice(0, 10);
+      render();
+    });
+    document.getElementById('next-week').addEventListener('click', () => {
+      const d = new Date(weekStart + 'T00:00:00');
+      d.setDate(d.getDate() + 7);
+      weekStart = d.toISOString().slice(0, 10);
+      render();
+    });
+
+    render();
+  </script>
+</AppLayout>

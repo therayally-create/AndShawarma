@@ -1,0 +1,165 @@
+{
+  "users": [
+    {
+      "id": "u1",
+      "username": "ray",
+      "password_hash": "55e5c10b6a3b989aedc27fa11aba5168335d0d0de7834c810e0dd6d476f5cb90",
+      "role": "admin",
+      "display_name": "Ray Ally",
+      "email": "theRayally@gmail.com",
+      "phone": "+12624499088"
+    },
+    {
+      "id": "u2",
+      "username": "azmeer",
+      "password_hash": "2d01bddb797b0b7c25a50a2968078b24a83cb9833131f90513754ca2964d8223",
+      "role": "manager",
+      "display_name": "Azmeer",
+      "email": "azmeer@andshawarma.example",
+      "phone": "+15551234567"
+    },
+    {
+      "id": "u3",
+      "username": "staff1",
+      "password_hash": "7448477c642e607e214fc8f12e1e68389c59f142459fea8c074b324acb553100",
+      "role": "staff",
+      "display_name": "Staff 1",
+      "email": "staff1@andshawarma.example",
+      "phone": "+15551234568"
+    },
+    {
+      "id": "u4",
+      "username": "staff2",
+      "password_hash": "7448477c642e607e214fc8f12e1e68389c59f142459fea8c074b324acb553100",
+      "role": "staff",
+      "display_name": "Staff 2",
+      "email": "staff2@andshawarma.example",
+      "phone": "+15551234569"
+    },
+    {
+      "id": "u5",
+      "username": "staff3",
+      "password_hash": "7448477c642e607e214fc8f12e1e68389c59f142459fea8c074b324acb553100",
+      "role": "staff",
+      "display_name": "Staff 3",
+      "email": "staff3@andshawarma.example",
+      "phone": "+15551234570"
+    },
+    {
+      "id": "u6",
+      "username": "staff4",
+      "password_hash": "7448477c642e607e214fc8f12e1e68389c59f142459fea8c074b324acb553100",
+      "role": "staff",
+      "display_name": "Staff 4",
+      "email": "staff4@andshawarma.example",
+      "phone": "+15551234571"
+    },
+    {
+      "id": "u7",
+      "username": "staff5",
+      "password_hash": "7448477c642e607e214fc8f12e1e68389c59f142459fea8c074b324acb553100",
+      "role": "staff",
+      "display_name": "Staff 5",
+      "email": "staff5@andshawarma.example",
+      "phone": "+15551234572"
+    },
+    {
+      "id": "u8",
+      "username": "staff6",
+      "password_hash": "7448477c642e607e214fc8f12e1e68389c59f142459fea8c074b324acb553100",
+      "role": "staff",
+      "display_name": "Staff 6",
+      "email": "staff6@andshawarma.example",
+      "phone": "+15551234573"
+    },
+    {
+      "id": "u9",
+      "username": "staff7",
+      "password_hash": "7448477c642e607e214fc8f12e1e68389c59f142459fea8c074b324acb553100",
+      "role": "staff",
+      "display_name": "Staff 7",
+      "email": "staff7@andshawarma.example",
+      "phone": "+15551234574"
+    },
+    {
+      "id": "u10",
+      "username": "staff8",
+      "password_hash": "7448477c642e607e214fc8f12e1e68389c59f142459fea8c074b324acb553100",
+      "role": "staff",
+      "display_name": "Staff 8",
+      "email": "staff8@andshawarma.example",
+      "phone": "+15551234575"
+    }
+  ],
+  "shifts": [
+    { "id": "s1",  "user_id": "u2",  "date": "2026-07-06", "start": "10:00", "end": "18:00", "role": "FOH", "notes": "Manager on duty" },
+    { "id": "s2",  "user_id": "u3",  "date": "2026-07-06", "start": "11:00", "end": "19:00", "role": "FOH", "notes": "" },
+    { "id": "s3",  "user_id": "u4",  "date": "2026-07-06", "start": "12:00", "end": "20:00", "role": "BOH", "notes": "" },
+    { "id": "s4",  "user_id": "u5",  "date": "2026-07-06", "start": "16:00", "end": "22:00", "role": "FOH", "notes": "" },
+
+    { "id": "s5",  "user_id": "u2",  "date": "2026-07-07", "start": "10:00", "end": "18:00", "role": "FOH", "notes": "" },
+    { "id": "s6",  "user_id": "u6",  "date": "2026-07-07", "start": "11:00", "end": "19:00", "role": "FOH", "notes": "" },
+    { "id": "s7",  "user_id": "u7",  "date": "2026-07-07", "start": "12:00", "end": "20:00", "role": "BOH", "notes": "" },
+    { "id": "s8",  "user_id": "u8",  "date": "2026-07-07", "start": "16:00", "end": "22:00", "role": "BOH", "notes": "" },
+
+    { "id": "s9",  "user_id": "u2",  "date": "2026-07-08", "start": "10:00", "end": "18:00", "role": "FOH", "notes": "" },
+    { "id": "s10", "user_id": "u9",  "date": "2026-07-08", "start": "11:00", "end": "19:00", "role": "FOH", "notes": "" },
+    { "id": "s11", "user_id": "u3",  "date": "2026-07-08", "start": "12:00", "end": "20:00", "role": "BOH", "notes": "" },
+    { "id": "s12", "user_id": "u4",  "date": "2026-07-08", "start": "16:00", "end": "22:00", "role": "BOH", "notes": "" },
+
+    { "id": "s13", "user_id": "u2",  "date": "2026-07-09", "start": "10:00", "end": "18:00", "role": "FOH", "notes": "" },
+    { "id": "s14", "user_id": "u5",  "date": "2026-07-09", "start": "11:00", "end": "19:00", "role": "FOH", "notes": "" },
+    { "id": "s15", "user_id": "u6",  "date": "2026-07-09", "start": "12:00", "end": "20:00", "role": "BOH", "notes": "" },
+    { "id": "s16", "user_id": "u7",  "date": "2026-07-09", "start": "16:00", "end": "22:00", "role": "BOH", "notes": "" },
+
+    { "id": "s17", "user_id": "u2",  "date": "2026-07-10", "start": "10:00", "end": "18:00", "role": "FOH", "notes": "" },
+    { "id": "s18", "user_id": "u8",  "date": "2026-07-10", "start": "11:00", "end": "19:00", "role": "FOH", "notes": "" },
+    { "id": "s19", "user_id": "u9",  "date": "2026-07-10", "start": "12:00", "end": "20:00", "role": "BOH", "notes": "" },
+    { "id": "s20", "user_id": "u10", "date": "2026-07-10", "start": "16:00", "end": "22:00", "role": "BOH", "notes": "" },
+
+    { "id": "s21", "user_id": "u2",  "date": "2026-07-11", "start": "10:00", "end": "18:00", "role": "FOH", "notes": "Weekend" },
+    { "id": "s22", "user_id": "u3",  "date": "2026-07-11", "start": "11:00", "end": "19:00", "role": "FOH", "notes": "" },
+    { "id": "s23", "user_id": "u4",  "date": "2026-07-11", "start": "12:00", "end": "20:00", "role": "BOH", "notes": "" },
+    { "id": "s24", "user_id": "u5",  "date": "2026-07-11", "start": "16:00", "end": "23:00", "role": "BOH", "notes": "" },
+
+    { "id": "s25", "user_id": "u2",  "date": "2026-07-12", "start": "10:00", "end": "18:00", "role": "FOH", "notes": "Weekend" },
+    { "id": "s26", "user_id": "u6",  "date": "2026-07-12", "start": "11:00", "end": "19:00", "role": "FOH", "notes": "" },
+    { "id": "s27", "user_id": "u7",  "date": "2026-07-12", "start": "12:00", "end": "20:00", "role": "BOH", "notes": "" },
+    { "id": "s28", "user_id": "u8",  "date": "2026-07-12", "start": "16:00", "end": "23:00", "role": "BOH", "notes": "" }
+  ],
+  "time_off": [
+    {
+      "id": "t1",
+      "user_id": "u3",
+      "start_date": "2026-07-15",
+      "end_date": "2026-07-17",
+      "reason": "Family event",
+      "status": "pending",
+      "created_at": "2026-07-06T10:00:00Z"
+    },
+    {
+      "id": "t2",
+      "user_id": "u5",
+      "start_date": "2026-07-20",
+      "end_date": "2026-07-22",
+      "reason": "Vacation",
+      "status": "approved",
+      "created_at": "2026-07-05T14:30:00Z"
+    }
+  ],
+  "swap_requests": [
+    {
+      "id": "sw1",
+      "requester_id": "u3",
+      "target_user_id": "u4",
+      "shift_id": "s3",
+      "status": "pending",
+      "created_at": "2026-07-06T11:00:00Z"
+    }
+  ],
+  "settings": {
+    "restaurant_name": "&Shawarma",
+    "primary_color": "#dc2626",
+    "week_start": "Monday"
+  }
+}

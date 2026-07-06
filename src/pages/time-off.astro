@@ -1,0 +1,99 @@
+---
+import AppLayout from '../layouts/AppLayout.astro';
+---
+<AppLayout title="&Shawarma — Time Off" active="timeoff">
+  <div class="card">
+    <h2>🏖️ Request Time Off</h2>
+    <form id="request-form">
+      <div class="field">
+        <label for="start_date">Start date</label>
+        <input type="date" id="start_date" class="input" required />
+      </div>
+      <div class="field">
+        <label for="end_date">End date</label>
+        <input type="date" id="end_date" class="input" required />
+      </div>
+      <div class="field">
+        <label for="reason">Reason</label>
+        <input type="text" id="reason" class="input" placeholder="Vacation, appointment, etc." required />
+      </div>
+      <button type="submit" class="btn-primary">Submit request</button>
+    </form>
+  </div>
+
+  <div class="card">
+    <h2>📋 My Time-Off Requests</h2>
+    <div id="my-list"><p class="empty">Loading...</p></div>
+  </div>
+
+  <div class="card" id="all-card" style="display:none;">
+    <h2>👥 All Time-Off Requests <span style="font-size:0.75rem;color:var(--color-muted);font-weight:400;">(manager / admin only)</span></h2>
+    <div id="all-list"><p class="empty">Loading...</p></div>
+  </div>
+
+  <script type="module">
+    import { requireAuth } from '../lib/auth.js';
+    import { loadData, getTimeOffForUser, getAllTimeOff, getUserName, formatDate } from '../lib/data.js';
+
+    const t = requireAuth();
+    if (!t) throw new Error('not authed');
+
+    const data = await loadData();
+
+    document.getElementById('request-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      window.__toast('Coming soon — backend not connected in v1');
+    });
+
+    function renderMy() {
+      const list = document.getElementById('my-list');
+      const items = getTimeOffForUser(data, t.user_id);
+      if (items.length === 0) {
+        list.innerHTML = '<p class="empty">No requests yet.</p>';
+        return;
+      }
+      list.innerHTML = items.map(it => `
+        <div class="list-item">
+          <div>
+            <div class="who">${formatDate(it.start_date, {short: true})} – ${formatDate(it.end_date, {short: true})}</div>
+            <div class="meta">${it.reason || '—'}</div>
+          </div>
+          <span class="badge badge-${it.status}">${it.status}</span>
+        </div>
+      `).join('');
+    }
+
+    function renderAll() {
+      const card = document.getElementById('all-card');
+      if (t.role !== 'manager' && t.role !== 'admin') return;
+      card.style.display = 'block';
+      const list = document.getElementById('all-list');
+      const items = getAllTimeOff(data);
+      if (items.length === 0) {
+        list.innerHTML = '<p class="empty">No requests.</p>';
+        return;
+      }
+      list.innerHTML = items.map(it => `
+        <div class="list-item">
+          <div>
+            <div class="who">${getUserName(data, it.user_id)}</div>
+            <div class="meta">${formatDate(it.start_date, {short: true})} – ${formatDate(it.end_date, {short: true})} · ${it.reason || '—'}</div>
+          </div>
+          <div style="display:flex;gap:0.5rem;align-items:center;">
+            <span class="badge badge-${it.status}">${it.status}</span>
+            ${it.status === 'pending' ? `
+              <button class="btn-secondary" data-approve="${it.id}">Approve</button>
+              <button class="btn-secondary" data-deny="${it.id}">Deny</button>
+            ` : ''}
+          </div>
+        </div>
+      `).join('');
+
+      list.querySelectorAll('[data-approve]').forEach(b => b.addEventListener('click', () => window.__toast('Coming soon')));
+      list.querySelectorAll('[data-deny]').forEach(b => b.addEventListener('click', () => window.__toast('Coming soon')));
+    }
+
+    renderMy();
+    renderAll();
+  </script>
+</AppLayout>

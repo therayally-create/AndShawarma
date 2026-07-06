@@ -1,0 +1,76 @@
+---
+import '../styles/global.css';
+---
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#dc2626" />
+  <title>&amp;Shawarma — Login</title>
+</head>
+<body>
+  <div class="login-wrap">
+    <div class="login-card">
+      <div class="login-header">
+        <div class="login-mark">&amp;Shawarma</div>
+        <h1 class="login-title">Staff Login</h1>
+        <p class="login-sub">Sign in to view your schedule</p>
+      </div>
+
+      <div class="error" id="error"></div>
+
+      <form id="login-form">
+        <div class="field">
+          <label for="username">Username</label>
+          <input type="text" id="username" class="input" autocomplete="username" required />
+        </div>
+        <div class="field">
+          <label for="password">Password</label>
+          <input type="password" id="password" class="input" autocomplete="current-password" required />
+        </div>
+        <button type="submit" class="btn-primary btn-block">Sign in</button>
+      </form>
+
+      <div class="demo-creds">
+        <strong>Demo accounts:</strong><br />
+        Admin: <code>ray</code> / <code>ray2026admin</code><br />
+        Manager: <code>azmeer</code> / <code>shawarma2026</code><br />
+        Staff: <code>staff1</code>–<code>staff8</code> / <code>staff2026</code>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { login, getToken, baseUrl } from '../lib/auth.js';
+    import { loadData } from '../lib/data.js';
+
+    if (getToken()) {
+      window.location.href = baseUrl('/');
+    }
+
+    const form = document.getElementById('login-form');
+    const errorEl = document.getElementById('error');
+    const data = await loadData();
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errorEl.classList.remove('show');
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+      const btn = form.querySelector('button');
+      btn.disabled = true;
+      btn.textContent = 'Signing in...';
+      const r = await login(username, password, data.users);
+      btn.disabled = false;
+      btn.textContent = 'Sign in';
+      if (!r.ok) {
+        errorEl.textContent = r.error;
+        errorEl.classList.add('show');
+        return;
+      }
+      window.location.href = baseUrl('/');
+    });
+  </script>
+</body>
+</html>

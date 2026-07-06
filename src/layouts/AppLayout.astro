@@ -1,0 +1,74 @@
+---
+// AppLayout — header + bottom nav. No SSR auth (static).
+import '../styles/global.css';
+const { title = '&Shawarma — My Shifts', active = '' } = Astro.props;
+---
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#dc2626" />
+  <title>{title}</title>
+</head>
+<body>
+  <header class="site-header">
+    <div class="site-header-inner">
+      <a href="/AndShawarma/" class="brand">
+        <span class="brand-mark">&amp;Shawarma</span>
+      </a>
+      <div class="header-actions">
+        <span id="user-pill" style="font-size:0.75rem;opacity:0.9;"></span>
+        <button id="logout-btn" class="btn-logout" style="display:none;">Logout</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <slot />
+  </main>
+
+  <nav class="bottom-nav">
+    <a href="/AndShawarma/" class={active === 'home' ? 'active' : ''}>
+      <span class="icon">🏠</span><span>Home</span>
+    </a>
+    <a href="/AndShawarma/schedule" class={active === 'schedule' ? 'active' : ''}>
+      <span class="icon">📅</span><span>Schedule</span>
+    </a>
+    <a href="/AndShawarma/shift-swap" class={active === 'swap' ? 'active' : ''}>
+      <span class="icon">🔄</span><span>Swap</span>
+    </a>
+    <a href="/AndShawarma/time-off" class={active === 'timeoff' ? 'active' : ''}>
+      <span class="icon">🏖️</span><span>Time Off</span>
+    </a>
+    <a href="/AndShawarma/admin" class={active === 'admin' ? 'active' : ''} id="admin-link" style="display:none;">
+      <span class="icon">⚙️</span><span>Manage</span>
+    </a>
+  </nav>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    import { getToken, logout } from '../lib/auth.js';
+    const t = getToken();
+    if (t) {
+      document.getElementById('user-pill').textContent = t.display_name + ' · ' + t.role;
+      document.getElementById('logout-btn').style.display = 'inline-block';
+      if (t.role === 'admin' || t.role === 'manager') {
+        document.getElementById('admin-link').style.display = 'flex';
+      }
+    }
+    document.getElementById('logout-btn').addEventListener('click', () => {
+      logout();
+    });
+
+    // Toast helper
+    window.__toast = (msg) => {
+      const el = document.getElementById('toast');
+      el.textContent = msg;
+      el.classList.add('show');
+      setTimeout(() => el.classList.remove('show'), 2500);
+    };
+  </script>
+</body>
+</html>
