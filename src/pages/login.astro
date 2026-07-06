@@ -8,6 +8,11 @@ import '../styles/global.css';
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#dc2626" />
   <title>&amp;Shawarma — Login</title>
+  <script is:inline>
+    // Pre-configured API server. Set this when deploying so users don't
+    // have to paste a tunnel URL. (See README — search "SHAWARMA_API_URL")
+    window.SHAWARMA_API_URL = "https://shiny-parts-wink.loca.lt";
+  </script>
   <script is:inline src="/AndShawarma/app.js?v=20260706113500"></script>
   <script is:inline>
     // Clear any stale token + pending so login always requires fresh input.
@@ -26,9 +31,10 @@ import '../styles/global.css';
       <div class="error" id="error"></div>
 
       <form id="login-form">
-        <div class="field">
-          <label for="api-url">API server <span style="color:var(--color-muted);font-weight:normal;">(paste the tunnel URL from your Mac's terminal)</span></label>
-          <input type="url" id="api-url" class="input" placeholder="https://strong-dogs-sort.loca.lt" autocomplete="off" required />
+        <div class="field" id="api-url-field" style="display:none;">
+          <label for="api-url">Server</label>
+          <input type="url" id="api-url" class="input" placeholder="https://your-server.example.com" autocomplete="off" />
+          <p style="font-size:0.75rem;color:var(--color-muted);margin:0.25rem 0 0;">Ask the app admin if you don't know this.</p>
         </div>
         <div class="field">
           <label for="username">Username</label>
@@ -147,18 +153,34 @@ import '../styles/global.css';
       }
       const form = document.getElementById('login-form');
       const errorEl = document.getElementById('error');
-      // Pre-fill the API URL field with whatever was saved previously
+      const apiUrlField = document.getElementById('api-url-field');
       const apiUrlInput = document.getElementById('api-url');
-      try { apiUrlInput.value = localStorage.getItem('shawarma.api_url') || ''; } catch (e) {}
+
+      // Show the "Server" field ONLY if no API URL is pre-configured.
+      // The deploy script bakes SHAWARMA_API_URL into the page, so normal
+      // users never see this. It's a fallback for the app admin.
+      const preConfigured = (window.SHAWARMA_API_URL || '').trim();
+      const saved = (() => { try { return localStorage.getItem('shawarma.api_url') || ''; } catch (e) { return ''; } })();
+      if (!preConfigured && !saved) {
+        apiUrlField.style.display = 'block';
+        apiUrlInput.required = true;
+      } else {
+        apiUrlField.style.display = 'none';
+        apiUrlInput.required = false;
+        apiUrlInput.value = preConfigured || saved;
+      }
+
       form.addEventListener('submit', async function(e) {
         e.preventDefault();
         errorEl.classList.remove('show');
-        // Save the API URL the user entered. If they cleared it, error out.
-        const apiUrl = (apiUrlInput.value || '').trim().replace(/\/$/, '');
+        // If the field is visible (no pre-config), read the URL from it.
+        // Otherwise use the pre-configured one.
+        const apiUrl = apiUrlField.style.display !== 'none'
+          ? (apiUrlInput.value || '').trim().replace(/\/$/, '')
+          : (preConfigured || saved || '').replace(/\/$/, '');
         if (!apiUrl) {
-          errorEl.textContent = 'Please paste the API server URL from your Mac terminal first.';
+          errorEl.textContent = 'Server URL is missing. Please contact the app admin.';
           errorEl.classList.add('show');
-          apiUrlInput.focus();
           return;
         }
         try { localStorage.setItem('shawarma.api_url', apiUrl); } catch (e) {}
