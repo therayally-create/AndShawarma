@@ -16,13 +16,16 @@ window.shawarma = (function() {
   async function callSheet(method, body) {
     if (!SHEET_WEBHOOK_URL) return null;
     try {
+      // Append a cache-bust query param so the browser never serves stale data
+      const url = SHEET_WEBHOOK_URL + (SHEET_WEBHOOK_URL.indexOf('?') >= 0 ? '&' : '?') + '_t=' + Date.now();
       const opts = {
         method: method,
         headers: { 'Content-Type': 'application/json' },
+        cache: 'no-store',
         redirect: 'follow',
       };
       if (body) opts.body = JSON.stringify(body);
-      const res = await fetch(SHEET_WEBHOOK_URL, opts);
+      const res = await fetch(url, opts);
       return await res.json();
     } catch (e) {
       console.warn('Sheet call failed:', e);
