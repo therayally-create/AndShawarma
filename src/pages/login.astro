@@ -46,7 +46,7 @@ import '../styles/global.css';
     (function() {
       const s = window.shawarma;
       if (s.getToken()) {
-        window.location.href = s.baseUrl('/');
+        window.location.href = s.baseUrl('/schedule');
         return;
       }
       const form = document.getElementById('login-form');
@@ -73,7 +73,7 @@ import '../styles/global.css';
           errorEl.classList.add('show');
           return;
         }
-        window.location.href = s.baseUrl('/');
+        window.location.href = s.baseUrl('/schedule');
       });
     })();
   </script>
