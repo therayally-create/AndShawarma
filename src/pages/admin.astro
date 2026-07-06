@@ -106,7 +106,22 @@ import AppLayout from '../layouts/AppLayout.astro';
         const pending = s.getPending().filter(function(p) { return p.status === 'pending'; });
         document.getElementById('pending-count').textContent = pending.length;
         if (pending.length === 0) {
-          list.innerHTML = '<p class="empty">No pending requests.</p>';
+          list.innerHTML =
+            '<p class="empty" style="margin-bottom:0.75rem;">No pending requests. They show up here when staff submit changes.</p>' +
+            (isAdmin ? '<button class="btn-secondary" id="seed-demo-btn" type="button">+ Add test request (demo)</button>' : '');
+          if (isAdmin) {
+            const seedBtn = document.getElementById('seed-demo-btn');
+            if (seedBtn) seedBtn.addEventListener('click', function() {
+              s.addPending({
+                kind: 'time_off',
+                requester_id: 'u4', // Jorge
+                start_date: '2026-07-20', end_date: '2026-07-22',
+                reason: 'Doctor appointment (test request)',
+              });
+              s.toast('Test request added — refresh the list');
+              renderApprovals();
+            });
+          }
           return;
         }
         list.innerHTML = pending.map(function(p) {
