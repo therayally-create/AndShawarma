@@ -3,12 +3,17 @@ import AppLayout from '../layouts/AppLayout.astro';
 ---
 <AppLayout title="&Shawarma — Schedule" active="schedule">
   <div class="calendar-nav">
-    <button class="btn-secondary" id="prev-month">← Prev</button>
-    <h2 id="month-label">Loading...</h2>
-    <button class="btn-secondary" id="next-month">Next →</button>
+    <button class="btn-secondary" id="prev-period">← Prev</button>
+    <h2 id="period-label">Loading...</h2>
+    <button class="btn-secondary" id="next-period">Next →</button>
+    <div class="view-toggle" id="view-toggle">
+      <button data-view="day">Day</button>
+      <button data-view="month" class="active">Month</button>
+      <button data-view="year">Year</button>
+    </div>
   </div>
 
-  <div class="calendar-grid" id="calendar-grid">
+  <div id="view-container">
     <p class="empty">Loading...</p>
   </div>
 
@@ -37,98 +42,170 @@ import AppLayout from '../layouts/AppLayout.astro';
       const today = s.todayISO();
       const canEdit = (t.role === 'admin' || t.role === 'manager');
 
-      let viewYear, viewMonth; // month: 1-12
+      let view = 'month';
+      let viewYear, viewMonth, viewDay;
       const td = new Date(today + 'T00:00:00');
       viewYear = td.getFullYear();
       viewMonth = td.getMonth() + 1;
+      viewDay = parseInt(today.slice(8, 10), 10);
 
-      function renderCalendar() {
-        document.getElementById('month-label').textContent = s.formatDate(viewYear + '-' + String(viewMonth).padStart(2,'0') + '-01', { monthYear: true });
-        const range = s.getMonthRange(viewYear, viewMonth);
-        const grid = document.getElementById('calendar-grid');
-
-        // Build header + 6 weeks of 7 days
-        const head = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(function(d) {
-          return '<div class="calendar-head">' + d + '</div>';
-        }).join('');
-
-        // First day of month — pad to start of week (Sun)
-        const firstDate = new Date(viewYear, viewMonth - 1, 1);
-        const firstDow = firstDate.getDay();
-        const cells = [];
-        // Previous month padding
-        for (let i = 0; i < firstDow; i++) {
-          const d = new Date(firstDate);
-          d.setDate(d.getDate() - (firstDow - i));
-          cells.push({ iso: d.toISOString().slice(0,10), other: true });
+      function shiftRange() {
+        if (view === 'day') {
+          const iso = viewYear + '-' + String(viewMonth).padStart(2,'0') + '-' + String(viewDay).padStart(2,'0');
+          return { start: iso, end: iso, days: [iso] };
         }
-        // This month
-        for (let i = 0; i < range.days.length; i++) {
-          cells.push({ iso: range.days[i], other: false });
-        }
-        // Pad to multiple of 7
-        while (cells.length % 7 !== 0) {
-          const last = new Date(cells[cells.length-1].iso + 'T00:00:00');
-          last.setDate(last.getDate() + 1);
-          cells.push({ iso: last.toISOString().slice(0,10), other: true });
-        }
+        if (view === 'month') return s.getMonthRange(viewYear, viewMonth);
+        // year: Jan 1 → Dec 31
+        return { start: viewYear + '-01-01', end: viewYear + '-12-31', days: null, year: viewYear };
+      }
 
-        const body = cells.map(function(c) {
-          const dayShifts = s.getShiftsForDate(data, c.iso);
-          const dots = dayShifts.map(function(sh) {
-            return '<span class="shift-dot ' + sh.role.toLowerCase() + '"></span>';
-          }).join('');
-          const count = dayShifts.length > 0 ? '<span class="shift-count">' + dayShifts.length + ' shift' + (dayShifts.length === 1 ? '' : 's') + '</span>' : '';
-          const isToday = c.iso === today;
-          return '<div class="calendar-day' + (c.other ? ' other-month' : '') + (isToday ? ' today' : '') + '" data-iso="' + c.iso + '">' +
-            '<span class="day-num">' + parseInt(c.iso.slice(8,10), 10) + '</span>' +
-            '<div class="shift-dots">' + dots + '</div>' +
-            count +
+      function render() {
+        const container = document.getElementById('view-container');
+        const label = document.getElementById('period-label');
+        if (view === 'day') {
+          const iso = viewYear + '-' + String(viewMonth).padStart(2,'0') + '-' + String(viewDay).padStart(2,'0');
+          label.textContent = s.formatDate(iso);
+          const shifts = s.getShiftsForDate(data, iso);
+          if (shifts.length === 0) {
+            container.innerHTML = '<div class="day-view"><p class="empty" style="text-align:center;padding:2rem;">No shifts on this day.</p>' +
+              (canEdit ? '<button class="btn-primary" id="day-add">+ Add shift</button>' : '') + '</div>';
+          } else {
+            container.innerHTML = '<div class="day-view">' +
+              shifts.map(function(sh) {
+                const editBtn = canEdit ? '<button class="btn-secondary" data-edit="' + sh.id + '">Edit</button>' : '';
+                return '<div class="day-shift ' + sh.role.toLowerCase() + '">' +
+                  '<div class="day-shift-main">' +
+                    '<div class="day-shift-name">' + s.getUserName(data, sh.user_id) + '</div>' +
+                    '<div class="day-shift-time">' + s.formatTime12(sh.start) + ' – ' + s.formatTime12(sh.end) + '</div>' +
+                    '<div class="day-shift-role">' + sh.role + (sh.notes ? ' · ' + sh.notes : '') + '</div>' +
+                  '</div>' +
+                  '<div class="day-shift-actions">' + editBtn + '</div>' +
+                '</div>';
+              }).join('') +
+              (canEdit ? '<button class="btn-primary" id="day-add">+ Add shift</button>' : '') +
+              '</div>';
+          }
+          if (canEdit) {
+            container.querySelector('#day-add').addEventListener('click', function() { openShiftEditor(iso, null); });
+            container.querySelectorAll('[data-edit]').forEach(function(b) {
+              b.addEventListener('click', function() { openShiftEditor(iso, b.getAttribute('data-edit')); });
+            });
+          }
+          return;
+        }
+        if (view === 'month') {
+          label.textContent = s.formatDate(viewYear + '-' + String(viewMonth).padStart(2,'0') + '-01', { monthYear: true });
+          const range = s.getMonthRange(viewYear, viewMonth);
+          const firstDate = new Date(viewYear, viewMonth - 1, 1);
+          const firstDow = firstDate.getDay();
+          const cells = [];
+          for (let i = 0; i < firstDow; i++) {
+            const d = new Date(firstDate);
+            d.setDate(d.getDate() - (firstDow - i));
+            cells.push({ iso: d.toISOString().slice(0,10), other: true });
+          }
+          for (let i = 0; i < range.days.length; i++) cells.push({ iso: range.days[i], other: false });
+          while (cells.length % 7 !== 0) {
+            const last = new Date(cells[cells.length-1].iso + 'T00:00:00');
+            last.setDate(last.getDate() + 1);
+            cells.push({ iso: last.toISOString().slice(0,10), other: true });
+          }
+          const head = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(function(d) { return '<div class="calendar-head">' + d + '</div>'; }).join('');
+          const body = cells.map(function(c) {
+            const dayShifts = s.getShiftsForDate(data, c.iso);
+            // Show up to 3 shift lines with name + time, +N more
+            const lines = dayShifts.slice(0, 3).map(function(sh) {
+              const firstName = s.getUserName(data, sh.user_id).split(' ')[0];
+              return '<div class="shift-line ' + sh.role.toLowerCase() + '"><strong>' + firstName + '</strong> ' + s.formatTime12(sh.start) + '–' + s.formatTime12(sh.end) + '</div>';
+            }).join('');
+            const more = dayShifts.length > 3 ? '<div class="shift-line">+' + (dayShifts.length - 3) + ' more</div>' : '';
+            const isToday = c.iso === today;
+            return '<div class="calendar-day' + (c.other ? ' other-month' : '') + (isToday ? ' today' : '') + '" data-iso="' + c.iso + '">' +
+              '<span class="day-num">' + parseInt(c.iso.slice(8,10), 10) + '</span>' +
+              lines + more +
             '</div>';
-        }).join('');
-
-        grid.innerHTML = head + body;
-
-        grid.querySelectorAll('.calendar-day').forEach(function(el) {
-          el.addEventListener('click', function() {
-            openDay(el.getAttribute('data-iso'));
+          }).join('');
+          container.innerHTML = '<div class="calendar-grid">' + head + body + '</div>';
+          container.querySelectorAll('.calendar-day').forEach(function(el) {
+            el.addEventListener('click', function() { openDay(el.getAttribute('data-iso')); });
           });
+          return;
+        }
+        // year
+        label.textContent = String(viewYear);
+        const months = [];
+        for (let m = 1; m <= 12; m++) months.push(s.getMonthRange(viewYear, m));
+        container.innerHTML = '<div class="year-grid">' + months.map(function(range, idx) {
+          const monthName = new Date(viewYear, idx, 1).toLocaleDateString('en-US', { month: 'short' });
+          const firstDate = new Date(viewYear, idx, 1);
+          const firstDow = firstDate.getDay();
+          const cells = [];
+          for (let i = 0; i < firstDow; i++) cells.push({ iso: null, other: true });
+          for (let i = 0; i < range.days.length; i++) {
+            const shifts = s.getShiftsForDate(data, range.days[i]);
+            let cls = '';
+            if (shifts.length > 0) {
+              const hasFOH = shifts.some(function(sh) { return sh.role === 'FOH'; });
+              const hasBOH = shifts.some(function(sh) { return sh.role === 'BOH'; });
+              cls = 'has-shift' + (hasFOH ? ' foh' : '') + (hasBOH ? ' boh' : '') + (hasFOH && hasBOH ? ' both' : '');
+            }
+            if (range.days[i] === today) cls += ' today';
+            cells.push({ iso: range.days[i], cls: cls });
+          }
+          const head = ['S','M','T','W','T','F','S'].map(function(d) { return '<div class="mini-head">' + d + '</div>'; }).join('');
+          const body = cells.map(function(c) {
+            if (c.other) return '<div class="mini-day other"></div>';
+            return '<div class="mini-day ' + c.cls + '">' + parseInt(c.iso.slice(8,10), 10) + '</div>';
+          }).join('');
+          const totalShifts = s.getShiftsInRange(data, range.start, range.end).length;
+          return '<div class="year-month" data-year="' + viewYear + '" data-month="' + (idx + 1) + '">' +
+            '<h3>' + monthName + '</h3>' +
+            '<div class="year-mini-grid">' + head + body + '</div>' +
+            '<div class="year-month-count">' + totalShifts + ' shift' + (totalShifts === 1 ? '' : 's') + '</div>' +
+          '</div>';
+        }).join('') + '</div>';
+        container.querySelectorAll('.year-month').forEach(function(el) {
+          el.addEventListener('click', function() {
+            view = 'month';
+            viewYear = parseInt(el.getAttribute('data-year'), 10);
+            viewMonth = parseInt(el.getAttribute('data-month'), 10);
+            updateToggle();
+            render();
+          });
+        });
+      }
+
+      function updateToggle() {
+        document.querySelectorAll('#view-toggle button').forEach(function(b) {
+          b.classList.toggle('active', b.getAttribute('data-view') === view);
         });
       }
 
       function openDay(iso) {
         const dayShifts = s.getShiftsForDate(data, iso);
         document.getElementById('modal-title').textContent = s.formatDate(iso);
-
         const shiftsHTML = dayShifts.length === 0
           ? '<p class="empty">No shifts scheduled.</p>'
           : dayShifts.map(function(sh) {
-              const editBtn = canEdit
-                ? '<button class="btn-secondary" data-edit="' + sh.id + '">Edit</button>'
-                : '';
+              const editBtn = canEdit ? '<button class="btn-secondary" data-edit="' + sh.id + '">Edit</button>' : '';
               return '<div class="day-shift ' + sh.role.toLowerCase() + '">' +
-                '<div style="flex:1;min-width:0;">' +
-                  '<div class="who">' + s.getUserName(data, sh.user_id) + '</div>' +
-                  '<div class="when">' + s.formatTime12(sh.start) + ' – ' + s.formatTime12(sh.end) + ' · ' + sh.role + (sh.notes ? ' · ' + sh.notes : '') + '</div>' +
+                '<div class="day-shift-main">' +
+                  '<div class="day-shift-name">' + s.getUserName(data, sh.user_id) + '</div>' +
+                  '<div class="day-shift-time">' + s.formatTime12(sh.start) + ' – ' + s.formatTime12(sh.end) + '</div>' +
+                  '<div class="day-shift-role">' + sh.role + (sh.notes ? ' · ' + sh.notes : '') + '</div>' +
                 '</div>' +
                 '<div class="day-shift-actions">' + editBtn + '</div>' +
-                '</div>';
+              '</div>';
             }).join('');
-
         document.getElementById('modal-shifts').innerHTML = shiftsHTML;
-
-        const addBtn = canEdit
-          ? '<button class="btn-primary" id="add-shift-btn" style="margin-top:0.5rem;">+ Add shift</button>'
-          : '<p style="color:var(--color-muted);font-size:0.75rem;margin-top:0.5rem;">Contact your manager to make changes.</p>';
+        const addBtn = canEdit ? '<button class="btn-primary" id="add-shift-btn" style="margin-top:0.75rem;">+ Add shift</button>' : '';
         document.getElementById('modal-actions').innerHTML = addBtn;
-
         if (canEdit) {
           document.getElementById('add-shift-btn').addEventListener('click', function() { openShiftEditor(iso, null); });
           document.querySelectorAll('[data-edit]').forEach(function(b) {
             b.addEventListener('click', function() { openShiftEditor(iso, b.getAttribute('data-edit')); });
           });
         }
-
         document.getElementById('day-modal').classList.add('show');
       }
 
@@ -141,7 +218,6 @@ import AppLayout from '../layouts/AppLayout.astro';
         }).join('');
         const fohSel = sh && sh.role === 'FOH' ? ' selected' : '';
         const bohSel = sh && sh.role === 'BOH' ? ' selected' : '';
-
         const editorHTML =
           '<div class="modal-backdrop show" id="editor-modal" style="z-index:300;">' +
             '<div class="modal">' +
@@ -152,8 +228,8 @@ import AppLayout from '../layouts/AppLayout.astro';
               '<div class="modal-body">' +
                 '<div class="field"><label>Staff</label><select id="ed-user" class="input">' + userOptions + '</select></div>' +
                 '<div class="field"><label>Date</label><input type="date" id="ed-date" class="input" value="' + (sh ? sh.date : iso) + '" /></div>' +
-                '<div class="field"><label>Start</label><input type="time" id="ed-start" class="input" value="' + (sh ? sh.start : '11:00') + '" /></div>' +
-                '<div class="field"><label>End</label><input type="time" id="ed-end" class="input" value="' + (sh ? sh.end : '19:00') + '" /></div>' +
+                '<div class="field"><label>Start time</label><input type="time" id="ed-start" class="input" value="' + (sh ? sh.start : '11:00') + '" /></div>' +
+                '<div class="field"><label>End time</label><input type="time" id="ed-end" class="input" value="' + (sh ? sh.end : '19:00') + '" /></div>' +
                 '<div class="field"><label>Role</label><select id="ed-role" class="input"><option value="FOH"' + fohSel + '>FOH (front of house)</option><option value="BOH"' + bohSel + '>BOH (back of house)</option></select></div>' +
                 '<div class="field"><label>Notes</label><input type="text" id="ed-notes" class="input" value="' + (sh && sh.notes ? sh.notes : '') + '" placeholder="Optional" /></div>' +
               '</div>' +
@@ -166,14 +242,11 @@ import AppLayout from '../layouts/AppLayout.astro';
         const wrap = document.createElement('div');
         wrap.innerHTML = editorHTML;
         document.body.appendChild(wrap);
-
         function closeEditor() { document.body.removeChild(wrap); }
-
         wrap.querySelector('#editor-close').addEventListener('click', closeEditor);
         wrap.querySelector('#ed-save').addEventListener('click', function() {
           const payload = {
-            kind: 'shift_change',
-            shift_id: sh ? sh.id : null,
+            kind: 'shift_change', shift_id: sh ? sh.id : null,
             date: wrap.querySelector('#ed-date').value,
             user_id: wrap.querySelector('#ed-user').value,
             start: wrap.querySelector('#ed-start').value,
@@ -182,12 +255,8 @@ import AppLayout from '../layouts/AppLayout.astro';
             notes: wrap.querySelector('#ed-notes').value,
           };
           s.addPending({
-            kind: 'shift_change',
-            requester_id: t.user_id,
-            requester_name: t.display_name,
-            action: isNew ? 'create' : 'update',
-            before: sh || null,
-            after: payload,
+            kind: 'shift_change', requester_id: t.user_id, requester_name: t.display_name,
+            action: isNew ? 'create' : 'update', before: sh || null, after: payload,
           });
           closeEditor();
           document.getElementById('day-modal').classList.remove('show');
@@ -196,12 +265,8 @@ import AppLayout from '../layouts/AppLayout.astro';
         if (!isNew) {
           wrap.querySelector('#ed-delete').addEventListener('click', function() {
             s.addPending({
-              kind: 'shift_change',
-              requester_id: t.user_id,
-              requester_name: t.display_name,
-              action: 'delete',
-              before: sh,
-              after: null,
+              kind: 'shift_change', requester_id: t.user_id, requester_name: t.display_name,
+              action: 'delete', before: sh, after: null,
             });
             closeEditor();
             document.getElementById('day-modal').classList.remove('show');
@@ -210,15 +275,39 @@ import AppLayout from '../layouts/AppLayout.astro';
         }
       }
 
-      document.getElementById('prev-month').addEventListener('click', function() {
-        viewMonth--;
-        if (viewMonth < 1) { viewMonth = 12; viewYear--; }
-        renderCalendar();
+      // View toggle
+      document.querySelectorAll('#view-toggle button').forEach(function(b) {
+        b.addEventListener('click', function() {
+          view = b.getAttribute('data-view');
+          updateToggle();
+          render();
+        });
       });
-      document.getElementById('next-month').addEventListener('click', function() {
-        viewMonth++;
-        if (viewMonth > 12) { viewMonth = 1; viewYear++; }
-        renderCalendar();
+
+      // Prev/Next depends on view
+      document.getElementById('prev-period').addEventListener('click', function() {
+        if (view === 'day') {
+          const d = new Date(viewYear, viewMonth - 1, viewDay);
+          d.setDate(d.getDate() - 1);
+          viewYear = d.getFullYear(); viewMonth = d.getMonth() + 1; viewDay = d.getDate();
+        } else if (view === 'month') {
+          viewMonth--; if (viewMonth < 1) { viewMonth = 12; viewYear--; }
+        } else {
+          viewYear--;
+        }
+        render();
+      });
+      document.getElementById('next-period').addEventListener('click', function() {
+        if (view === 'day') {
+          const d = new Date(viewYear, viewMonth - 1, viewDay);
+          d.setDate(d.getDate() + 1);
+          viewYear = d.getFullYear(); viewMonth = d.getMonth() + 1; viewDay = d.getDate();
+        } else if (view === 'month') {
+          viewMonth++; if (viewMonth > 12) { viewMonth = 1; viewYear++; }
+        } else {
+          viewYear++;
+        }
+        render();
       });
       document.getElementById('modal-close').addEventListener('click', function() {
         document.getElementById('day-modal').classList.remove('show');
@@ -227,7 +316,7 @@ import AppLayout from '../layouts/AppLayout.astro';
         if (e.target.id === 'day-modal') document.getElementById('day-modal').classList.remove('show');
       });
 
-      renderCalendar();
+      render();
     })();
   </script>
 </AppLayout>
