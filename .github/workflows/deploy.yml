@@ -25,7 +25,6 @@ jobs:
           cache-dependency-path: package-lock.json
 
       - run: npm ci --no-audit --no-fund
-      - run: cp data.json public/data.json
       - run: npm run build
 
       - name: Deploy to gh-pages branch

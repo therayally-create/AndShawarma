@@ -2,15 +2,11 @@
 import AppLayout from '../layouts/AppLayout.astro';
 ---
 <script is:inline>
-  // Immediate redirect: if no token, go to login before the page renders
+  // Always send users to login first. If they have a valid token, the
+  // login page will redirect them to the schedule.
   (function() {
-    var t = null;
-    try { t = localStorage.getItem('shawarma.token'); } catch(e) {}
-    if (!t) {
-      // Already on login? don't loop
-      if (!/login\/?$/.test(location.pathname)) {
-        location.replace('/AndShawarma/login/');
-      }
+    if (!/login\/?$/.test(location.pathname)) {
+      location.replace('/AndShawarma/login/');
     }
   })();
 </script>

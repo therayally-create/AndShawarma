@@ -88,20 +88,20 @@ window.shawarma = (function() {
   }
 
   async function loadData() {
-    // Force a fresh fetch from the Sheet every time. No localStorage cache.
-    // The Sheet is the source of truth for users, shifts, time_off, etc.
+    // The Google Sheet is the ONLY source of truth. No localStorage cache,
+    // no data.json fallback. If the Sheet is unreachable, the app shows
+    // an error instead of showing stale data.
     window.__dataCache = null;
     const result = await callSheet('GET');
     if (result && result.ok && result.data) {
       window.__dataCache = result.data;
       return result.data;
     }
-    // Fallback: local data.json (only if Sheet is unreachable)
-    const res = await fetch(baseUrl('/data.json'));
-    if (!res.ok) throw new Error('Failed to load data: HTTP ' + res.status);
-    const data = await res.json();
-    window.__dataCache = data;
-    return data;
+    // Sheet unreachable — return empty dataset so the app renders without crashing.
+    console.error('Sheet webhook failed:', result);
+    const empty = { users: [], shifts: [], time_off: [], swap_requests: [], pending: [] };
+    window.__dataCache = empty;
+    return empty;
   }
 
   async function login(username, password, users) {
