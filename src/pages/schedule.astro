@@ -2,68 +2,232 @@
 import AppLayout from '../layouts/AppLayout.astro';
 ---
 <AppLayout title="&Shawarma — Schedule" active="schedule">
-  <div class="week-nav">
-    <button class="btn-secondary" id="prev-week">← Prev</button>
-    <h2 id="week-label">Loading...</h2>
-    <button class="btn-secondary" id="next-week">Next →</button>
+  <div class="calendar-nav">
+    <button class="btn-secondary" id="prev-month">← Prev</button>
+    <h2 id="month-label">Loading...</h2>
+    <button class="btn-secondary" id="next-month">Next →</button>
   </div>
 
-  <div class="schedule-grid" id="schedule-grid">
+  <div class="calendar-grid" id="calendar-grid">
     <p class="empty">Loading...</p>
   </div>
 
+  <!-- Day popup modal -->
+  <div class="modal-backdrop" id="day-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="modal-title">Day</h2>
+        <button class="modal-close" id="modal-close">×</button>
+      </div>
+      <div class="modal-body">
+        <div id="modal-shifts"></div>
+        <div id="modal-actions"></div>
+      </div>
+    </div>
+  </div>
+</AppLayout>
+
+  <script is:inline src="/AndShawarma/app.js"></script>
   <script>
     (async function() {
       const s = window.shawarma;
       const t = s.requireAuth();
       if (!t) return;
       const data = await s.loadData();
-      let weekStart = s.getMondayOf(s.todayISO());
+      const today = s.todayISO();
+      const canEdit = (t.role === 'admin' || t.role === 'manager');
 
-      function render() {
-        const range = s.getWeekRange(weekStart);
-        const startD = new Date(range.start + 'T00:00:00');
-        const endD = new Date(range.end + 'T00:00:00');
-        document.getElementById('week-label').innerHTML =
-          startD.toLocaleDateString('en-US',{month:'short',day:'numeric'}) + ' – ' +
-          endD.toLocaleDateString('en-US',{month:'short',day:'numeric'}) +
-          '<div class="range">' + startD.getFullYear() + '</div>';
-        const grid = document.getElementById('schedule-grid');
-        grid.innerHTML = range.days.map(function(date) {
-          const header = s.formatDayHeader(date);
-          const shifts = s.getShiftsForDate(data, date);
-          let shiftsHTML;
-          if (shifts.length === 0) {
-            shiftsHTML = '<p class="empty" style="padding:0.5rem 0;font-size:0.75rem;">—</p>';
-          } else {
-            shiftsHTML = shifts.map(function(sh) {
-              const mine = sh.user_id === t.user_id;
-              return '<div class="shift-chip ' + sh.role.toLowerCase() + (mine ? ' mine' : '') + '">' +
-                '<span class="who">' + s.getUserName(data, sh.user_id) + '</span>' +
-                '<span class="time">' + s.formatTime12(sh.start) + ' – ' + s.formatTime12(sh.end) + '</span>' +
-                '</div>';
-            }).join('');
-          }
-          return '<div class="day-col' + (header.isToday ? ' today' : '') + '">' +
-            '<div class="day-col-head">' + header.weekday + '<span class="date">' + header.day + '</span></div>' +
-            shiftsHTML +
+      let viewYear, viewMonth; // month: 1-12
+      const td = new Date(today + 'T00:00:00');
+      viewYear = td.getFullYear();
+      viewMonth = td.getMonth() + 1;
+
+      function renderCalendar() {
+        document.getElementById('month-label').textContent = s.formatDate(viewYear + '-' + String(viewMonth).padStart(2,'0') + '-01', { monthYear: true });
+        const range = s.getMonthRange(viewYear, viewMonth);
+        const grid = document.getElementById('calendar-grid');
+
+        // Build header + 6 weeks of 7 days
+        const head = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(function(d) {
+          return '<div class="calendar-head">' + d + '</div>';
+        }).join('');
+
+        // First day of month — pad to start of week (Sun)
+        const firstDate = new Date(viewYear, viewMonth - 1, 1);
+        const firstDow = firstDate.getDay();
+        const cells = [];
+        // Previous month padding
+        for (let i = 0; i < firstDow; i++) {
+          const d = new Date(firstDate);
+          d.setDate(d.getDate() - (firstDow - i));
+          cells.push({ iso: d.toISOString().slice(0,10), other: true });
+        }
+        // This month
+        for (let i = 0; i < range.days.length; i++) {
+          cells.push({ iso: range.days[i], other: false });
+        }
+        // Pad to multiple of 7
+        while (cells.length % 7 !== 0) {
+          const last = new Date(cells[cells.length-1].iso + 'T00:00:00');
+          last.setDate(last.getDate() + 1);
+          cells.push({ iso: last.toISOString().slice(0,10), other: true });
+        }
+
+        const body = cells.map(function(c) {
+          const dayShifts = s.getShiftsForDate(data, c.iso);
+          const dots = dayShifts.map(function(sh) {
+            return '<span class="shift-dot ' + sh.role.toLowerCase() + '"></span>';
+          }).join('');
+          const count = dayShifts.length > 0 ? '<span class="shift-count">' + dayShifts.length + ' shift' + (dayShifts.length === 1 ? '' : 's') + '</span>' : '';
+          const isToday = c.iso === today;
+          return '<div class="calendar-day' + (c.other ? ' other-month' : '') + (isToday ? ' today' : '') + '" data-iso="' + c.iso + '">' +
+            '<span class="day-num">' + parseInt(c.iso.slice(8,10), 10) + '</span>' +
+            '<div class="shift-dots">' + dots + '</div>' +
+            count +
             '</div>';
         }).join('');
+
+        grid.innerHTML = head + body;
+
+        grid.querySelectorAll('.calendar-day').forEach(function(el) {
+          el.addEventListener('click', function() {
+            openDay(el.getAttribute('data-iso'));
+          });
+        });
       }
 
-      document.getElementById('prev-week').addEventListener('click', function() {
-        const d = new Date(weekStart + 'T00:00:00');
-        d.setDate(d.getDate() - 7);
-        weekStart = d.toISOString().slice(0, 10);
-        render();
+      function openDay(iso) {
+        const dayShifts = s.getShiftsForDate(data, iso);
+        document.getElementById('modal-title').textContent = s.formatDate(iso);
+
+        const shiftsHTML = dayShifts.length === 0
+          ? '<p class="empty">No shifts scheduled.</p>'
+          : dayShifts.map(function(sh) {
+              const editBtn = canEdit
+                ? '<button class="btn-secondary" data-edit="' + sh.id + '">Edit</button>'
+                : '';
+              return '<div class="day-shift ' + sh.role.toLowerCase() + '">' +
+                '<div style="flex:1;min-width:0;">' +
+                  '<div class="who">' + s.getUserName(data, sh.user_id) + '</div>' +
+                  '<div class="when">' + s.formatTime12(sh.start) + ' – ' + s.formatTime12(sh.end) + ' · ' + sh.role + (sh.notes ? ' · ' + sh.notes : '') + '</div>' +
+                '</div>' +
+                '<div class="day-shift-actions">' + editBtn + '</div>' +
+                '</div>';
+            }).join('');
+
+        document.getElementById('modal-shifts').innerHTML = shiftsHTML;
+
+        const addBtn = canEdit
+          ? '<button class="btn-primary" id="add-shift-btn" style="margin-top:0.5rem;">+ Add shift</button>'
+          : '<p style="color:var(--color-muted);font-size:0.75rem;margin-top:0.5rem;">Contact your manager to make changes.</p>';
+        document.getElementById('modal-actions').innerHTML = addBtn;
+
+        if (canEdit) {
+          document.getElementById('add-shift-btn').addEventListener('click', function() { openShiftEditor(iso, null); });
+          document.querySelectorAll('[data-edit]').forEach(function(b) {
+            b.addEventListener('click', function() { openShiftEditor(iso, b.getAttribute('data-edit')); });
+          });
+        }
+
+        document.getElementById('day-modal').classList.add('show');
+      }
+
+      function openShiftEditor(iso, shiftId) {
+        const sh = shiftId ? data.shifts.find(function(x) { return x.id === shiftId; }) : null;
+        const isNew = !sh;
+        const userOptions = data.users.map(function(u) {
+          const sel = sh && sh.user_id === u.id ? ' selected' : '';
+          return '<option value="' + u.id + '"' + sel + '>' + u.display_name + ' (' + u.role + ')</option>';
+        }).join('');
+        const fohSel = sh && sh.role === 'FOH' ? ' selected' : '';
+        const bohSel = sh && sh.role === 'BOH' ? ' selected' : '';
+
+        const editorHTML =
+          '<div class="modal-backdrop show" id="editor-modal" style="z-index:300;">' +
+            '<div class="modal">' +
+              '<div class="modal-header">' +
+                '<h2>' + (isNew ? 'New shift' : 'Edit shift') + '</h2>' +
+                '<button class="modal-close" id="editor-close">×</button>' +
+              '</div>' +
+              '<div class="modal-body">' +
+                '<div class="field"><label>Staff</label><select id="ed-user" class="input">' + userOptions + '</select></div>' +
+                '<div class="field"><label>Date</label><input type="date" id="ed-date" class="input" value="' + (sh ? sh.date : iso) + '" /></div>' +
+                '<div class="field"><label>Start</label><input type="time" id="ed-start" class="input" value="' + (sh ? sh.start : '11:00') + '" /></div>' +
+                '<div class="field"><label>End</label><input type="time" id="ed-end" class="input" value="' + (sh ? sh.end : '19:00') + '" /></div>' +
+                '<div class="field"><label>Role</label><select id="ed-role" class="input"><option value="FOH"' + fohSel + '>FOH (front of house)</option><option value="BOH"' + bohSel + '>BOH (back of house)</option></select></div>' +
+                '<div class="field"><label>Notes</label><input type="text" id="ed-notes" class="input" value="' + (sh && sh.notes ? sh.notes : '') + '" placeholder="Optional" /></div>' +
+              '</div>' +
+              '<div class="modal-footer">' +
+                (isNew ? '' : '<button class="btn-secondary" id="ed-delete">Delete</button>') +
+                '<button class="btn-primary" id="ed-save">Save</button>' +
+              '</div>' +
+            '</div>' +
+          '</div>';
+        const wrap = document.createElement('div');
+        wrap.innerHTML = editorHTML;
+        document.body.appendChild(wrap);
+
+        function closeEditor() { document.body.removeChild(wrap); }
+
+        wrap.querySelector('#editor-close').addEventListener('click', closeEditor);
+        wrap.querySelector('#ed-save').addEventListener('click', function() {
+          const payload = {
+            kind: 'shift_change',
+            shift_id: sh ? sh.id : null,
+            date: wrap.querySelector('#ed-date').value,
+            user_id: wrap.querySelector('#ed-user').value,
+            start: wrap.querySelector('#ed-start').value,
+            end: wrap.querySelector('#ed-end').value,
+            role: wrap.querySelector('#ed-role').value,
+            notes: wrap.querySelector('#ed-notes').value,
+          };
+          s.addPending({
+            kind: 'shift_change',
+            requester_id: t.user_id,
+            requester_name: t.display_name,
+            action: isNew ? 'create' : 'update',
+            before: sh || null,
+            after: payload,
+          });
+          closeEditor();
+          document.getElementById('day-modal').classList.remove('show');
+          s.toast('Change requested — admin notified');
+        });
+        if (!isNew) {
+          wrap.querySelector('#ed-delete').addEventListener('click', function() {
+            s.addPending({
+              kind: 'shift_change',
+              requester_id: t.user_id,
+              requester_name: t.display_name,
+              action: 'delete',
+              before: sh,
+              after: null,
+            });
+            closeEditor();
+            document.getElementById('day-modal').classList.remove('show');
+            s.toast('Delete requested — admin notified');
+          });
+        }
+      }
+
+      document.getElementById('prev-month').addEventListener('click', function() {
+        viewMonth--;
+        if (viewMonth < 1) { viewMonth = 12; viewYear--; }
+        renderCalendar();
       });
-      document.getElementById('next-week').addEventListener('click', function() {
-        const d = new Date(weekStart + 'T00:00:00');
-        d.setDate(d.getDate() + 7);
-        weekStart = d.toISOString().slice(0, 10);
-        render();
+      document.getElementById('next-month').addEventListener('click', function() {
+        viewMonth++;
+        if (viewMonth > 12) { viewMonth = 1; viewYear++; }
+        renderCalendar();
       });
-      render();
+      document.getElementById('modal-close').addEventListener('click', function() {
+        document.getElementById('day-modal').classList.remove('show');
+      });
+      document.getElementById('day-modal').addEventListener('click', function(e) {
+        if (e.target.id === 'day-modal') document.getElementById('day-modal').classList.remove('show');
+      });
+
+      renderCalendar();
     })();
   </script>
 </AppLayout>

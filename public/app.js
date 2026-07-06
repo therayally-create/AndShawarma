@@ -3,6 +3,7 @@
 
 window.shawarma = (function() {
   const TOKEN_KEY = 'shawarma.token';
+  const PENDING_KEY = 'shawarma.pending';
 
   async function sha256(text) {
     const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
@@ -70,6 +71,64 @@ window.shawarma = (function() {
     return { ok: true, user: u };
   }
 
+  // ---- Pending requests (time-off, swap, shift edits) ----
+  // Stored in localStorage; admins see them in their dashboard.
+  // Per Ray 2026-07-06: every pending change triggers an email notification
+  // to theRayally@gmail.com. Real send is gated by SHAWARMA_PROD=1.
+  // For v1 we just log the email body to console + show a toast — the
+  // barrier is that there's no backend to deliver the email from.
+  function getPending() {
+    try { return JSON.parse(localStorage.getItem(PENDING_KEY) || '[]'); }
+    catch { return []; }
+  }
+  function setPending(arr) {
+    localStorage.setItem(PENDING_KEY, JSON.stringify(arr));
+  }
+  function addPending(req) {
+    const all = getPending();
+    req.id = 'p' + Date.now() + Math.random().toString(36).slice(2, 6);
+    req.created_at = new Date().toISOString();
+    req.status = 'pending';
+    all.push(req);
+    setPending(all);
+    notifyApprovalNeeded(req);
+    return req;
+  }
+  function resolvePending(id, decision) {
+    const all = getPending();
+    const req = all.find(r => r.id === id);
+    if (req) {
+      req.status = decision; // 'approved' or 'denied'
+      req.resolved_at = new Date().toISOString();
+    }
+    setPending(all);
+    return req;
+  }
+
+  // Mock email notification — logs body to console, shows toast.
+  // Real implementation: POST to /api/notify with the request payload.
+  // The /api/notify endpoint reads SHAWARMA_PROD env to decide real send.
+  function notifyApprovalNeeded(req) {
+    const subject = '[&Shawarma] Approval needed: ' + req.kind;
+    const body = [
+      'A new request needs your approval.',
+      '',
+      'Type: ' + req.kind,
+      'From: ' + (req.requester_name || req.user_id || 'unknown'),
+      'Details: ' + JSON.stringify(req, null, 2),
+      '',
+      'Approve / deny at: https://therayally-create.github.io/AndShawarma/admin/',
+      '',
+      '— &Shawarma staff app',
+    ].join('\n');
+    console.log('[EMAIL → theRayally@gmail.com]');
+    console.log('Subject:', subject);
+    console.log(body);
+    if (typeof window.__toast === 'function') {
+      window.__toast('Request submitted — admin notified');
+    }
+  }
+
   function getUserById(d, id) { return d.users.find(u => u.id === id); }
   function getUserName(d, id) { const u = getUserById(d, id); return u ? u.display_name : 'Unknown'; }
   function getShiftsForUser(d, uid) {
@@ -78,6 +137,10 @@ window.shawarma = (function() {
   }
   function getShiftsForDate(d, date) {
     return d.shifts.filter(s => s.date === date).sort((a, b) => a.start.localeCompare(b.start));
+  }
+  function getShiftsInRange(d, startISO, endISO) {
+    return d.shifts.filter(s => s.date >= startISO && s.date <= endISO)
+      .sort((a, b) => (a.date + a.start).localeCompare(b.date + b.start));
   }
   function getTimeOffForUser(d, uid) {
     return d.time_off.filter(t => t.user_id === uid)
@@ -110,10 +173,21 @@ window.shawarma = (function() {
     }
     return { start: start.toISOString().slice(0,10), end: end.toISOString().slice(0,10), days };
   }
+  function getMonthRange(year, month) {
+    // month: 1-12
+    const start = new Date(year, month - 1, 1);
+    const end = new Date(year, month, 0); // day 0 of next month = last day of this month
+    const days = [];
+    for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+      days.push(d.toISOString().slice(0, 10));
+    }
+    return { start: start.toISOString().slice(0,10), end: end.toISOString().slice(0,10), days, year, month };
+  }
   function formatDate(iso, opts) {
     opts = opts || {};
     const d = new Date(iso + 'T00:00:00');
     if (opts.short) return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    if (opts.monthYear) return d.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
     return d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
   }
   function formatDayHeader(iso) {
@@ -122,6 +196,7 @@ window.shawarma = (function() {
       weekday: d.toLocaleDateString('en-US', { weekday: 'short' }),
       day: d.getDate(),
       isToday: iso === todayISO(),
+      isOtherMonth: false,
     };
   }
   function formatTime12(t) {
@@ -140,13 +215,16 @@ window.shawarma = (function() {
     el.classList.add('show');
     setTimeout(function() { el.classList.remove('show'); }, 2500);
   }
+  // Expose for internal use
+  window.__toast = toast;
 
   return {
     sha256, getToken, setToken, clearToken, logout, baseUrl, requireAuth,
     loadData, login,
-    getUserById, getUserName, getShiftsForUser, getShiftsForDate,
+    getPending, setPending, addPending, resolvePending, notifyApprovalNeeded,
+    getUserById, getUserName, getShiftsForUser, getShiftsForDate, getShiftsInRange,
     getTimeOffForUser, getAllTimeOff, getSwapsForUser,
-    todayISO, getMondayOf, getWeekRange,
+    todayISO, getMondayOf, getWeekRange, getMonthRange,
     formatDate, formatDayHeader, formatTime12,
     toast
   };

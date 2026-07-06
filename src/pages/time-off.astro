@@ -40,38 +40,62 @@ import AppLayout from '../layouts/AppLayout.astro';
 
       document.getElementById('request-form').addEventListener('submit', function(e) {
         e.preventDefault();
-        s.toast('Coming soon — backend not connected in v1');
+        s.addPending({
+          kind: 'time_off',
+          requester_id: t.user_id,
+          requester_name: t.display_name,
+          start_date: document.getElementById('start_date').value,
+          end_date: document.getElementById('end_date').value,
+          reason: document.getElementById('reason').value.trim(),
+        });
+        document.getElementById('request-form').reset();
+        s.toast('Time-off requested — admin notified');
+        renderAll();
       });
 
-      const myItems = s.getTimeOffForUser(data, t.user_id);
-      const myList = document.getElementById('my-list');
-      if (myItems.length === 0) {
-        myList.innerHTML = '<p class="empty">No requests yet.</p>';
-      } else {
-        myList.innerHTML = myItems.map(function(it) {
-          return '<div class="list-item"><div><div class="who">' + s.formatDate(it.start_date, {short: true}) + ' – ' + s.formatDate(it.end_date, {short: true}) + '</div><div class="meta">' + (it.reason || '—') + '</div></div><span class="badge badge-' + it.status + '">' + it.status + '</span></div>';
-        }).join('');
-      }
+      function renderAll() {
+        const myList = document.getElementById('my-list');
+        const mine = s.getTimeOffForUser(data, t.user_id);
+        // Combine data.json + my pending time-off requests
+        const myPending = s.getPending().filter(function(p) {
+          return p.kind === 'time_off' && p.requester_id === t.user_id && p.status === 'pending';
+        });
+        if (mine.length === 0 && myPending.length === 0) {
+          myList.innerHTML = '<p class="empty">No requests yet.</p>';
+        } else {
+          let html = '';
+          myPending.forEach(function(p) {
+            html += '<div class="list-item"><div><div class="who">' + s.formatDate(p.start_date, {short:true}) + ' – ' + s.formatDate(p.end_date, {short:true}) + '</div><div class="meta">' + (p.reason || '—') + '</div></div><span class="badge badge-pending">pending review</span></div>';
+          });
+          mine.forEach(function(it) {
+            html += '<div class="list-item"><div><div class="who">' + s.formatDate(it.start_date, {short:true}) + ' – ' + s.formatDate(it.end_date, {short:true}) + '</div><div class="meta">' + (it.reason || '—') + '</div></div><span class="badge badge-' + it.status + '">' + it.status + '</span></div>';
+          });
+          myList.innerHTML = html;
+        }
 
-      if (t.role === 'manager' || t.role === 'admin') {
+        if (t.role !== 'manager' && t.role !== 'admin') return;
         const card = document.getElementById('all-card');
         card.style.display = 'block';
         const allList = document.getElementById('all-list');
-        const items = s.getAllTimeOff(data);
-        if (items.length === 0) {
+        const seeded = s.getAllTimeOff(data);
+        const pending = s.getPending().filter(function(p) { return p.kind === 'time_off' && p.status === 'pending'; });
+        const denied = s.getPending().filter(function(p) { return p.kind === 'time_off' && p.status === 'denied'; });
+        if (seeded.length === 0 && pending.length === 0 && denied.length === 0) {
           allList.innerHTML = '<p class="empty">No requests.</p>';
         } else {
-          allList.innerHTML = items.map(function(it) {
-            let actions = '';
-            if (it.status === 'pending') {
-              actions = '<button class="btn-secondary" data-approve="' + it.id + '">Approve</button> <button class="btn-secondary" data-deny="' + it.id + '">Deny</button>';
-            }
-            return '<div class="list-item"><div><div class="who">' + s.getUserName(data, it.user_id) + '</div><div class="meta">' + s.formatDate(it.start_date, {short: true}) + ' – ' + s.formatDate(it.end_date, {short: true}) + ' · ' + (it.reason || '—') + '</div></div><div style="display:flex;gap:0.5rem;align-items:center;"><span class="badge badge-' + it.status + '">' + it.status + '</span>' + actions + '</div></div>';
-          }).join('');
-          allList.querySelectorAll('[data-approve]').forEach(function(b) { b.addEventListener('click', function() { s.toast('Coming soon'); }); });
-          allList.querySelectorAll('[data-deny]').forEach(function(b) { b.addEventListener('click', function() { s.toast('Coming soon'); }); });
+          let html = '';
+          pending.forEach(function(p) {
+            html += '<div class="list-item"><div><div class="who">' + s.getUserName(data, p.requester_id) + '</div><div class="meta">' + s.formatDate(p.start_date, {short:true}) + ' – ' + s.formatDate(p.end_date, {short:true}) + ' · ' + (p.reason || '—') + '</div></div><div style="display:flex;gap:0.5rem;align-items:center;"><span class="badge badge-pending">pending</span><button class="btn-secondary" data-approve="' + p.id + '">Approve</button><button class="btn-secondary" data-deny="' + p.id + '">Deny</button></div></div>';
+          });
+          seeded.forEach(function(it) {
+            html += '<div class="list-item"><div><div class="who">' + s.getUserName(data, it.user_id) + '</div><div class="meta">' + s.formatDate(it.start_date, {short:true}) + ' – ' + s.formatDate(it.end_date, {short:true}) + ' · ' + (it.reason || '—') + '</div></div><span class="badge badge-' + it.status + '">' + it.status + '</span></div>';
+          });
+          allList.innerHTML = html;
+          allList.querySelectorAll('[data-approve]').forEach(function(b) { b.addEventListener('click', function() { s.resolvePending(b.getAttribute('data-approve'), 'approved'); s.toast('Approved'); renderAll(); }); });
+          allList.querySelectorAll('[data-deny]').forEach(function(b) { b.addEventListener('click', function() { s.resolvePending(b.getAttribute('data-deny'), 'denied'); s.toast('Denied'); renderAll(); }); });
         }
       }
+      renderAll();
     })();
   </script>
 </AppLayout>

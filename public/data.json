@@ -92,40 +92,4038 @@
     }
   ],
   "shifts": [
-    { "id": "s1",  "user_id": "u2",  "date": "2026-07-06", "start": "10:00", "end": "18:00", "role": "FOH", "notes": "Manager on duty" },
-    { "id": "s2",  "user_id": "u3",  "date": "2026-07-06", "start": "11:00", "end": "19:00", "role": "FOH", "notes": "" },
-    { "id": "s3",  "user_id": "u4",  "date": "2026-07-06", "start": "12:00", "end": "20:00", "role": "BOH", "notes": "" },
-    { "id": "s4",  "user_id": "u5",  "date": "2026-07-06", "start": "16:00", "end": "22:00", "role": "FOH", "notes": "" },
-
-    { "id": "s5",  "user_id": "u2",  "date": "2026-07-07", "start": "10:00", "end": "18:00", "role": "FOH", "notes": "" },
-    { "id": "s6",  "user_id": "u6",  "date": "2026-07-07", "start": "11:00", "end": "19:00", "role": "FOH", "notes": "" },
-    { "id": "s7",  "user_id": "u7",  "date": "2026-07-07", "start": "12:00", "end": "20:00", "role": "BOH", "notes": "" },
-    { "id": "s8",  "user_id": "u8",  "date": "2026-07-07", "start": "16:00", "end": "22:00", "role": "BOH", "notes": "" },
-
-    { "id": "s9",  "user_id": "u2",  "date": "2026-07-08", "start": "10:00", "end": "18:00", "role": "FOH", "notes": "" },
-    { "id": "s10", "user_id": "u9",  "date": "2026-07-08", "start": "11:00", "end": "19:00", "role": "FOH", "notes": "" },
-    { "id": "s11", "user_id": "u3",  "date": "2026-07-08", "start": "12:00", "end": "20:00", "role": "BOH", "notes": "" },
-    { "id": "s12", "user_id": "u4",  "date": "2026-07-08", "start": "16:00", "end": "22:00", "role": "BOH", "notes": "" },
-
-    { "id": "s13", "user_id": "u2",  "date": "2026-07-09", "start": "10:00", "end": "18:00", "role": "FOH", "notes": "" },
-    { "id": "s14", "user_id": "u5",  "date": "2026-07-09", "start": "11:00", "end": "19:00", "role": "FOH", "notes": "" },
-    { "id": "s15", "user_id": "u6",  "date": "2026-07-09", "start": "12:00", "end": "20:00", "role": "BOH", "notes": "" },
-    { "id": "s16", "user_id": "u7",  "date": "2026-07-09", "start": "16:00", "end": "22:00", "role": "BOH", "notes": "" },
-
-    { "id": "s17", "user_id": "u2",  "date": "2026-07-10", "start": "10:00", "end": "18:00", "role": "FOH", "notes": "" },
-    { "id": "s18", "user_id": "u8",  "date": "2026-07-10", "start": "11:00", "end": "19:00", "role": "FOH", "notes": "" },
-    { "id": "s19", "user_id": "u9",  "date": "2026-07-10", "start": "12:00", "end": "20:00", "role": "BOH", "notes": "" },
-    { "id": "s20", "user_id": "u10", "date": "2026-07-10", "start": "16:00", "end": "22:00", "role": "BOH", "notes": "" },
-
-    { "id": "s21", "user_id": "u2",  "date": "2026-07-11", "start": "10:00", "end": "18:00", "role": "FOH", "notes": "Weekend" },
-    { "id": "s22", "user_id": "u3",  "date": "2026-07-11", "start": "11:00", "end": "19:00", "role": "FOH", "notes": "" },
-    { "id": "s23", "user_id": "u4",  "date": "2026-07-11", "start": "12:00", "end": "20:00", "role": "BOH", "notes": "" },
-    { "id": "s24", "user_id": "u5",  "date": "2026-07-11", "start": "16:00", "end": "23:00", "role": "BOH", "notes": "" },
-
-    { "id": "s25", "user_id": "u2",  "date": "2026-07-12", "start": "10:00", "end": "18:00", "role": "FOH", "notes": "Weekend" },
-    { "id": "s26", "user_id": "u6",  "date": "2026-07-12", "start": "11:00", "end": "19:00", "role": "FOH", "notes": "" },
-    { "id": "s27", "user_id": "u7",  "date": "2026-07-12", "start": "12:00", "end": "20:00", "role": "BOH", "notes": "" },
-    { "id": "s28", "user_id": "u8",  "date": "2026-07-12", "start": "16:00", "end": "23:00", "role": "BOH", "notes": "" }
+    {
+      "id": "s1",
+      "user_id": "u2",
+      "date": "2026-07-06",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": "Manager on duty"
+    },
+    {
+      "id": "s2",
+      "user_id": "u3",
+      "date": "2026-07-06",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s3",
+      "user_id": "u4",
+      "date": "2026-07-06",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s4",
+      "user_id": "u5",
+      "date": "2026-07-06",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s5",
+      "user_id": "u2",
+      "date": "2026-07-07",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s6",
+      "user_id": "u6",
+      "date": "2026-07-07",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s7",
+      "user_id": "u7",
+      "date": "2026-07-07",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s8",
+      "user_id": "u8",
+      "date": "2026-07-07",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s9",
+      "user_id": "u2",
+      "date": "2026-07-08",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s10",
+      "user_id": "u9",
+      "date": "2026-07-08",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s11",
+      "user_id": "u3",
+      "date": "2026-07-08",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s12",
+      "user_id": "u4",
+      "date": "2026-07-08",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s13",
+      "user_id": "u2",
+      "date": "2026-07-09",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s14",
+      "user_id": "u5",
+      "date": "2026-07-09",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s15",
+      "user_id": "u6",
+      "date": "2026-07-09",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s16",
+      "user_id": "u7",
+      "date": "2026-07-09",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s17",
+      "user_id": "u2",
+      "date": "2026-07-10",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s18",
+      "user_id": "u8",
+      "date": "2026-07-10",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s19",
+      "user_id": "u9",
+      "date": "2026-07-10",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s20",
+      "user_id": "u10",
+      "date": "2026-07-10",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s21",
+      "user_id": "u2",
+      "date": "2026-07-11",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": "Weekend"
+    },
+    {
+      "id": "s22",
+      "user_id": "u3",
+      "date": "2026-07-11",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s23",
+      "user_id": "u4",
+      "date": "2026-07-11",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s24",
+      "user_id": "u5",
+      "date": "2026-07-11",
+      "start": "16:00",
+      "end": "23:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s25",
+      "user_id": "u2",
+      "date": "2026-07-12",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": "Weekend"
+    },
+    {
+      "id": "s26",
+      "user_id": "u6",
+      "date": "2026-07-12",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s27",
+      "user_id": "u7",
+      "date": "2026-07-12",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s28",
+      "user_id": "u8",
+      "date": "2026-07-12",
+      "start": "16:00",
+      "end": "23:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s29",
+      "user_id": "u2",
+      "date": "2026-07-13",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s30",
+      "user_id": "u8",
+      "date": "2026-07-13",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s31",
+      "user_id": "u9",
+      "date": "2026-07-13",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s32",
+      "user_id": "u10",
+      "date": "2026-07-13",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s33",
+      "user_id": "u2",
+      "date": "2026-07-14",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s34",
+      "user_id": "u3",
+      "date": "2026-07-14",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s35",
+      "user_id": "u4",
+      "date": "2026-07-14",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s36",
+      "user_id": "u5",
+      "date": "2026-07-14",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s37",
+      "user_id": "u2",
+      "date": "2026-07-15",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s38",
+      "user_id": "u6",
+      "date": "2026-07-15",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s39",
+      "user_id": "u7",
+      "date": "2026-07-15",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s40",
+      "user_id": "u8",
+      "date": "2026-07-15",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s41",
+      "user_id": "u2",
+      "date": "2026-07-16",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s42",
+      "user_id": "u9",
+      "date": "2026-07-16",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s43",
+      "user_id": "u10",
+      "date": "2026-07-16",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s44",
+      "user_id": "u3",
+      "date": "2026-07-16",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s45",
+      "user_id": "u2",
+      "date": "2026-07-17",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s46",
+      "user_id": "u4",
+      "date": "2026-07-17",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s47",
+      "user_id": "u5",
+      "date": "2026-07-17",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s48",
+      "user_id": "u6",
+      "date": "2026-07-17",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s49",
+      "user_id": "u2",
+      "date": "2026-07-18",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s50",
+      "user_id": "u7",
+      "date": "2026-07-18",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s51",
+      "user_id": "u8",
+      "date": "2026-07-18",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s52",
+      "user_id": "u9",
+      "date": "2026-07-18",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s53",
+      "user_id": "u2",
+      "date": "2026-07-19",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s54",
+      "user_id": "u10",
+      "date": "2026-07-19",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s55",
+      "user_id": "u3",
+      "date": "2026-07-19",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s56",
+      "user_id": "u4",
+      "date": "2026-07-19",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s57",
+      "user_id": "u2",
+      "date": "2026-07-20",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s58",
+      "user_id": "u5",
+      "date": "2026-07-20",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s59",
+      "user_id": "u6",
+      "date": "2026-07-20",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s60",
+      "user_id": "u7",
+      "date": "2026-07-20",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s61",
+      "user_id": "u2",
+      "date": "2026-07-21",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s62",
+      "user_id": "u8",
+      "date": "2026-07-21",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s63",
+      "user_id": "u9",
+      "date": "2026-07-21",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s64",
+      "user_id": "u10",
+      "date": "2026-07-21",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s65",
+      "user_id": "u2",
+      "date": "2026-07-22",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s66",
+      "user_id": "u3",
+      "date": "2026-07-22",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s67",
+      "user_id": "u4",
+      "date": "2026-07-22",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s68",
+      "user_id": "u5",
+      "date": "2026-07-22",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s69",
+      "user_id": "u2",
+      "date": "2026-07-23",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s70",
+      "user_id": "u6",
+      "date": "2026-07-23",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s71",
+      "user_id": "u7",
+      "date": "2026-07-23",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s72",
+      "user_id": "u8",
+      "date": "2026-07-23",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s73",
+      "user_id": "u2",
+      "date": "2026-07-24",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s74",
+      "user_id": "u9",
+      "date": "2026-07-24",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s75",
+      "user_id": "u10",
+      "date": "2026-07-24",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s76",
+      "user_id": "u3",
+      "date": "2026-07-24",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s77",
+      "user_id": "u2",
+      "date": "2026-07-25",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s78",
+      "user_id": "u4",
+      "date": "2026-07-25",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s79",
+      "user_id": "u5",
+      "date": "2026-07-25",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s80",
+      "user_id": "u6",
+      "date": "2026-07-25",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s81",
+      "user_id": "u2",
+      "date": "2026-07-26",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s82",
+      "user_id": "u7",
+      "date": "2026-07-26",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s83",
+      "user_id": "u8",
+      "date": "2026-07-26",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s84",
+      "user_id": "u9",
+      "date": "2026-07-26",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s85",
+      "user_id": "u2",
+      "date": "2026-07-27",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s86",
+      "user_id": "u10",
+      "date": "2026-07-27",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s87",
+      "user_id": "u3",
+      "date": "2026-07-27",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s88",
+      "user_id": "u4",
+      "date": "2026-07-27",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s89",
+      "user_id": "u2",
+      "date": "2026-07-28",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s90",
+      "user_id": "u5",
+      "date": "2026-07-28",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s91",
+      "user_id": "u6",
+      "date": "2026-07-28",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s92",
+      "user_id": "u7",
+      "date": "2026-07-28",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s93",
+      "user_id": "u2",
+      "date": "2026-07-29",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s94",
+      "user_id": "u8",
+      "date": "2026-07-29",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s95",
+      "user_id": "u9",
+      "date": "2026-07-29",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s96",
+      "user_id": "u10",
+      "date": "2026-07-29",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s97",
+      "user_id": "u2",
+      "date": "2026-07-30",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s98",
+      "user_id": "u3",
+      "date": "2026-07-30",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s99",
+      "user_id": "u4",
+      "date": "2026-07-30",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s100",
+      "user_id": "u5",
+      "date": "2026-07-30",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s101",
+      "user_id": "u2",
+      "date": "2026-07-31",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s102",
+      "user_id": "u6",
+      "date": "2026-07-31",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s103",
+      "user_id": "u7",
+      "date": "2026-07-31",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s104",
+      "user_id": "u8",
+      "date": "2026-07-31",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s105",
+      "user_id": "u2",
+      "date": "2026-08-01",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s106",
+      "user_id": "u9",
+      "date": "2026-08-01",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s107",
+      "user_id": "u10",
+      "date": "2026-08-01",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s108",
+      "user_id": "u3",
+      "date": "2026-08-01",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s109",
+      "user_id": "u2",
+      "date": "2026-08-02",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s110",
+      "user_id": "u4",
+      "date": "2026-08-02",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s111",
+      "user_id": "u5",
+      "date": "2026-08-02",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s112",
+      "user_id": "u6",
+      "date": "2026-08-02",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s113",
+      "user_id": "u2",
+      "date": "2026-08-03",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s114",
+      "user_id": "u7",
+      "date": "2026-08-03",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s115",
+      "user_id": "u8",
+      "date": "2026-08-03",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s116",
+      "user_id": "u9",
+      "date": "2026-08-03",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s117",
+      "user_id": "u2",
+      "date": "2026-08-04",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s118",
+      "user_id": "u10",
+      "date": "2026-08-04",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s119",
+      "user_id": "u3",
+      "date": "2026-08-04",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s120",
+      "user_id": "u4",
+      "date": "2026-08-04",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s121",
+      "user_id": "u2",
+      "date": "2026-08-05",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s122",
+      "user_id": "u5",
+      "date": "2026-08-05",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s123",
+      "user_id": "u6",
+      "date": "2026-08-05",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s124",
+      "user_id": "u7",
+      "date": "2026-08-05",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s125",
+      "user_id": "u2",
+      "date": "2026-08-06",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s126",
+      "user_id": "u8",
+      "date": "2026-08-06",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s127",
+      "user_id": "u9",
+      "date": "2026-08-06",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s128",
+      "user_id": "u10",
+      "date": "2026-08-06",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s129",
+      "user_id": "u2",
+      "date": "2026-08-07",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s130",
+      "user_id": "u3",
+      "date": "2026-08-07",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s131",
+      "user_id": "u4",
+      "date": "2026-08-07",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s132",
+      "user_id": "u5",
+      "date": "2026-08-07",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s133",
+      "user_id": "u2",
+      "date": "2026-08-08",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s134",
+      "user_id": "u6",
+      "date": "2026-08-08",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s135",
+      "user_id": "u7",
+      "date": "2026-08-08",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s136",
+      "user_id": "u8",
+      "date": "2026-08-08",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s137",
+      "user_id": "u2",
+      "date": "2026-08-09",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s138",
+      "user_id": "u9",
+      "date": "2026-08-09",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s139",
+      "user_id": "u10",
+      "date": "2026-08-09",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s140",
+      "user_id": "u3",
+      "date": "2026-08-09",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s141",
+      "user_id": "u2",
+      "date": "2026-08-10",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s142",
+      "user_id": "u4",
+      "date": "2026-08-10",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s143",
+      "user_id": "u5",
+      "date": "2026-08-10",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s144",
+      "user_id": "u6",
+      "date": "2026-08-10",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s145",
+      "user_id": "u2",
+      "date": "2026-08-11",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s146",
+      "user_id": "u7",
+      "date": "2026-08-11",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s147",
+      "user_id": "u8",
+      "date": "2026-08-11",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s148",
+      "user_id": "u9",
+      "date": "2026-08-11",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s149",
+      "user_id": "u2",
+      "date": "2026-08-12",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s150",
+      "user_id": "u10",
+      "date": "2026-08-12",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s151",
+      "user_id": "u3",
+      "date": "2026-08-12",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s152",
+      "user_id": "u4",
+      "date": "2026-08-12",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s153",
+      "user_id": "u2",
+      "date": "2026-08-13",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s154",
+      "user_id": "u5",
+      "date": "2026-08-13",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s155",
+      "user_id": "u6",
+      "date": "2026-08-13",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s156",
+      "user_id": "u7",
+      "date": "2026-08-13",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s157",
+      "user_id": "u2",
+      "date": "2026-08-14",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s158",
+      "user_id": "u8",
+      "date": "2026-08-14",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s159",
+      "user_id": "u9",
+      "date": "2026-08-14",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s160",
+      "user_id": "u10",
+      "date": "2026-08-14",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s161",
+      "user_id": "u2",
+      "date": "2026-08-15",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s162",
+      "user_id": "u3",
+      "date": "2026-08-15",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s163",
+      "user_id": "u4",
+      "date": "2026-08-15",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s164",
+      "user_id": "u5",
+      "date": "2026-08-15",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s165",
+      "user_id": "u2",
+      "date": "2026-08-16",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s166",
+      "user_id": "u6",
+      "date": "2026-08-16",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s167",
+      "user_id": "u7",
+      "date": "2026-08-16",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s168",
+      "user_id": "u8",
+      "date": "2026-08-16",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s169",
+      "user_id": "u2",
+      "date": "2026-08-17",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s170",
+      "user_id": "u9",
+      "date": "2026-08-17",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s171",
+      "user_id": "u10",
+      "date": "2026-08-17",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s172",
+      "user_id": "u3",
+      "date": "2026-08-17",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s173",
+      "user_id": "u2",
+      "date": "2026-08-18",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s174",
+      "user_id": "u4",
+      "date": "2026-08-18",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s175",
+      "user_id": "u5",
+      "date": "2026-08-18",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s176",
+      "user_id": "u6",
+      "date": "2026-08-18",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s177",
+      "user_id": "u2",
+      "date": "2026-08-19",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s178",
+      "user_id": "u7",
+      "date": "2026-08-19",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s179",
+      "user_id": "u8",
+      "date": "2026-08-19",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s180",
+      "user_id": "u9",
+      "date": "2026-08-19",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s181",
+      "user_id": "u2",
+      "date": "2026-08-20",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s182",
+      "user_id": "u10",
+      "date": "2026-08-20",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s183",
+      "user_id": "u3",
+      "date": "2026-08-20",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s184",
+      "user_id": "u4",
+      "date": "2026-08-20",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s185",
+      "user_id": "u2",
+      "date": "2026-08-21",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s186",
+      "user_id": "u5",
+      "date": "2026-08-21",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s187",
+      "user_id": "u6",
+      "date": "2026-08-21",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s188",
+      "user_id": "u7",
+      "date": "2026-08-21",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s189",
+      "user_id": "u2",
+      "date": "2026-08-22",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s190",
+      "user_id": "u8",
+      "date": "2026-08-22",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s191",
+      "user_id": "u9",
+      "date": "2026-08-22",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s192",
+      "user_id": "u10",
+      "date": "2026-08-22",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s193",
+      "user_id": "u2",
+      "date": "2026-08-23",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s194",
+      "user_id": "u3",
+      "date": "2026-08-23",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s195",
+      "user_id": "u4",
+      "date": "2026-08-23",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s196",
+      "user_id": "u5",
+      "date": "2026-08-23",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s197",
+      "user_id": "u2",
+      "date": "2026-08-24",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s198",
+      "user_id": "u6",
+      "date": "2026-08-24",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s199",
+      "user_id": "u7",
+      "date": "2026-08-24",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s200",
+      "user_id": "u8",
+      "date": "2026-08-24",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s201",
+      "user_id": "u2",
+      "date": "2026-08-25",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s202",
+      "user_id": "u9",
+      "date": "2026-08-25",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s203",
+      "user_id": "u10",
+      "date": "2026-08-25",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s204",
+      "user_id": "u3",
+      "date": "2026-08-25",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s205",
+      "user_id": "u2",
+      "date": "2026-08-26",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s206",
+      "user_id": "u4",
+      "date": "2026-08-26",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s207",
+      "user_id": "u5",
+      "date": "2026-08-26",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s208",
+      "user_id": "u6",
+      "date": "2026-08-26",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s209",
+      "user_id": "u2",
+      "date": "2026-08-27",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s210",
+      "user_id": "u7",
+      "date": "2026-08-27",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s211",
+      "user_id": "u8",
+      "date": "2026-08-27",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s212",
+      "user_id": "u9",
+      "date": "2026-08-27",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s213",
+      "user_id": "u2",
+      "date": "2026-08-28",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s214",
+      "user_id": "u10",
+      "date": "2026-08-28",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s215",
+      "user_id": "u3",
+      "date": "2026-08-28",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s216",
+      "user_id": "u4",
+      "date": "2026-08-28",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s217",
+      "user_id": "u2",
+      "date": "2026-08-29",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s218",
+      "user_id": "u5",
+      "date": "2026-08-29",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s219",
+      "user_id": "u6",
+      "date": "2026-08-29",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s220",
+      "user_id": "u7",
+      "date": "2026-08-29",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s221",
+      "user_id": "u2",
+      "date": "2026-08-30",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s222",
+      "user_id": "u8",
+      "date": "2026-08-30",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s223",
+      "user_id": "u9",
+      "date": "2026-08-30",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s224",
+      "user_id": "u10",
+      "date": "2026-08-30",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s225",
+      "user_id": "u2",
+      "date": "2026-08-31",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s226",
+      "user_id": "u3",
+      "date": "2026-08-31",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s227",
+      "user_id": "u4",
+      "date": "2026-08-31",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s228",
+      "user_id": "u5",
+      "date": "2026-08-31",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s229",
+      "user_id": "u2",
+      "date": "2026-09-01",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s230",
+      "user_id": "u6",
+      "date": "2026-09-01",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s231",
+      "user_id": "u7",
+      "date": "2026-09-01",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s232",
+      "user_id": "u8",
+      "date": "2026-09-01",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s233",
+      "user_id": "u2",
+      "date": "2026-09-02",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s234",
+      "user_id": "u9",
+      "date": "2026-09-02",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s235",
+      "user_id": "u10",
+      "date": "2026-09-02",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s236",
+      "user_id": "u3",
+      "date": "2026-09-02",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s237",
+      "user_id": "u2",
+      "date": "2026-09-03",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s238",
+      "user_id": "u4",
+      "date": "2026-09-03",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s239",
+      "user_id": "u5",
+      "date": "2026-09-03",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s240",
+      "user_id": "u6",
+      "date": "2026-09-03",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s241",
+      "user_id": "u2",
+      "date": "2026-09-04",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s242",
+      "user_id": "u7",
+      "date": "2026-09-04",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s243",
+      "user_id": "u8",
+      "date": "2026-09-04",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s244",
+      "user_id": "u9",
+      "date": "2026-09-04",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s245",
+      "user_id": "u2",
+      "date": "2026-09-05",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s246",
+      "user_id": "u10",
+      "date": "2026-09-05",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s247",
+      "user_id": "u3",
+      "date": "2026-09-05",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s248",
+      "user_id": "u4",
+      "date": "2026-09-05",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s249",
+      "user_id": "u2",
+      "date": "2026-09-06",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s250",
+      "user_id": "u5",
+      "date": "2026-09-06",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s251",
+      "user_id": "u6",
+      "date": "2026-09-06",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s252",
+      "user_id": "u7",
+      "date": "2026-09-06",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s253",
+      "user_id": "u2",
+      "date": "2026-09-07",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s254",
+      "user_id": "u8",
+      "date": "2026-09-07",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s255",
+      "user_id": "u9",
+      "date": "2026-09-07",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s256",
+      "user_id": "u10",
+      "date": "2026-09-07",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s257",
+      "user_id": "u2",
+      "date": "2026-09-08",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s258",
+      "user_id": "u3",
+      "date": "2026-09-08",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s259",
+      "user_id": "u4",
+      "date": "2026-09-08",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s260",
+      "user_id": "u5",
+      "date": "2026-09-08",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s261",
+      "user_id": "u2",
+      "date": "2026-09-09",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s262",
+      "user_id": "u6",
+      "date": "2026-09-09",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s263",
+      "user_id": "u7",
+      "date": "2026-09-09",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s264",
+      "user_id": "u8",
+      "date": "2026-09-09",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s265",
+      "user_id": "u2",
+      "date": "2026-09-10",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s266",
+      "user_id": "u9",
+      "date": "2026-09-10",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s267",
+      "user_id": "u10",
+      "date": "2026-09-10",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s268",
+      "user_id": "u3",
+      "date": "2026-09-10",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s269",
+      "user_id": "u2",
+      "date": "2026-09-11",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s270",
+      "user_id": "u4",
+      "date": "2026-09-11",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s271",
+      "user_id": "u5",
+      "date": "2026-09-11",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s272",
+      "user_id": "u6",
+      "date": "2026-09-11",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s273",
+      "user_id": "u2",
+      "date": "2026-09-12",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s274",
+      "user_id": "u7",
+      "date": "2026-09-12",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s275",
+      "user_id": "u8",
+      "date": "2026-09-12",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s276",
+      "user_id": "u9",
+      "date": "2026-09-12",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s277",
+      "user_id": "u2",
+      "date": "2026-09-13",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s278",
+      "user_id": "u10",
+      "date": "2026-09-13",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s279",
+      "user_id": "u3",
+      "date": "2026-09-13",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s280",
+      "user_id": "u4",
+      "date": "2026-09-13",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s281",
+      "user_id": "u2",
+      "date": "2026-09-14",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s282",
+      "user_id": "u5",
+      "date": "2026-09-14",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s283",
+      "user_id": "u6",
+      "date": "2026-09-14",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s284",
+      "user_id": "u7",
+      "date": "2026-09-14",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s285",
+      "user_id": "u2",
+      "date": "2026-09-15",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s286",
+      "user_id": "u8",
+      "date": "2026-09-15",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s287",
+      "user_id": "u9",
+      "date": "2026-09-15",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s288",
+      "user_id": "u10",
+      "date": "2026-09-15",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s289",
+      "user_id": "u2",
+      "date": "2026-09-16",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s290",
+      "user_id": "u3",
+      "date": "2026-09-16",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s291",
+      "user_id": "u4",
+      "date": "2026-09-16",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s292",
+      "user_id": "u5",
+      "date": "2026-09-16",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s293",
+      "user_id": "u2",
+      "date": "2026-09-17",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s294",
+      "user_id": "u6",
+      "date": "2026-09-17",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s295",
+      "user_id": "u7",
+      "date": "2026-09-17",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s296",
+      "user_id": "u8",
+      "date": "2026-09-17",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s297",
+      "user_id": "u2",
+      "date": "2026-09-18",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s298",
+      "user_id": "u9",
+      "date": "2026-09-18",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s299",
+      "user_id": "u10",
+      "date": "2026-09-18",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s300",
+      "user_id": "u3",
+      "date": "2026-09-18",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s301",
+      "user_id": "u2",
+      "date": "2026-09-19",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s302",
+      "user_id": "u4",
+      "date": "2026-09-19",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s303",
+      "user_id": "u5",
+      "date": "2026-09-19",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s304",
+      "user_id": "u6",
+      "date": "2026-09-19",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s305",
+      "user_id": "u2",
+      "date": "2026-09-20",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s306",
+      "user_id": "u7",
+      "date": "2026-09-20",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s307",
+      "user_id": "u8",
+      "date": "2026-09-20",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s308",
+      "user_id": "u9",
+      "date": "2026-09-20",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s309",
+      "user_id": "u2",
+      "date": "2026-09-21",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s310",
+      "user_id": "u10",
+      "date": "2026-09-21",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s311",
+      "user_id": "u3",
+      "date": "2026-09-21",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s312",
+      "user_id": "u4",
+      "date": "2026-09-21",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s313",
+      "user_id": "u2",
+      "date": "2026-09-22",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s314",
+      "user_id": "u5",
+      "date": "2026-09-22",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s315",
+      "user_id": "u6",
+      "date": "2026-09-22",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s316",
+      "user_id": "u7",
+      "date": "2026-09-22",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s317",
+      "user_id": "u2",
+      "date": "2026-09-23",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s318",
+      "user_id": "u8",
+      "date": "2026-09-23",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s319",
+      "user_id": "u9",
+      "date": "2026-09-23",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s320",
+      "user_id": "u10",
+      "date": "2026-09-23",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s321",
+      "user_id": "u2",
+      "date": "2026-09-24",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s322",
+      "user_id": "u3",
+      "date": "2026-09-24",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s323",
+      "user_id": "u4",
+      "date": "2026-09-24",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s324",
+      "user_id": "u5",
+      "date": "2026-09-24",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s325",
+      "user_id": "u2",
+      "date": "2026-09-25",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s326",
+      "user_id": "u6",
+      "date": "2026-09-25",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s327",
+      "user_id": "u7",
+      "date": "2026-09-25",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s328",
+      "user_id": "u8",
+      "date": "2026-09-25",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s329",
+      "user_id": "u2",
+      "date": "2026-09-26",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s330",
+      "user_id": "u9",
+      "date": "2026-09-26",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s331",
+      "user_id": "u10",
+      "date": "2026-09-26",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s332",
+      "user_id": "u3",
+      "date": "2026-09-26",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s333",
+      "user_id": "u2",
+      "date": "2026-09-27",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s334",
+      "user_id": "u4",
+      "date": "2026-09-27",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s335",
+      "user_id": "u5",
+      "date": "2026-09-27",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s336",
+      "user_id": "u6",
+      "date": "2026-09-27",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s337",
+      "user_id": "u2",
+      "date": "2026-09-28",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s338",
+      "user_id": "u7",
+      "date": "2026-09-28",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s339",
+      "user_id": "u8",
+      "date": "2026-09-28",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s340",
+      "user_id": "u9",
+      "date": "2026-09-28",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s341",
+      "user_id": "u2",
+      "date": "2026-09-29",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s342",
+      "user_id": "u10",
+      "date": "2026-09-29",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s343",
+      "user_id": "u3",
+      "date": "2026-09-29",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s344",
+      "user_id": "u4",
+      "date": "2026-09-29",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s345",
+      "user_id": "u2",
+      "date": "2026-09-30",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s346",
+      "user_id": "u5",
+      "date": "2026-09-30",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s347",
+      "user_id": "u6",
+      "date": "2026-09-30",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s348",
+      "user_id": "u7",
+      "date": "2026-09-30",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s349",
+      "user_id": "u2",
+      "date": "2026-10-01",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s350",
+      "user_id": "u8",
+      "date": "2026-10-01",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s351",
+      "user_id": "u9",
+      "date": "2026-10-01",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s352",
+      "user_id": "u10",
+      "date": "2026-10-01",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s353",
+      "user_id": "u2",
+      "date": "2026-10-02",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s354",
+      "user_id": "u3",
+      "date": "2026-10-02",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s355",
+      "user_id": "u4",
+      "date": "2026-10-02",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s356",
+      "user_id": "u5",
+      "date": "2026-10-02",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s357",
+      "user_id": "u2",
+      "date": "2026-10-03",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s358",
+      "user_id": "u6",
+      "date": "2026-10-03",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s359",
+      "user_id": "u7",
+      "date": "2026-10-03",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s360",
+      "user_id": "u8",
+      "date": "2026-10-03",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s361",
+      "user_id": "u2",
+      "date": "2026-10-04",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s362",
+      "user_id": "u9",
+      "date": "2026-10-04",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s363",
+      "user_id": "u10",
+      "date": "2026-10-04",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s364",
+      "user_id": "u3",
+      "date": "2026-10-04",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s365",
+      "user_id": "u2",
+      "date": "2026-10-05",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s366",
+      "user_id": "u4",
+      "date": "2026-10-05",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s367",
+      "user_id": "u5",
+      "date": "2026-10-05",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s368",
+      "user_id": "u6",
+      "date": "2026-10-05",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s369",
+      "user_id": "u2",
+      "date": "2026-10-06",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s370",
+      "user_id": "u7",
+      "date": "2026-10-06",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s371",
+      "user_id": "u8",
+      "date": "2026-10-06",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s372",
+      "user_id": "u9",
+      "date": "2026-10-06",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s373",
+      "user_id": "u2",
+      "date": "2026-10-07",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s374",
+      "user_id": "u10",
+      "date": "2026-10-07",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s375",
+      "user_id": "u3",
+      "date": "2026-10-07",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s376",
+      "user_id": "u4",
+      "date": "2026-10-07",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s377",
+      "user_id": "u2",
+      "date": "2026-10-08",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s378",
+      "user_id": "u5",
+      "date": "2026-10-08",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s379",
+      "user_id": "u6",
+      "date": "2026-10-08",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s380",
+      "user_id": "u7",
+      "date": "2026-10-08",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s381",
+      "user_id": "u2",
+      "date": "2026-10-09",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s382",
+      "user_id": "u8",
+      "date": "2026-10-09",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s383",
+      "user_id": "u9",
+      "date": "2026-10-09",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s384",
+      "user_id": "u10",
+      "date": "2026-10-09",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s385",
+      "user_id": "u2",
+      "date": "2026-10-10",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s386",
+      "user_id": "u3",
+      "date": "2026-10-10",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s387",
+      "user_id": "u4",
+      "date": "2026-10-10",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s388",
+      "user_id": "u5",
+      "date": "2026-10-10",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s389",
+      "user_id": "u2",
+      "date": "2026-10-11",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s390",
+      "user_id": "u6",
+      "date": "2026-10-11",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s391",
+      "user_id": "u7",
+      "date": "2026-10-11",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s392",
+      "user_id": "u8",
+      "date": "2026-10-11",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s393",
+      "user_id": "u2",
+      "date": "2026-10-12",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s394",
+      "user_id": "u9",
+      "date": "2026-10-12",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s395",
+      "user_id": "u10",
+      "date": "2026-10-12",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s396",
+      "user_id": "u3",
+      "date": "2026-10-12",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s397",
+      "user_id": "u2",
+      "date": "2026-10-13",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s398",
+      "user_id": "u4",
+      "date": "2026-10-13",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s399",
+      "user_id": "u5",
+      "date": "2026-10-13",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s400",
+      "user_id": "u6",
+      "date": "2026-10-13",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s401",
+      "user_id": "u2",
+      "date": "2026-10-14",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s402",
+      "user_id": "u7",
+      "date": "2026-10-14",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s403",
+      "user_id": "u8",
+      "date": "2026-10-14",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s404",
+      "user_id": "u9",
+      "date": "2026-10-14",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s405",
+      "user_id": "u2",
+      "date": "2026-10-15",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s406",
+      "user_id": "u10",
+      "date": "2026-10-15",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s407",
+      "user_id": "u3",
+      "date": "2026-10-15",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s408",
+      "user_id": "u4",
+      "date": "2026-10-15",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s409",
+      "user_id": "u2",
+      "date": "2026-10-16",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s410",
+      "user_id": "u5",
+      "date": "2026-10-16",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s411",
+      "user_id": "u6",
+      "date": "2026-10-16",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s412",
+      "user_id": "u7",
+      "date": "2026-10-16",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s413",
+      "user_id": "u2",
+      "date": "2026-10-17",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s414",
+      "user_id": "u8",
+      "date": "2026-10-17",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s415",
+      "user_id": "u9",
+      "date": "2026-10-17",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s416",
+      "user_id": "u10",
+      "date": "2026-10-17",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s417",
+      "user_id": "u2",
+      "date": "2026-10-18",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s418",
+      "user_id": "u3",
+      "date": "2026-10-18",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s419",
+      "user_id": "u4",
+      "date": "2026-10-18",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s420",
+      "user_id": "u5",
+      "date": "2026-10-18",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s421",
+      "user_id": "u2",
+      "date": "2026-10-19",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s422",
+      "user_id": "u6",
+      "date": "2026-10-19",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s423",
+      "user_id": "u7",
+      "date": "2026-10-19",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s424",
+      "user_id": "u8",
+      "date": "2026-10-19",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s425",
+      "user_id": "u2",
+      "date": "2026-10-20",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s426",
+      "user_id": "u9",
+      "date": "2026-10-20",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s427",
+      "user_id": "u10",
+      "date": "2026-10-20",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s428",
+      "user_id": "u3",
+      "date": "2026-10-20",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s429",
+      "user_id": "u2",
+      "date": "2026-10-21",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s430",
+      "user_id": "u4",
+      "date": "2026-10-21",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s431",
+      "user_id": "u5",
+      "date": "2026-10-21",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s432",
+      "user_id": "u6",
+      "date": "2026-10-21",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s433",
+      "user_id": "u2",
+      "date": "2026-10-22",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s434",
+      "user_id": "u7",
+      "date": "2026-10-22",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s435",
+      "user_id": "u8",
+      "date": "2026-10-22",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s436",
+      "user_id": "u9",
+      "date": "2026-10-22",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s437",
+      "user_id": "u2",
+      "date": "2026-10-23",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s438",
+      "user_id": "u10",
+      "date": "2026-10-23",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s439",
+      "user_id": "u3",
+      "date": "2026-10-23",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s440",
+      "user_id": "u4",
+      "date": "2026-10-23",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s441",
+      "user_id": "u2",
+      "date": "2026-10-24",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s442",
+      "user_id": "u5",
+      "date": "2026-10-24",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s443",
+      "user_id": "u6",
+      "date": "2026-10-24",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s444",
+      "user_id": "u7",
+      "date": "2026-10-24",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s445",
+      "user_id": "u2",
+      "date": "2026-10-25",
+      "start": "10:00",
+      "end": "18:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s446",
+      "user_id": "u8",
+      "date": "2026-10-25",
+      "start": "11:00",
+      "end": "19:00",
+      "role": "FOH",
+      "notes": ""
+    },
+    {
+      "id": "s447",
+      "user_id": "u9",
+      "date": "2026-10-25",
+      "start": "12:00",
+      "end": "20:00",
+      "role": "BOH",
+      "notes": ""
+    },
+    {
+      "id": "s448",
+      "user_id": "u10",
+      "date": "2026-10-25",
+      "start": "16:00",
+      "end": "22:00",
+      "role": "FOH",
+      "notes": ""
+    }
   ],
   "time_off": [
     {
@@ -145,6 +4143,24 @@
       "reason": "Vacation",
       "status": "approved",
       "created_at": "2026-07-05T14:30:00Z"
+    },
+    {
+      "id": "t3",
+      "user_id": "u7",
+      "start_date": "2026-08-10",
+      "end_date": "2026-08-12",
+      "reason": "Wedding",
+      "status": "pending",
+      "created_at": "2026-07-06T15:00:00Z"
+    },
+    {
+      "id": "t4",
+      "user_id": "u10",
+      "start_date": "2026-09-01",
+      "end_date": "2026-09-03",
+      "reason": "Personal",
+      "status": "pending",
+      "created_at": "2026-07-06T16:00:00Z"
     }
   ],
   "swap_requests": [

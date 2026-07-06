@@ -26,25 +26,59 @@ import AppLayout from '../layouts/AppLayout.astro';
         list.innerHTML = '<p class="empty">No upcoming shifts.</p>';
       } else {
         list.innerHTML = myShifts.map(function(sh) {
-          return '<div class="list-item"><div><div class="who">' + s.formatDate(sh.date, {short: true}) + '</div><div class="meta">' + s.formatTime12(sh.start) + ' – ' + s.formatTime12(sh.end) + ' · ' + sh.role + '</div></div><button class="btn-secondary" data-swap="' + sh.id + '">Request swap</button></div>';
+          return '<div class="list-item"><div><div class="who">' + s.formatDate(sh.date, {short:true}) + '</div><div class="meta">' + s.formatTime12(sh.start) + ' – ' + s.formatTime12(sh.end) + ' · ' + sh.role + '</div></div><button class="btn-secondary" data-swap="' + sh.id + '">Request swap</button></div>';
         }).join('');
         list.querySelectorAll('[data-swap]').forEach(function(b) {
-          b.addEventListener('click', function() { s.toast('Coming soon — backend not connected in v1'); });
+          b.addEventListener('click', function() {
+            const shiftId = b.getAttribute('data-swap');
+            const target = prompt('Swap with which staff? Enter their username (staff1–staff8 or azmeer):');
+            if (!target) return;
+            const targetUser = data.users.find(function(u) { return u.username === target.trim(); });
+            if (!targetUser) { s.toast('User not found: ' + target); return; }
+            s.addPending({
+              kind: 'shift_swap',
+              requester_id: t.user_id,
+              requester_name: t.display_name,
+              target_user_id: targetUser.id,
+              target_user_name: targetUser.display_name,
+              shift_id: shiftId,
+            });
+            s.toast('Swap requested — admin notified');
+            renderSwaps();
+          });
         });
       }
-      const swaps = s.getSwapsForUser(data, t.user_id);
-      const swapList = document.getElementById('swap-list');
-      if (swaps.length === 0) {
-        swapList.innerHTML = '<p class="empty">No swap requests.</p>';
-      } else {
-        swapList.innerHTML = swaps.map(function(sw) {
-          const role = sw.requester_id === t.user_id ? 'You →' : 'You ←';
-          const other = sw.requester_id === t.user_id ? s.getUserName(data, sw.target_user_id) : s.getUserName(data, sw.requester_id);
-          const shift = data.shifts.find(function(x) { return x.id === sw.shift_id; });
-          const shiftDate = shift ? s.formatDate(shift.date, {short: true}) : '—';
-          return '<div class="list-item"><div><div class="who">' + role + ' ' + other + '</div><div class="meta">Shift on ' + shiftDate + '</div></div><span class="badge badge-' + sw.status + '">' + sw.status + '</span></div>';
-        }).join('');
+
+      function renderSwaps() {
+        const seedSwaps = s.getSwapsForUser(data, t.user_id);
+        const myPending = s.getPending().filter(function(p) {
+          return p.kind === 'shift_swap' &&
+            (p.requester_id === t.user_id || p.target_user_id === t.user_id) &&
+            p.status === 'pending';
+        });
+        const swapList = document.getElementById('swap-list');
+        if (seedSwaps.length === 0 && myPending.length === 0) {
+          swapList.innerHTML = '<p class="empty">No swap requests.</p>';
+        } else {
+          let html = '';
+          myPending.forEach(function(sw) {
+            const role = sw.requester_id === t.user_id ? 'You →' : 'You ←';
+            const other = sw.requester_id === t.user_id ? sw.target_user_name : sw.requester_name;
+            const shift = data.shifts.find(function(x) { return x.id === sw.shift_id; });
+            const shiftDate = shift ? s.formatDate(shift.date, {short:true}) : '—';
+            html += '<div class="list-item"><div><div class="who">' + role + ' ' + other + '</div><div class="meta">Shift on ' + shiftDate + '</div></div><span class="badge badge-pending">pending</span></div>';
+          });
+          seedSwaps.forEach(function(sw) {
+            const role = sw.requester_id === t.user_id ? 'You →' : 'You ←';
+            const other = sw.requester_id === t.user_id ? s.getUserName(data, sw.target_user_id) : s.getUserName(data, sw.requester_id);
+            const shift = data.shifts.find(function(x) { return x.id === sw.shift_id; });
+            const shiftDate = shift ? s.formatDate(shift.date, {short:true}) : '—';
+            html += '<div class="list-item"><div><div class="who">' + role + ' ' + other + '</div><div class="meta">Shift on ' + shiftDate + '</div></div><span class="badge badge-' + sw.status + '">' + sw.status + '</span></div>';
+          });
+          swapList.innerHTML = html;
+        }
       }
+      renderSwaps();
     })();
   </script>
 </AppLayout>

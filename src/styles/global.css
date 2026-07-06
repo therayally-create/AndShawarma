@@ -368,11 +368,161 @@ label { display: block; font-size: 0.875rem; font-weight: 600; margin-bottom: 0.
   padding: 0.75rem 1.25rem;
   border-radius: 0.5rem;
   font-size: 0.875rem;
-  z-index: 100;
+  z-index: 300;
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
   display: none;
 }
 .toast.show { display: block; }
+
+/* ----- Modal / popup ----- */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 200;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  overflow-y: auto;
+}
+.modal-backdrop.show { display: flex; }
+.modal {
+  background: #fff;
+  border-radius: 1rem;
+  width: 100%;
+  max-width: 32rem;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+  animation: pop 0.15s ease-out;
+}
+@keyframes pop {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--color-border);
+}
+.modal-header h2 { margin: 0; font-size: 1.125rem; }
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--color-muted);
+  line-height: 1;
+  padding: 0;
+}
+.modal-close:hover { color: var(--color-ink); }
+.modal-body { padding: 1.25rem; overflow-y: auto; flex: 1; }
+.modal-footer {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+  padding: 0.75rem 1.25rem;
+  border-top: 1px solid var(--color-border);
+  background: var(--color-bg-soft);
+  border-radius: 0 0 1rem 1rem;
+}
+
+/* ----- Month calendar ----- */
+.calendar-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.calendar-nav h2 { margin: 0; font-size: 1.125rem; }
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.25rem;
+  background: var(--color-border);
+  border: 1px solid var(--color-border);
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+.calendar-head {
+  background: var(--color-bg-soft);
+  padding: 0.5rem;
+  text-align: center;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: var(--color-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.calendar-day {
+  background: #fff;
+  min-height: 5.5rem;
+  padding: 0.375rem;
+  cursor: pointer;
+  transition: background 0.1s;
+  position: relative;
+  overflow: hidden;
+}
+.calendar-day:hover { background: #fef3f2; }
+.calendar-day.other-month { background: #fafaf9; color: var(--color-muted); }
+.calendar-day.today { background: #fff7ed; }
+.calendar-day.today .day-num { color: var(--color-primary); font-weight: 800; }
+.calendar-day .day-num {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--color-ink);
+  display: block;
+  margin-bottom: 0.25rem;
+}
+.calendar-day .shift-dots {
+  display: flex;
+  gap: 2px;
+  flex-wrap: wrap;
+}
+.shift-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 9999px;
+  display: inline-block;
+}
+.shift-dot.foh { background: var(--color-foh); }
+.shift-dot.boh { background: var(--color-boh); }
+.calendar-day .shift-count {
+  font-size: 0.625rem;
+  color: var(--color-muted);
+  margin-top: 0.25rem;
+  display: block;
+}
+
+@media (max-width: 480px) {
+  .calendar-day { min-height: 4.5rem; padding: 0.25rem; }
+  .calendar-day .day-num { font-size: 0.6875rem; }
+  .calendar-day .shift-count { display: none; }
+}
+
+/* ----- Day popup list ----- */
+.day-shift {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.625rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+  margin-bottom: 0.5rem;
+  background: #fff;
+}
+.day-shift .who { font-weight: 600; }
+.day-shift .when { color: var(--color-muted); font-size: 0.75rem; }
+.day-shift.foh { border-left: 4px solid var(--color-foh); }
+.day-shift.boh { border-left: 4px solid var(--color-boh); }
+.day-shift-actions { display: flex; gap: 0.25rem; }
 
 /* ----- Empty state ----- */
 .empty {
