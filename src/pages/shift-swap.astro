@@ -9,6 +9,12 @@ import AppLayout from '../layouts/AppLayout.astro';
   </div>
 
   <div class="card">
+    <h2>📢 Shifts available to swap</h2>
+    <p style="color:var(--color-muted);font-size:0.875rem;">Shifts other staff have posted as available. Tap "Take this shift" to request taking it (admin/manager must approve).</p>
+    <div id="available-list"><p class="empty">Loading...</p></div>
+  </div>
+
+  <div class="card">
     <h2>👥 Team — see who you're swapping with</h2>
     <p style="color:var(--color-muted);font-size:0.875rem;">All crew members and their next shift. Tap "Request swap" on a shift above, then enter the username.</p>
     <div class="roster-grid" id="roster-grid"><p class="empty">Loading...</p></div>

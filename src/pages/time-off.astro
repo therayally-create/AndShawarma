@@ -26,7 +26,7 @@ import AppLayout from '../layouts/AppLayout.astro';
     <div id="my-list"><p class="empty">Loading...</p></div>
   </div>
 
-  <div class="card" id="all-card" style="display:none;">
+  <div class="card" id="all-card">
     <h2>👥 All Time-Off Requests <span style="font-size:0.75rem;color:var(--color-muted);font-weight:400;">(manager / admin only)</span></h2>
     <div id="all-list"><p class="empty">Loading...</p></div>
   </div>
@@ -60,12 +60,18 @@ import AppLayout from '../layouts/AppLayout.astro';
         const myPending = s.getPending().filter(function(p) {
           return p.kind === 'time_off' && p.requester_id === t.user_id && p.status === 'pending';
         });
-        if (mine.length === 0 && myPending.length === 0) {
+        const myResolved = s.getPending().filter(function(p) {
+          return p.kind === 'time_off' && p.requester_id === t.user_id && p.status !== 'pending';
+        });
+        if (mine.length === 0 && myPending.length === 0 && myResolved.length === 0) {
           myList.innerHTML = '<p class="empty">No requests yet.</p>';
         } else {
           let html = '';
           myPending.forEach(function(p) {
             html += '<div class="list-item"><div><div class="who">' + s.formatDate(p.start_date, {short:true}) + ' – ' + s.formatDate(p.end_date, {short:true}) + '</div><div class="meta">' + (p.reason || '—') + '</div></div><span class="badge badge-pending">pending review</span></div>';
+          });
+          myResolved.forEach(function(p) {
+            html += '<div class="list-item"><div><div class="who">' + s.formatDate(p.start_date, {short:true}) + ' – ' + s.formatDate(p.end_date, {short:true}) + '</div><div class="meta">' + (p.reason || '—') + '</div></div><span class="badge badge-' + p.status + '">' + p.status + '</span></div>';
           });
           mine.forEach(function(it) {
             html += '<div class="list-item"><div><div class="who">' + s.formatDate(it.start_date, {short:true}) + ' – ' + s.formatDate(it.end_date, {short:true}) + '</div><div class="meta">' + (it.reason || '—') + '</div></div><span class="badge badge-' + it.status + '">' + it.status + '</span></div>';

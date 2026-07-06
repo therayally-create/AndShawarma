@@ -9,7 +9,6 @@ import AppLayout from '../layouts/AppLayout.astro';
     <div class="view-toggle" id="view-toggle">
       <button data-view="day">Day</button>
       <button data-view="month" class="active">Month</button>
-      <button data-view="roster">Roster</button>
     </div>
   </div>
 
@@ -121,40 +120,6 @@ import AppLayout from '../layouts/AppLayout.astro';
           container.querySelectorAll('.calendar-day').forEach(function(el) {
             el.addEventListener('click', function() { openDay(el.getAttribute('data-iso')); });
           });
-          return;
-        }
-
-        if (view === 'roster') {
-          label.textContent = s.formatDate(viewYear + '-' + String(viewMonth).padStart(2,'0') + '-01', { monthYear: true });
-          const range = s.getMonthRange(viewYear, viewMonth);
-          const users = data.users.slice().sort(function(a, b) {
-            if (a.role === 'admin' && b.role !== 'admin') return -1;
-            if (b.role === 'admin' && a.role !== 'admin') return 1;
-            if (a.role === 'manager' && b.role !== 'manager') return -1;
-            if (b.role === 'manager' && a.role !== 'manager') return 1;
-            return a.display_name.localeCompare(b.display_name);
-          });
-          const headHTML = '<thead><tr><th>Employee</th>' + range.days.map(function(iso) {
-            const d = new Date(iso + 'T00:00:00');
-            const dayName = d.toLocaleDateString('en-US', { weekday: 'short' });
-            const isToday = iso === today;
-            return '<th class="' + (isToday ? 'today' : '') + '"><span class="roster-day">' + dayName + '</span><span class="roster-date">' + d.getDate() + '</span></th>';
-          }).join('') + '</tr></thead>';
-          const bodyHTML = '<tbody>' + users.map(function(u) {
-            const roleClass = u.role === 'admin' ? 'role-admin' : u.role === 'manager' ? 'role-manager' : 'role-staff';
-            const cells = range.days.map(function(iso) {
-              const dayShifts = s.getShiftsForDate(data, iso).filter(function(sh) { return sh.user_id === u.id; });
-              if (dayShifts.length === 0) return '<td><span class="roster-cell off">OFF</span></td>';
-              return '<td>' + dayShifts.map(function(sh) {
-                return '<span class="roster-cell ' + sh.role.toLowerCase() + '">' +
-                  '<span class="roster-time">' + s.formatTime12(sh.start) + '–' + s.formatTime12(sh.end) + '</span>' +
-                  '<span class="roster-shift-role">' + sh.role + '</span>' +
-                '</span>';
-              }).join('') + '</td>';
-            }).join('');
-            return '<tr><th scope="row"><span class="roster-name">' + u.display_name + '</span><span class="roster-role ' + roleClass + '">' + u.role + '</span></th>' + cells + '</tr>';
-          }).join('') + '</tbody>';
-          container.innerHTML = '<div class="roster-wrap"><table class="roster-table">' + headHTML + bodyHTML + '</table></div>';
           return;
         }
       }
