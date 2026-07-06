@@ -41,6 +41,12 @@ import AppLayout from '../layouts/AppLayout.astro';
   </div>
 
   <div class="card">
+    <h2>📜 Public Swap Log</h2>
+    <p style="color:var(--color-muted);font-size:0.875rem;">All swap activity from the team. Anyone can see who's posted a shift and who's volunteered. Admin/manager must approve before changes take effect.</p>
+    <div id="swap-log"><p class="empty">Loading...</p></div>
+  </div>
+
+  <div class="card">
     <h2>📋 My Swap Activity</h2>
     <div id="swap-list"><p class="empty">Loading...</p></div>
   </div>
@@ -201,8 +207,48 @@ import AppLayout from '../layouts/AppLayout.astro';
         list.innerHTML = html;
       }
 
+      // Public swap log — every post + every take request, visible to all
+      function renderLog() {
+        const log = document.getElementById('swap-log');
+        const all = s.getPending().filter(function(p) {
+          return p.kind === 'shift_post' || p.kind === 'shift_take';
+        });
+        if (all.length === 0) {
+          log.innerHTML = '<p class="empty">No swap activity yet. Post a shift above to get started.</p>';
+          return;
+        }
+        // Sort newest first
+        all.sort(function(a, b) { return b.created_at.localeCompare(a.created_at); });
+        log.innerHTML = all.map(function(p) {
+          const dateStr = s.formatDate(p.date, {short: true}) + ' · ' + s.formatTime12(p.start) + '–' + s.formatTime12(p.end);
+          let who, what;
+          if (p.kind === 'shift_post') {
+            who = p.requester_name;
+            what = p.post_type === 'full' ? 'posted their full shift' : 'posted custom hours';
+            return '<div class="list-item" style="align-items:flex-start;padding:0.75rem 0;">' +
+              '<div style="flex:1;min-width:0;">' +
+                '<div class="who">📢 <strong>' + who + '</strong> ' + what + '</div>' +
+                '<div class="meta">' + dateStr + ' · ' + p.role + ' · ' + (p.reason || '—') + '</div>' +
+              '</div>' +
+              '<span class="badge badge-' + p.status + '">' + p.status + '</span>' +
+            '</div>';
+          } else {
+            who = p.taker_name;
+            const poster = p.poster_name || '?';
+            return '<div class="list-item" style="align-items:flex-start;padding:0.75rem 0;">' +
+              '<div style="flex:1;min-width:0;">' +
+                '<div class="who">🙋 <strong>' + who + '</strong> volunteered to take ' + poster + '\'s shift</div>' +
+                '<div class="meta">' + dateStr + ' · ' + p.role + '</div>' +
+              '</div>' +
+              '<span class="badge badge-' + p.status + '">' + p.status + '</span>' +
+            '</div>';
+          }
+        }).join('');
+      }
+
       renderAvailable();
       renderSwaps();
+      renderLog();
     })();
   </script>
 </AppLayout>

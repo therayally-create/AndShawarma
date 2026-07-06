@@ -58,8 +58,44 @@ window.shawarma = (function() {
     if (window.__dataCache) return window.__dataCache;
     const res = await fetch(baseUrl('/data.json'));
     if (!res.ok) throw new Error('Failed to load data.json: HTTP ' + res.status);
-    window.__dataCache = await res.json();
-    return window.__dataCache;
+    const data = await res.json();
+    // Apply approved changes from localStorage (shift takes, deletes, etc.)
+    // so the schedule reflects admin-approved swaps.
+    const approved = getPending().filter(function(p) { return p.status === 'approved'; });
+    approved.forEach(function(p) {
+      if (p.kind === 'shift_take' && p.shift_id) {
+        // Reassign shift to the taker
+        const sh = data.shifts.find(function(s) { return s.id === p.shift_id; });
+        if (sh) sh.user_id = p.taker_id;
+      } else if (p.kind === 'shift_change' && p.action === 'delete' && p.before) {
+        data.shifts = data.shifts.filter(function(s) { return s.id !== p.before.id; });
+      } else if (p.kind === 'shift_change' && p.action === 'create' && p.after) {
+        // Add the new shift if not already there
+        if (!data.shifts.find(function(s) { return s.id === p.after.shift_id; })) {
+          data.shifts.push({
+            id: p.after.shift_id,
+            user_id: p.after.user_id,
+            date: p.after.date,
+            start: p.after.start,
+            end: p.after.end,
+            role: p.after.role,
+            notes: p.after.notes || '',
+          });
+        }
+      } else if (p.kind === 'shift_change' && p.action === 'update' && p.after && p.shift_id) {
+        const sh = data.shifts.find(function(s) { return s.id === p.shift_id; });
+        if (sh) {
+          sh.date = p.after.date;
+          sh.user_id = p.after.user_id;
+          sh.start = p.after.start;
+          sh.end = p.after.end;
+          sh.role = p.after.role;
+          sh.notes = p.after.notes || '';
+        }
+      }
+    });
+    window.__dataCache = data;
+    return data;
   }
 
   async function login(username, password, users) {
