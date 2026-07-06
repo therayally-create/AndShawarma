@@ -6,55 +6,29 @@ window.shawarma = (function() {
   const PENDING_KEY = 'shawarma.pending';
 
   // ============================================================
-  // GOOGLE SHEET BACKUP (configurable)
+  // GOOGLE SHEET WEBHOOK (Apps Script Web App)
   // ------------------------------------------------------------
-  // To enable, create a Google Form linked to a Sheet, then paste
-  // its public submit URL + entry IDs below. App will POST every
-  // approval/denial/submit to the form, which writes to the Sheet.
+  // The Sheet is the database. Reads on every page load, writes on
+  // every action. Paste your deployed Web App URL below.
   // ============================================================
-  const SHEET_CONFIG = {
-    enabled: false,  // flip to true once you have the form URL
-    formUrl: '',     // https://docs.google.com/forms/d/e/FORM_ID/formResponse
-    entries: {
-      kind: '',            // entry id for "kind" field (e.g. "entry.123456")
-      requester_id: '',
-      requester_name: '',
-      status: '',
-      date_from: '',
-      date_to: '',
-      reason: '',
-      action: '',
-      extra: '',
-    }
-  };
+  const SHEET_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbwATWqLND-AHF3Y8de0SIRSwhgKjrkoM6Y-cg6NELECR5pm0ONgHsnaSh8HCAoAYm8S4w/exec';
 
-  async function postToSheet(req) {
-    if (!SHEET_CONFIG.enabled || !SHEET_CONFIG.formUrl) return;
-    const e = SHEET_CONFIG.entries;
-    const form = new URLSearchParams();
-    if (e.kind) form.set(e.kind, req.kind || '');
-    if (e.requester_id) form.set(e.requester_id, req.requester_id || '');
-    if (e.requester_name) form.set(e.requester_name, req.requester_name || '');
-    if (e.status) form.set(e.status, req.status || '');
-    if (e.date_from) form.set(e.date_from, req.start_date || req.date || '');
-    if (e.date_to) form.set(e.date_to, req.end_date || '');
-    if (e.reason) form.set(e.reason, req.reason || '');
-    if (e.action) form.set(e.action, req.action || req.action_target || '');
-    if (e.extra) form.set(e.extra, JSON.stringify(req.extra || req));
+  async function callSheet(method, body) {
+    if (!SHEET_WEBHOOK_URL) return null;
     try {
-      // Use mode: 'no-cors' so the POST goes through without CORS preflight.
-      // We don't read the response — Google Forms returns 200 with opaque body.
-      await fetch(SHEET_CONFIG.formUrl, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: form.toString()
-      });
+      const opts = {
+        method: method,
+        headers: { 'Content-Type': 'application/json' },
+        redirect: 'follow',
+      };
+      if (body) opts.body = JSON.stringify(body);
+      const res = await fetch(SHEET_WEBHOOK_URL, opts);
+      return await res.json();
     } catch (e) {
-      console.warn('Sheet POST failed:', e);
+      console.warn('Sheet call failed:', e);
+      return null;
     }
   }
-  // ============================================================
 
   async function sha256(text) {
     const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
@@ -106,9 +80,15 @@ window.shawarma = (function() {
   }
 
   async function loadData() {
-    if (window.__dataCache) return window.__dataCache;
+    // Try the Sheet first (live, shared database)
+    const result = await callSheet('GET');
+    if (result && result.ok && result.data) {
+      window.__dataCache = result.data;
+      return result.data;
+    }
+    // Fallback: local data.json
     const res = await fetch(baseUrl('/data.json'));
-    if (!res.ok) throw new Error('Failed to load data.json: HTTP ' + res.status);
+    if (!res.ok) throw new Error('Failed to load data: HTTP ' + res.status);
     const data = await res.json();
     window.__dataCache = data;
     return data;
@@ -124,6 +104,7 @@ window.shawarma = (function() {
     return { ok: true, user: u };
   }
 
+  // ---- Pending requests (also written to Sheet) ----
   function getPending() {
     try { return JSON.parse(localStorage.getItem(PENDING_KEY) || '[]'); }
     catch { return []; }
@@ -156,7 +137,7 @@ window.shawarma = (function() {
     req.status = req.status || 'pending';
     all.push(req);
     setPending(all);
-    postToSheet(req);  // also log to Google Sheet (if enabled)
+    callSheet('POST', req);  // log to Google Sheet
     return req;
   }
   function resolvePending(id, decision) {
@@ -167,13 +148,11 @@ window.shawarma = (function() {
       req.resolved_at = new Date().toISOString();
     }
     setPending(all);
-    if (req) postToSheet(req);  // log resolved state to Google Sheet
+    if (req) callSheet('POST', req);  // log resolved state
     return req;
   }
 
-  // Submit a request to the localStorage pending queue.
-  // - shift_post: auto-approves (no admin needed to post a shift)
-  // - shift_take, shift_change, time_off: stay pending, need admin approval
+  // Submit a request. shift_post auto-approves; everything else is pending.
   function submitRequest(req) {
     const autoApprove = req.kind === 'shift_post';
     if (autoApprove) req.status = 'approved';
@@ -291,14 +270,14 @@ window.shawarma = (function() {
   return {
     sha256, getToken, setToken, clearToken, logout, baseUrl, requireAuth,
     loadData, login,
-    getPending, setPending, addPending, resolvePending, findOrCreate, submitRequest, notifyApprovalNeeded,
+    getPending, setPending, addPending, resolvePending, findOrCreate, submitRequest,
     getUserById, getUserName, getShiftsForUser, getShiftsForDate, getShiftsInRange,
     getTimeOffForUser, getAllTimeOff, getSwapsForUser,
     getTimeOffBlocks, isBlocked,
     todayISO, getMondayOf, getWeekRange, getMonthRange,
     formatDate, formatDayHeader, formatTime12,
     toast,
-    SHEET_CONFIG,
-    postToSheet
+    SHEET_WEBHOOK_URL,
+    callSheet
   };
 })();
