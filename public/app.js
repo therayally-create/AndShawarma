@@ -246,21 +246,30 @@ window.shawarma = (function() {
     return d.swap_requests.filter(sw => sw.requester_id === uid || sw.target_user_id === uid)
       .sort((a, b) => b.created_at.localeCompare(a.created_at));
   }
+  // Read time-off blocks from the Sheet (data.time_off + data.pending
+  // with status='approved'). This is the source of truth — every browser
+  // sees the same time-off blocks on the schedule.
   function getTimeOffBlocks(data) {
     const blocks = [];
-    const approved = getPending().filter(p =>
-      p.kind === 'time_off' && p.status === 'approved' && p.start_date && p.end_date
-    );
-    approved.forEach(p => {
+    if (!data) return blocks;
+    // Helper to expand a time-off entry into per-day blocks
+    function addEntry(p) {
+      if (!p.start_date || !p.end_date) return;
       const start = new Date(p.start_date + 'T00:00:00');
       const end = new Date(p.end_date + 'T00:00:00');
       for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
         blocks.push({
           date: d.toISOString().slice(0, 10),
-          user_id: p.requester_id,
+          user_id: p.requester_id || p.user_id,
           reason: p.reason || '',
         });
       }
+    }
+    // Confirmed time-off in the time_off tab
+    (data.time_off || []).forEach(addEntry);
+    // Approved pending requests (admin already approved via the queue)
+    (data.pending || []).forEach(function(p) {
+      if (p.kind === 'time_off' && p.status === 'approved') addEntry(p);
     });
     return blocks;
   }
