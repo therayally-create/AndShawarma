@@ -221,6 +221,29 @@ label { display: block; font-size: 0.875rem; font-weight: 600; margin-bottom: 0.
 }
 .demo-creds strong { color: var(--color-ink); }
 .demo-creds code { background: #fff; padding: 0 0.25rem; border-radius: 0.25rem; font-size: 0.75rem; }
+.demo-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.375rem;
+  margin-top: 0.5rem;
+}
+.demo-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.375rem 0.5rem;
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: 0.375rem;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  font-size: 0.75rem;
+  width: 100%;
+}
+.demo-pill:hover { background: var(--color-bg-soft); border-color: var(--color-primary); }
+.demo-pill .demo-name { font-weight: 700; flex: 1; min-width: 0; }
+.demo-pill .demo-cred { font-size: 0.6875rem; color: var(--color-ink-light); }
 .error {
   background: #fee2e2;
   color: #991b1b;

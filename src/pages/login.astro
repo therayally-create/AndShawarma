@@ -33,10 +33,8 @@ import '../styles/global.css';
       </form>
 
       <div class="demo-creds">
-        <strong>Demo accounts:</strong><br />
-        Admin: <code>ray</code> / <code>ray2026admin</code><br />
-        Manager: <code>azmeer</code> / <code>shawarma2026</code><br />
-        Staff: <code>staff1</code>–<code>staff8</code> / <code>staff2026</code>
+        <strong>Demo accounts (tap to fill):</strong>
+        <div class="demo-grid" id="demo-grid"></div>
       </div>
     </div>
   </div>
@@ -51,6 +49,35 @@ import '../styles/global.css';
       const prePass = params.get('p');
       if (preUser) document.getElementById('username').value = preUser;
       if (prePass) document.getElementById('password').value = prePass;
+
+      // Demo account grid (tap to fill the form)
+      const demoCreds = [
+        { username: 'ray',    password: 'ray2026admin', name: 'Ray Ally',     role: 'admin' },
+        { username: 'azmeer', password: 'admin',        name: 'Azmeer',       role: 'admin' },
+        { username: 'badar',  password: 'admin',        name: 'Badar Khokar', role: 'admin' },
+        { username: 'jorge',  password: 'staff2026',    name: 'Jorge',        role: 'staff' },
+        { username: 'jeremy', password: 'staff2026',    name: 'Jeremy',       role: 'staff' },
+        { username: 'adnan',  password: 'staff2026',    name: 'Adnan',        role: 'staff' },
+        { username: 'david',  password: 'staff2026',    name: 'David',        role: 'staff' },
+        { username: 'albero', password: 'staff2026',    name: 'Albero',       role: 'staff' },
+        { username: 'john',   password: 'staff2026',    name: 'John',         role: 'staff' },
+        { username: 'sanaa',  password: 'staff2026',    name: 'Sanaa',        role: 'staff' },
+        { username: 'bhanu',  password: 'staff2026',    name: 'Bhanu',        role: 'staff' },
+      ];
+      document.getElementById('demo-grid').innerHTML = demoCreds.map(function(d) {
+        return '<button type="button" class="demo-pill" data-user="' + d.username + '" data-pass="' + d.password + '">' +
+          '<span class="badge badge-' + d.role + '">' + d.role + '</span>' +
+          '<span class="demo-name">' + d.name + '</span>' +
+          '<code class="demo-cred">' + d.username + ' / ' + d.password + '</code>' +
+        '</button>';
+      }).join('');
+      document.querySelectorAll('.demo-pill').forEach(function(p) {
+        p.addEventListener('click', function() {
+          document.getElementById('username').value = p.getAttribute('data-user');
+          document.getElementById('password').value = p.getAttribute('data-pass');
+          document.getElementById('username').focus();
+        });
+      });
 
       if (s.getToken()) {
         window.location.href = s.baseUrl('/schedule');
