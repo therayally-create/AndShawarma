@@ -54,6 +54,21 @@ window.shawarma = (function() {
     return t;
   }
 
+  // Apply approved time-off by removing the user from any shifts in the date range
+  async function applyTimeOff(data, p) {
+    if (!p.start_date || !p.end_date) return;
+    // Find which shifts this user has in the date range
+    const blocked = data.shifts.filter(function(sh) {
+      return sh.user_id === p.requester_id && sh.date >= p.start_date && sh.date <= p.end_date;
+    });
+    // Remove them (block off = unassigned)
+    if (blocked.length > 0) {
+      data.shifts = data.shifts.filter(function(sh) {
+        return !(sh.user_id === p.requester_id && sh.date >= p.start_date && sh.date <= p.end_date);
+      });
+    }
+  }
+
   async function loadData() {
     if (window.__dataCache) return window.__dataCache;
     const res = await fetch(baseUrl('/data.json'));
@@ -62,15 +77,13 @@ window.shawarma = (function() {
     // Apply approved changes from localStorage (shift takes, deletes, etc.)
     // so the schedule reflects admin-approved swaps.
     const approved = getPending().filter(function(p) { return p.status === 'approved'; });
-    approved.forEach(function(p) {
+    for (const p of approved) {
       if (p.kind === 'shift_take' && p.shift_id) {
-        // Reassign shift to the taker
         const sh = data.shifts.find(function(s) { return s.id === p.shift_id; });
         if (sh) sh.user_id = p.taker_id;
       } else if (p.kind === 'shift_change' && p.action === 'delete' && p.before) {
         data.shifts = data.shifts.filter(function(s) { return s.id !== p.before.id; });
       } else if (p.kind === 'shift_change' && p.action === 'create' && p.after) {
-        // Add the new shift if not already there
         if (!data.shifts.find(function(s) { return s.id === p.after.shift_id; })) {
           data.shifts.push({
             id: p.after.shift_id,
@@ -92,8 +105,10 @@ window.shawarma = (function() {
           sh.role = p.after.role;
           sh.notes = p.after.notes || '';
         }
+      } else if (p.kind === 'time_off' && p.start_date && p.end_date) {
+        await applyTimeOff(data, p);
       }
-    });
+    }
     window.__dataCache = data;
     return data;
   }
