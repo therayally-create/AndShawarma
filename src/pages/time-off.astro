@@ -55,7 +55,7 @@ import AppLayout from '../layouts/AppLayout.astro';
       });
 
       function dedupeKey(p) {
-        return [p.kind, p.requester_id || p.user_id, p.start_date, p.end_date, p.reason || ''].join('|');
+        return (p.kind || '') + '|' + (p.requester_id || p.user_id || '') + '|' + (p.start_date || '') + '|' + (p.end_date || '') + '|' + (p.shift_id || '');
       }
       function dedupe(arr) {
         const seen = {};
@@ -77,13 +77,22 @@ import AppLayout from '../layouts/AppLayout.astro';
 
       function renderAll() {
         const myList = document.getElementById('my-list');
-        const mine = s.getTimeOffForUser(data, t.user_id);
         const myPending = dedupe(s.getPending().filter(function(p) {
           return p.kind === 'time_off' && p.requester_id === t.user_id && p.status === 'pending';
         }));
         const myResolved = dedupe(s.getPending().filter(function(p) {
           return p.kind === 'time_off' && p.requester_id === t.user_id && p.status !== 'pending';
         }));
+        // Seeded data.json entries — skip any that have a localStorage counterpart
+        const allLocal = dedupe(s.getPending().filter(function(p) {
+          return p.kind === 'time_off' && p.requester_id === t.user_id;
+        }));
+        const hasLocal = function(start, end) {
+          return allLocal.some(function(x) { return x.start_date === start && x.end_date === end; });
+        };
+        const mine = s.getTimeOffForUser(data, t.user_id).filter(function(x) {
+          return !hasLocal(x.start_date, x.end_date);
+        });
         if (mine.length === 0 && myPending.length === 0 && myResolved.length === 0) {
           myList.innerHTML = '<p class="empty">No requests yet.</p>';
         } else {
@@ -139,7 +148,6 @@ import AppLayout from '../layouts/AppLayout.astro';
             b.addEventListener('click', function() {
               s.resolvePending(b.getAttribute('data-approve'), 'approved');
               s.toast('Approved — shifts unassigned for those dates');
-              // Clear data cache so the change reflects immediately
               window.__dataCache = null;
               renderAll();
             });
@@ -148,9 +156,8 @@ import AppLayout from '../layouts/AppLayout.astro';
             b.addEventListener('click', function() {
               const id = b.getAttribute('data-deny');
               const reason = prompt('Why are you denying this time-off request? (shown to the staff member)');
-              if (reason === null) return; // cancelled
+              if (reason === null) return;
               s.resolvePending(id, 'denied');
-              // Attach denial reason by updating the pending entry
               const all = s.getPending();
               const entry = all.find(function(x) { return x.id === id; });
               if (entry) {
@@ -162,27 +169,28 @@ import AppLayout from '../layouts/AppLayout.astro';
               renderAll();
             });
           });
-          // Approve seeded request — flags it approved + clears data cache so the
-          // unassignment takes effect on the next page load
+          // Approve seeded request — find-or-create the localStorage entry
+          // (no duplicates if admin clicks Approve multiple times)
           allList.querySelectorAll('[data-approve-seeded]').forEach(function(b) {
             b.addEventListener('click', function() {
               const seedId = b.getAttribute('data-approve-seeded');
               const it = seeded.find(function(x) { return x.id === seedId; });
               if (!it) return;
-              s.addPending({
+              s.findOrCreate({
                 kind: 'time_off',
                 requester_id: it.user_id,
                 requester_name: s.getUserName(data, it.user_id),
                 start_date: it.start_date,
                 end_date: it.end_date,
                 reason: it.reason,
+                status: 'approved',
               });
-              s.toast('Approved — refreshing');
+              s.toast('Approved');
               window.__dataCache = null;
               renderAll();
             });
           });
-          // Deny seeded — also goes through pending so the staff sees "denied"
+          // Deny seeded — find-or-create, attach denial reason
           allList.querySelectorAll('[data-deny-seeded]').forEach(function(b) {
             b.addEventListener('click', function() {
               const seedId = b.getAttribute('data-deny-seeded');
@@ -190,7 +198,7 @@ import AppLayout from '../layouts/AppLayout.astro';
               if (!it) return;
               const reason = prompt('Why are you denying this time-off request? (shown to the staff member)');
               if (reason === null) return;
-              s.addPending({
+              s.findOrCreate({
                 kind: 'time_off',
                 requester_id: it.user_id,
                 requester_name: s.getUserName(data, it.user_id),

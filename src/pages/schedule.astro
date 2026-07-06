@@ -91,7 +91,7 @@ import AppLayout from '../layouts/AppLayout.astro';
                   '<div class="day-shift-main">' +
                     '<div class="day-shift-name">' + s.getUserName(data, sh.user_id) + (pending ? ' <span class="badge badge-pending" style="font-size:0.625rem;">pending</span>' : '') + '</div>' +
                     '<div class="day-shift-time">' + s.formatTime12(sh.start) + ' – ' + s.formatTime12(sh.end) + '</div>' +
-                    '<div class="day-shift-role">' + sh.role + (sh.notes ? ' · ' + sh.notes : '') + '</div>' +
+                    '<div class="day-shift-notes'>' + (sh.notes || '') + '</div>' +
                   '</div>' +
                   '<div class="day-shift-actions">' + editBtn + '</div>' +
                 '</div>';
@@ -180,7 +180,7 @@ import AppLayout from '../layouts/AppLayout.astro';
                 '<div class="day-shift-main">' +
                   '<div class="day-shift-name">' + s.getUserName(data, sh.user_id) + (pending ? ' <span class="badge badge-pending" style="font-size:0.625rem;">pending</span>' : '') + '</div>' +
                   '<div class="day-shift-time">' + s.formatTime12(sh.start) + ' – ' + s.formatTime12(sh.end) + '</div>' +
-                  '<div class="day-shift-role">' + sh.role + (sh.notes ? ' · ' + sh.notes : '') + '</div>' +
+                    '<div class="day-shift-notes'>' + (sh.notes || '') + '</div>' +
                 '</div>' +
                 '<div class="day-shift-actions">' + editBtn + '</div>' +
               '</div>';

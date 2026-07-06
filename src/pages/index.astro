@@ -66,7 +66,7 @@ import AppLayout from '../layouts/AppLayout.astro';
         list.innerHTML = '<p class="empty">No upcoming shifts scheduled.</p>';
       } else {
         list.innerHTML = myShifts.map(function(sh) {
-          return '<div class="list-item"><div><div class="who">' + s.formatDate(sh.date, {short: true}) + '</div><div class="meta">' + s.formatTime12(sh.start) + ' – ' + s.formatTime12(sh.end) + ' · ' + sh.role + '</div></div><span class="badge badge-' + sh.role.toLowerCase() + '">' + sh.role + '</span></div>';
+          return '<div class="list-item"><div><div class="who">' + s.formatDate(sh.date, {short: true}) + '</div><div class="meta">' + s.formatTime12(sh.start) + ' – ' + s.formatTime12(sh.end) + '</div></div></div>';
         }).join('');
       }
 

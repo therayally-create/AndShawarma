@@ -148,6 +148,27 @@ window.shawarma = (function() {
   function setPending(arr) {
     localStorage.setItem(PENDING_KEY, JSON.stringify(arr));
   }
+  function findOrCreate(req) {
+    const all = getPending();
+    // Find existing matching entry (same kind + user + dates)
+    const key = (req.kind || '') + '|' + (req.requester_id || req.user_id || '') + '|' + (req.start_date || '') + '|' + (req.end_date || '') + '|' + (req.shift_id || '');
+    let existing = null;
+    for (let i = 0; i < all.length; i++) {
+      const k = (all[i].kind || '') + '|' + (all[i].requester_id || all[i].user_id || '') + '|' + (all[i].start_date || '') + '|' + (all[i].end_date || '') + '|' + (all[i].shift_id || '');
+      if (k === key) { existing = all[i]; break; }
+    }
+    if (existing) {
+      // Mutate in place
+      Object.assign(existing, req);
+      setPending(all);
+      return existing;
+    } else {
+      // Create new
+      all.push(req);
+      setPending(all);
+      return req;
+    }
+  }
   function addPending(req) {
     const all = getPending();
     req.id = 'p' + Date.now() + Math.random().toString(36).slice(2, 6);
@@ -293,7 +314,7 @@ window.shawarma = (function() {
   return {
     sha256, getToken, setToken, clearToken, logout, baseUrl, requireAuth,
     loadData, login,
-    getPending, setPending, addPending, resolvePending, submitRequest, notifyApprovalNeeded,
+    getPending, setPending, addPending, resolvePending, findOrCreate, submitRequest, notifyApprovalNeeded,
     getUserById, getUserName, getShiftsForUser, getShiftsForDate, getShiftsInRange,
     getTimeOffForUser, getAllTimeOff, getSwapsForUser,
     getTimeOffBlocks, isBlocked,

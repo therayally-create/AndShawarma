@@ -63,7 +63,7 @@ import AppLayout from '../layouts/AppLayout.astro';
           return '<div class="list-item" style="align-items:flex-start;padding:0.75rem 0;">' +
             '<div style="flex:1;min-width:0;">' +
               '<div class="who">' + s.formatDate(sh.date, {short: true}) + '</div>' +
-              '<div class="meta">' + s.formatTime12(sh.start) + ' – ' + s.formatTime12(sh.end) + ' · ' + sh.role + '</div>' +
+              '<div class="meta">' + s.formatTime12(sh.start) + ' – ' + s.formatTime12(sh.end) + '</div>' +
             '</div>' +
             '<div><button class="btn-secondary" data-post-shift="' + sh.id + '">Post for swap</button></div>' +
           '</div>';
