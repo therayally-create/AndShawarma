@@ -49,7 +49,7 @@ import AppLayout from '../layouts/AppLayout.astro';
           reason: document.getElementById('reason').value.trim(),
         });
         document.getElementById('request-form').reset();
-        s.toast('Time-off requested — admin notified');
+        s.toast('Time-off submitted — admin must approve');
         renderAll();
       });
 

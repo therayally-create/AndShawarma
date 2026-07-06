@@ -4,7 +4,7 @@ import AppLayout from '../layouts/AppLayout.astro';
 <AppLayout title="&Shawarma — Shift Swap" active="swap">
   <div class="card">
     <h2>📋 My Upcoming Shifts</h2>
-    <p style="color:var(--color-muted);font-size:0.875rem;">Tap a shift to post it for swap — or post a custom hour block (e.g. "I need to leave at 3pm for an appointment"). Admin/manager must approve before anyone can take it.</p>
+    <p style="color:var(--color-muted);font-size:0.875rem;">Tap a shift to post it for swap — or post a custom hour block (e.g. "I need to leave at 3pm for an appointment").</p>
     <div id="my-shifts"><p class="empty">Loading...</p></div>
   </div>
 
@@ -35,6 +35,12 @@ import AppLayout from '../layouts/AppLayout.astro';
   </div>
 
   <div class="card">
+    <h2>🙋 Open Shifts — Volunteer to Take</h2>
+    <p style="color:var(--color-muted);font-size:0.875rem;">Shifts other staff have posted. Tap "I'll take it" to volunteer — admin/manager then picks who covers it.</p>
+    <div id="open-shifts"><p class="empty">Loading...</p></div>
+  </div>
+
+  <div class="card">
     <h2>📋 My Swap Activity</h2>
     <div id="swap-list"><p class="empty">Loading...</p></div>
   </div>
@@ -48,7 +54,7 @@ import AppLayout from '../layouts/AppLayout.astro';
       const today = s.todayISO();
       const myShifts = s.getShiftsForUser(data, t.user_id).filter(function(x) { return x.date >= today; });
 
-      // Render my shifts as cards with "Post" + "Post custom" buttons
+      // Render my shifts as cards with "Post" button
       const list = document.getElementById('my-shifts');
       if (myShifts.length === 0) {
         list.innerHTML = '<p class="empty">No upcoming shifts.</p>';
@@ -59,9 +65,7 @@ import AppLayout from '../layouts/AppLayout.astro';
               '<div class="who">' + s.formatDate(sh.date, {short: true}) + '</div>' +
               '<div class="meta">' + s.formatTime12(sh.start) + ' – ' + s.formatTime12(sh.end) + ' · ' + sh.role + '</div>' +
             '</div>' +
-            '<div style="display:flex;flex-direction:column;gap:0.25rem;align-items:flex-end;">' +
-              '<button class="btn-secondary" data-post-shift="' + sh.id + '">Post for swap</button>' +
-            '</div>' +
+            '<div><button class="btn-secondary" data-post-shift="' + sh.id + '">Post for swap</button></div>' +
           '</div>';
         }).join('');
         list.querySelectorAll('[data-post-shift]').forEach(function(b) {
@@ -69,7 +73,7 @@ import AppLayout from '../layouts/AppLayout.astro';
             const shiftId = b.getAttribute('data-post-shift');
             const sh = data.shifts.find(function(x) { return x.id === shiftId; });
             if (!sh) return;
-            s.addPending({
+            s.submitRequest({
               kind: 'shift_post',
               shift_id: sh.id,
               requester_id: t.user_id,
@@ -81,8 +85,8 @@ import AppLayout from '../layouts/AppLayout.astro';
               role: sh.role,
               reason: 'Posting entire shift for swap',
             });
-            s.toast('Shift posted — admin will approve');
-            renderAvailable();
+            s.toast('Shift posted — staff can now volunteer');
+            renderOpenShifts();
             renderSwaps();
           });
         });
@@ -97,7 +101,7 @@ import AppLayout from '../layouts/AppLayout.astro';
         const reason = document.getElementById('cp-reason').value.trim();
         if (!date || !start || !end || !reason) return;
         if (end <= start) { s.toast('End must be after start'); return; }
-        s.addPending({
+        s.submitRequest({
           kind: 'shift_post',
           requester_id: t.user_id,
           requester_name: t.display_name,
@@ -105,39 +109,51 @@ import AppLayout from '../layouts/AppLayout.astro';
           date: date,
           start: start,
           end: end,
-          role: 'FOH', // default; admin can edit
+          role: 'FOH',
           reason: reason,
         });
         document.getElementById('custom-form').reset();
-        s.toast('Custom hours posted — admin will approve');
-        renderAvailable();
+        s.toast('Custom hours posted — staff can now volunteer');
+        renderOpenShifts();
         renderSwaps();
       });
 
-      // Available shifts to take (from localStorage approved posts)
-      function renderAvailable() {
-        const approved = s.getPending().filter(function(p) {
+      // Open shifts — anyone can volunteer
+      function renderOpenShifts() {
+        const posts = s.getPending().filter(function(p) {
           return p.kind === 'shift_post' && p.status === 'approved' && p.requester_id !== t.user_id;
         });
-        const list = document.getElementById('available-list');
-        if (approved.length === 0) {
-          list.innerHTML = '<p class="empty">No shifts posted right now.</p>';
+        const takes = s.getPending().filter(function(p) { return p.kind === 'shift_take'; });
+        const container = document.getElementById('open-shifts');
+        if (posts.length === 0) {
+          container.innerHTML = '<p class="empty">No open shifts right now. Post one above.</p>';
           return;
         }
-        list.innerHTML = approved.map(function(p) {
-          return '<div class="list-item" style="align-items:flex-start;padding:0.75rem 0;">' +
+        container.innerHTML = posts.map(function(p) {
+          const takers = takes.filter(function(x) { return x.post_id === p.id; });
+          const takersHTML = takers.length > 0
+            ? '<div class="takers-list">' + takers.map(function(t) {
+                return '<span class="taker-pill">🙋 ' + t.taker_name + ' <span class="badge badge-' + t.status + '" style="margin-left:0.25rem;">' + t.status + '</span></span>';
+              }).join('') + '</div>'
+            : '';
+          const myTake = takers.find(function(x) { return x.taker_id === t.user_id; });
+          const voteBtn = myTake
+            ? '<span class="badge badge-pending" style="margin-top:0.5rem;">You volunteered</span>'
+            : '<button class="btn-primary" data-volunteer="' + p.id + '" style="margin-top:0.5rem;">🙋 I\'ll take it</button>';
+          return '<div class="list-item shift-post" style="align-items:flex-start;padding:0.75rem 0;">' +
             '<div style="flex:1;min-width:0;">' +
-              '<div class="who">' + s.getUserName(data, p.requester_id) + '</div>' +
+              '<div class="who">📢 <strong>' + p.requester_name + '</strong> needs a cover</div>' +
               '<div class="meta">' + s.formatDate(p.date, {short: true}) + ' · ' + s.formatTime12(p.start) + '–' + s.formatTime12(p.end) + ' · ' + p.role + '</div>' +
-              '<div class="meta" style="font-style:italic;">' + (p.reason || '—') + '</div>' +
+              (p.reason ? '<div class="meta" style="font-style:italic;">' + p.reason + '</div>' : '') +
+              takersHTML + voteBtn +
             '</div>' +
-            '<div><button class="btn-primary" data-take="' + p.id + '">Take this</button></div>' +
           '</div>';
         }).join('');
-        list.querySelectorAll('[data-take]').forEach(function(b) {
-          b.addEventListener('click', function() {
-            const postId = b.getAttribute('data-take');
-            const post = approved.find(function(p) { return p.id === postId; });
+
+        container.querySelectorAll('[data-volunteer]').forEach(function(btn) {
+          btn.addEventListener('click', function() {
+            const postId = btn.getAttribute('data-volunteer');
+            const post = posts.find(function(x) { return x.id === postId; });
             if (!post) return;
             s.addPending({
               kind: 'shift_take',
@@ -154,7 +170,8 @@ import AppLayout from '../layouts/AppLayout.astro';
               post_type: post.post_type,
               reason: post.reason,
             });
-            s.toast('Take request submitted — admin will approve');
+            s.toast('Volunteered — admin will pick who takes it');
+            renderOpenShifts();
             renderSwaps();
           });
         });
@@ -186,8 +203,8 @@ import AppLayout from '../layouts/AppLayout.astro';
         myTakes.forEach(function(p) {
           html += '<div class="list-item" style="align-items:flex-start;padding:0.75rem 0;">' +
             '<div style="flex:1;min-width:0;">' +
-              '<div class="who">You\'re taking: ' + s.formatDate(p.date, {short: true}) + ' · ' + s.formatTime12(p.start) + '–' + s.formatTime12(p.end) + '</div>' +
-              '<div class="meta">From ' + (p.poster_name || '?') + ' · ' + (p.reason || '—') + '</div>' +
+              '<div class="who">You\'re covering: ' + s.formatDate(p.date, {short: true}) + ' · ' + s.formatTime12(p.start) + '–' + s.formatTime12(p.end) + '</div>' +
+              '<div class="meta">For ' + (p.poster_name || '?') + ' · ' + (p.reason || '—') + '</div>' +
             '</div>' +
             '<span class="badge badge-' + p.status + '">' + p.status + '</span>' +
           '</div>';
@@ -195,91 +212,8 @@ import AppLayout from '../layouts/AppLayout.astro';
         list.innerHTML = html;
       }
 
-      // "Swap a shift with me" log — every post + every take request, with
-      // "I'll take it" voting buttons on every open post
-      function renderLog() {
-        const log = document.getElementById('swap-log');
-        const all = s.getPending().filter(function(p) {
-          return p.kind === 'shift_post' || p.kind === 'shift_take';
-        });
-        if (all.length === 0) {
-          log.innerHTML = '<p class="empty">No swap activity yet. Post a shift above to get started.</p>';
-          return;
-        }
-        // Sort newest first
-        all.sort(function(a, b) { return b.created_at.localeCompare(a.created_at); });
-        log.innerHTML = all.map(function(p) {
-          const dateStr = s.formatDate(p.date, {short: true}) + ' · ' + s.formatTime12(p.start) + '–' + s.formatTime12(p.end);
-          // Find existing take requests for this post
-          const takers = all.filter(function(x) {
-            return x.kind === 'shift_take' && x.post_id === p.id;
-          });
-          const takersHTML = takers.length > 0
-            ? '<div class="takers-list">' + takers.map(function(t) {
-                return '<span class="taker-pill">' + t.taker_name + ' <span class="badge badge-' + t.status + '" style="margin-left:0.25rem;">' + t.status + '</span></span>';
-              }).join('') + '</div>'
-            : '';
-          // Show "I'll take it" button if: it's a post, approved, no current take by me
-          let voteBtn = '';
-          if (p.kind === 'shift_post' && p.status === 'approved' && p.requester_id !== t.user_id) {
-            const myTake = takers.find(function(x) { return x.taker_id === t.user_id; });
-            if (!myTake) {
-              voteBtn = '<button class="btn-primary" data-volunteer="' + p.id + '" style="margin-top:0.5rem;">🙋 I\'ll take it</button>';
-            } else {
-              voteBtn = '<span class="badge badge-pending" style="margin-top:0.5rem;">You volunteered</span>';
-            }
-          }
-          if (p.kind === 'shift_post') {
-            return '<div class="list-item shift-post" style="align-items:flex-start;padding:0.75rem 0;">' +
-              '<div style="flex:1;min-width:0;">' +
-                '<div class="who">📢 <strong>' + p.requester_name + '</strong> needs someone to cover</div>' +
-                '<div class="meta">' + dateStr + ' · ' + p.role + ' · ' + (p.reason || '—') + '</div>' +
-                takersHTML + voteBtn +
-              '</div>' +
-              '<span class="badge badge-' + p.status + '">' + p.status + '</span>' +
-            '</div>';
-          } else {
-            return '<div class="list-item shift-take" style="align-items:flex-start;padding:0.5rem 0 0.5rem 1.5rem;">' +
-              '<div style="flex:1;min-width:0;">' +
-                '<div class="who">🙋 <strong>' + p.taker_name + '</strong> volunteered</div>' +
-              '</div>' +
-              '<span class="badge badge-' + p.status + '">' + p.status + '</span>' +
-            '</div>';
-          }
-        }).join('');
-
-        // Wire up "I'll take it" buttons
-        log.querySelectorAll('[data-volunteer]').forEach(function(btn) {
-          btn.addEventListener('click', function() {
-            const postId = btn.getAttribute('data-volunteer');
-            const post = all.find(function(x) { return x.id === postId; });
-            if (!post) return;
-            s.addPending({
-              kind: 'shift_take',
-              post_id: postId,
-              shift_id: post.shift_id,
-              taker_id: t.user_id,
-              taker_name: t.display_name,
-              poster_id: post.requester_id,
-              poster_name: post.requester_name,
-              date: post.date,
-              start: post.start,
-              end: post.end,
-              role: post.role,
-              post_type: post.post_type,
-              reason: post.reason,
-            });
-            s.toast('Volunteered — admin will approve');
-            renderLog();
-            renderAvailable();
-            renderSwaps();
-          });
-        });
-      }
-
-      renderAvailable();
+      renderOpenShifts();
       renderSwaps();
-      renderLog();
     })();
   </script>
 </AppLayout>

@@ -160,6 +160,14 @@ window.shawarma = (function() {
   // Mock email notification — logs body to console, shows toast.
   // Real implementation: POST to /api/notify with the request payload.
   // The /api/notify endpoint reads SHAWARMA_PROD env to decide real send.
+  // Submit a request to the localStorage pending queue.
+  // - shift_post: auto-approves (no admin needed to post a shift)
+  // - shift_take, shift_change, time_off: stay pending, need admin approval
+  function submitRequest(req) {
+    const autoApprove = req.kind === 'shift_post';
+    if (autoApprove) req.status = 'approved';
+    return addPending(req);
+  }
   function notifyApprovalNeeded(req) {
     const subject = '[&Shawarma] Approval needed: ' + req.kind;
     const body = [
@@ -273,7 +281,7 @@ window.shawarma = (function() {
   return {
     sha256, getToken, setToken, clearToken, logout, baseUrl, requireAuth,
     loadData, login,
-    getPending, setPending, addPending, resolvePending, notifyApprovalNeeded,
+    getPending, setPending, addPending, resolvePending, submitRequest, notifyApprovalNeeded,
     getUserById, getUserName, getShiftsForUser, getShiftsForDate, getShiftsInRange,
     getTimeOffForUser, getAllTimeOff, getSwapsForUser,
     todayISO, getMondayOf, getWeekRange, getMonthRange,

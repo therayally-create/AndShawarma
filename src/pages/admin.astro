@@ -176,11 +176,9 @@ import AppLayout from '../layouts/AppLayout.astro';
       const usersList = document.getElementById('users-list');
       function renderUsers() {
         usersList.innerHTML = data.users.map(function(u) {
-          const initials = u.display_name.split(' ').map(function(p) { return p[0]; }).join('').slice(0, 2).toUpperCase();
           const disabledBadge = u.disabled ? ' <span class="badge badge-denied">disabled</span>' : '';
           return '<div class="user-row">' +
-            '<div class="avatar">' + initials + '</div>' +
-            '<div class="info">' +
+            '<div class="info" style="flex:1;min-width:0;">' +
               '<div class="name">' + u.display_name + disabledBadge + '</div>' +
               '<div class="username">@' + u.username + '</div>' +
             '</div>' +
