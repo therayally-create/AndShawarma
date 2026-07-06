@@ -3,6 +3,12 @@ import AppLayout from '../layouts/AppLayout.astro';
 ---
 <AppLayout title="&Shawarma — Shift Swap" active="swap">
   <div class="card">
+    <h2>🙋 Open Shifts — Volunteer to Take</h2>
+    <p style="color:var(--color-muted);font-size:0.875rem;">Shifts other staff have posted. Tap "I'll take it" to volunteer — admin/manager then picks who covers it.</p>
+    <div id="open-shifts"><p class="empty">Loading...</p></div>
+  </div>
+
+  <div class="card">
     <h2>📋 My Upcoming Shifts</h2>
     <p style="color:var(--color-muted);font-size:0.875rem;">Tap a shift to post it for swap — or post a custom hour block (e.g. "I need to leave at 3pm for an appointment").</p>
     <div id="my-shifts"><p class="empty">Loading...</p></div>
@@ -32,12 +38,6 @@ import AppLayout from '../layouts/AppLayout.astro';
       </div>
       <button type="submit" class="btn-primary">Post for swap</button>
     </form>
-  </div>
-
-  <div class="card">
-    <h2>🙋 Open Shifts — Volunteer to Take</h2>
-    <p style="color:var(--color-muted);font-size:0.875rem;">Shifts other staff have posted. Tap "I'll take it" to volunteer — admin/manager then picks who covers it.</p>
-    <div id="open-shifts"><p class="empty">Loading...</p></div>
   </div>
 
   <div class="card">

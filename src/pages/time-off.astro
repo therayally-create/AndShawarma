@@ -23,13 +23,8 @@ import AppLayout from '../layouts/AppLayout.astro';
 
   <div class="card">
     <h2>📋 My Time-Off Requests</h2>
+    <p style="color:var(--color-muted);font-size:0.875rem;">All your time-off (pending + approved + denied). Tap Cancel to remove, or Edit on a pending one to change dates.</p>
     <div id="my-list"><p class="empty">Loading...</p></div>
-  </div>
-
-  <div class="card" style="margin-top:1rem;">
-    <h2>🏖️ Upcoming Time Off</h2>
-    <p style="color:var(--color-muted);font-size:0.875rem;">All your approved time off on the schedule.</p>
-    <div id="upcoming-list"><p class="empty">Loading...</p></div>
   </div>
 
   <div class="card" id="all-card">
@@ -59,16 +54,36 @@ import AppLayout from '../layouts/AppLayout.astro';
         renderAll();
       });
 
+      function dedupeKey(p) {
+        return [p.kind, p.requester_id || p.user_id, p.start_date, p.end_date, p.reason || ''].join('|');
+      }
+      function dedupe(arr) {
+        const seen = {};
+        const out = [];
+        arr.forEach(function(p) {
+          const k = dedupeKey(p);
+          if (!seen[k]) { seen[k] = true; out.push(p); }
+        });
+        return out;
+      }
+
+      // One-time cleanup on page load: dedupe localStorage time-off entries
+      // so re-clicking Approve/Deny doesn't pile up duplicates
+      (function() {
+        const all = s.getPending();
+        const deduped = dedupe(all);
+        if (deduped.length < all.length) s.setPending(deduped);
+      })();
+
       function renderAll() {
         const myList = document.getElementById('my-list');
         const mine = s.getTimeOffForUser(data, t.user_id);
-        // Combine data.json + my pending time-off requests
-        const myPending = s.getPending().filter(function(p) {
+        const myPending = dedupe(s.getPending().filter(function(p) {
           return p.kind === 'time_off' && p.requester_id === t.user_id && p.status === 'pending';
-        });
-        const myResolved = s.getPending().filter(function(p) {
+        }));
+        const myResolved = dedupe(s.getPending().filter(function(p) {
           return p.kind === 'time_off' && p.requester_id === t.user_id && p.status !== 'pending';
-        });
+        }));
         if (mine.length === 0 && myPending.length === 0 && myResolved.length === 0) {
           myList.innerHTML = '<p class="empty">No requests yet.</p>';
         } else {
