@@ -3,25 +3,45 @@ import AppLayout from '../layouts/AppLayout.astro';
 ---
 <AppLayout title="&Shawarma — Shift Swap" active="swap">
   <div class="card">
-    <h2>🔄 My Upcoming Shifts</h2>
-    <p style="color:var(--color-muted);font-size:0.875rem;">Tap a shift to request a swap with another staff member.</p>
+    <h2>📋 My Upcoming Shifts</h2>
+    <p style="color:var(--color-muted);font-size:0.875rem;">Tap a shift to post it for swap — or post a custom hour block (e.g. "I need to leave at 3pm for an appointment"). Admin/manager must approve before anyone can take it.</p>
     <div id="my-shifts"><p class="empty">Loading...</p></div>
   </div>
 
+  <div class="card" id="custom-post-card">
+    <h2>✏️ Post custom hours for swap</h2>
+    <p style="color:var(--color-muted);font-size:0.875rem;">Need someone to cover just part of a shift? Tell us which date, what time you need covered, and a reason.</p>
+    <form id="custom-form">
+      <div class="field">
+        <label for="cp-date">Date</label>
+        <input type="date" id="cp-date" class="input" required />
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
+        <div class="field">
+          <label for="cp-start">Start time</label>
+          <input type="time" id="cp-start" class="input" required />
+        </div>
+        <div class="field">
+          <label for="cp-end">End time</label>
+          <input type="time" id="cp-end" class="input" required />
+        </div>
+      </div>
+      <div class="field">
+        <label for="cp-reason">Reason</label>
+        <input type="text" id="cp-reason" class="input" placeholder="e.g. Doctor appointment, family event" required />
+      </div>
+      <button type="submit" class="btn-primary">Post for swap</button>
+    </form>
+  </div>
+
   <div class="card">
-    <h2>📢 Shifts available to swap</h2>
-    <p style="color:var(--color-muted);font-size:0.875rem;">Shifts other staff have posted as available. Tap "Take this shift" to request taking it (admin/manager must approve).</p>
+    <h2>📢 Shifts available to take</h2>
+    <p style="color:var(--color-muted);font-size:0.875rem;">Shifts other staff have posted as available. Tap "Take this" to request taking it (admin/manager must approve).</p>
     <div id="available-list"><p class="empty">Loading...</p></div>
   </div>
 
   <div class="card">
-    <h2>👥 Team — see who you're swapping with</h2>
-    <p style="color:var(--color-muted);font-size:0.875rem;">All crew members and their next shift. Tap "Request swap" on a shift above, then enter the username.</p>
-    <div class="roster-grid" id="roster-grid"><p class="empty">Loading...</p></div>
-  </div>
-
-  <div class="card">
-    <h2>📋 Swap Requests</h2>
+    <h2>📋 My Swap Activity</h2>
     <div id="swap-list"><p class="empty">Loading...</p></div>
   </div>
 
@@ -33,86 +53,155 @@ import AppLayout from '../layouts/AppLayout.astro';
       const data = await s.loadData();
       const today = s.todayISO();
       const myShifts = s.getShiftsForUser(data, t.user_id).filter(function(x) { return x.date >= today; });
+
+      // Render my shifts as cards with "Post" + "Post custom" buttons
       const list = document.getElementById('my-shifts');
       if (myShifts.length === 0) {
         list.innerHTML = '<p class="empty">No upcoming shifts.</p>';
       } else {
         list.innerHTML = myShifts.map(function(sh) {
-          return '<div class="list-item"><div><div class="who">' + s.formatDate(sh.date, {short:true}) + '</div><div class="meta">' + s.formatTime12(sh.start) + ' – ' + s.formatTime12(sh.end) + ' · ' + sh.role + '</div></div><button class="btn-secondary" data-swap="' + sh.id + '">Request swap</button></div>';
+          return '<div class="list-item" style="align-items:flex-start;padding:0.75rem 0;">' +
+            '<div style="flex:1;min-width:0;">' +
+              '<div class="who">' + s.formatDate(sh.date, {short: true}) + '</div>' +
+              '<div class="meta">' + s.formatTime12(sh.start) + ' – ' + s.formatTime12(sh.end) + ' · ' + sh.role + '</div>' +
+            '</div>' +
+            '<div style="display:flex;flex-direction:column;gap:0.25rem;align-items:flex-end;">' +
+              '<button class="btn-secondary" data-post-shift="' + sh.id + '">Post for swap</button>' +
+            '</div>' +
+          '</div>';
         }).join('');
-        list.querySelectorAll('[data-swap]').forEach(function(b) {
+        list.querySelectorAll('[data-post-shift]').forEach(function(b) {
           b.addEventListener('click', function() {
-            const shiftId = b.getAttribute('data-swap');
-            const target = prompt('Swap with which staff? Enter their username (staff1–staff8 or azmeer):');
-            if (!target) return;
-            const targetUser = data.users.find(function(u) { return u.username === target.trim(); });
-            if (!targetUser) { s.toast('User not found: ' + target); return; }
+            const shiftId = b.getAttribute('data-post-shift');
+            const sh = data.shifts.find(function(x) { return x.id === shiftId; });
+            if (!sh) return;
             s.addPending({
-              kind: 'shift_swap',
+              kind: 'shift_post',
+              shift_id: sh.id,
               requester_id: t.user_id,
               requester_name: t.display_name,
-              target_user_id: targetUser.id,
-              target_user_name: targetUser.display_name,
-              shift_id: shiftId,
+              post_type: 'full',
+              date: sh.date,
+              start: sh.start,
+              end: sh.end,
+              role: sh.role,
+              reason: 'Posting entire shift for swap',
             });
-            s.toast('Swap requested — admin notified');
+            s.toast('Shift posted — admin will approve');
+            renderAvailable();
             renderSwaps();
           });
         });
       }
 
-      // Team roster
-      const sorted = data.users.slice().sort(function(a, b) {
-        if (a.role === 'admin' && b.role !== 'admin') return -1;
-        if (b.role === 'admin' && a.role !== 'admin') return 1;
-        if (a.role === 'manager' && b.role !== 'manager') return -1;
-        if (b.role === 'manager' && a.role !== 'manager') return 1;
-        return a.display_name.localeCompare(b.display_name);
-      });
-      document.getElementById('roster-grid').innerHTML = sorted.map(function(u) {
-        const next = s.getShiftsForUser(data, u.id).filter(function(x) { return x.date >= today; })[0];
-        const roleClass = u.role === 'admin' ? 'role-admin' : u.role === 'manager' ? 'role-manager' : 'role-staff';
-        const nextHTML = next
-          ? '<div class="roster-card-next">' + s.formatDate(next.date, {short: true}) + ' · ' + s.formatTime12(next.start) + '–' + s.formatTime12(next.end) + ' <span class="roster-card-next-role ' + next.role.toLowerCase() + '">' + next.role + '</span></div>'
-          : '<div class="roster-card-next off">No upcoming shifts</div>';
-        return '<div class="roster-card">' +
-          '<div class="roster-card-head">' +
-            '<div class="roster-card-name">' + u.display_name + '</div>' +
-            '<span class="roster-card-role ' + roleClass + '">' + u.role + '</span>' +
-          '</div>' +
-          nextHTML +
-        '</div>';
-      }).join('');
-
-      function renderSwaps() {
-        const seedSwaps = s.getSwapsForUser(data, t.user_id);
-        const myPending = s.getPending().filter(function(p) {
-          return p.kind === 'shift_swap' &&
-            (p.requester_id === t.user_id || p.target_user_id === t.user_id) &&
-            p.status === 'pending';
+      // Custom hours form
+      document.getElementById('custom-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const date = document.getElementById('cp-date').value;
+        const start = document.getElementById('cp-start').value;
+        const end = document.getElementById('cp-end').value;
+        const reason = document.getElementById('cp-reason').value.trim();
+        if (!date || !start || !end || !reason) return;
+        if (end <= start) { s.toast('End must be after start'); return; }
+        s.addPending({
+          kind: 'shift_post',
+          requester_id: t.user_id,
+          requester_name: t.display_name,
+          post_type: 'custom',
+          date: date,
+          start: start,
+          end: end,
+          role: 'FOH', // default; admin can edit
+          reason: reason,
         });
-        const swapList = document.getElementById('swap-list');
-        if (seedSwaps.length === 0 && myPending.length === 0) {
-          swapList.innerHTML = '<p class="empty">No swap requests.</p>';
-        } else {
-          let html = '';
-          myPending.forEach(function(sw) {
-            const role = sw.requester_id === t.user_id ? 'You →' : 'You ←';
-            const other = sw.requester_id === t.user_id ? sw.target_user_name : sw.requester_name;
-            const shift = data.shifts.find(function(x) { return x.id === sw.shift_id; });
-            const shiftDate = shift ? s.formatDate(shift.date, {short:true}) : '—';
-            html += '<div class="list-item"><div><div class="who">' + role + ' ' + other + '</div><div class="meta">Shift on ' + shiftDate + '</div></div><span class="badge badge-pending">pending</span></div>';
-          });
-          seedSwaps.forEach(function(sw) {
-            const role = sw.requester_id === t.user_id ? 'You →' : 'You ←';
-            const other = sw.requester_id === t.user_id ? s.getUserName(data, sw.target_user_id) : s.getUserName(data, sw.requester_id);
-            const shift = data.shifts.find(function(x) { return x.id === sw.shift_id; });
-            const shiftDate = shift ? s.formatDate(shift.date, {short:true}) : '—';
-            html += '<div class="list-item"><div><div class="who">' + role + ' ' + other + '</div><div class="meta">Shift on ' + shiftDate + '</div></div><span class="badge badge-' + sw.status + '">' + sw.status + '</span></div>';
-          });
-          swapList.innerHTML = html;
+        document.getElementById('custom-form').reset();
+        s.toast('Custom hours posted — admin will approve');
+        renderAvailable();
+        renderSwaps();
+      });
+
+      // Available shifts to take (from localStorage approved posts)
+      function renderAvailable() {
+        const approved = s.getPending().filter(function(p) {
+          return p.kind === 'shift_post' && p.status === 'approved' && p.requester_id !== t.user_id;
+        });
+        const list = document.getElementById('available-list');
+        if (approved.length === 0) {
+          list.innerHTML = '<p class="empty">No shifts posted right now.</p>';
+          return;
         }
+        list.innerHTML = approved.map(function(p) {
+          return '<div class="list-item" style="align-items:flex-start;padding:0.75rem 0;">' +
+            '<div style="flex:1;min-width:0;">' +
+              '<div class="who">' + s.getUserName(data, p.requester_id) + '</div>' +
+              '<div class="meta">' + s.formatDate(p.date, {short: true}) + ' · ' + s.formatTime12(p.start) + '–' + s.formatTime12(p.end) + ' · ' + p.role + '</div>' +
+              '<div class="meta" style="font-style:italic;">' + (p.reason || '—') + '</div>' +
+            '</div>' +
+            '<div><button class="btn-primary" data-take="' + p.id + '">Take this</button></div>' +
+          '</div>';
+        }).join('');
+        list.querySelectorAll('[data-take]').forEach(function(b) {
+          b.addEventListener('click', function() {
+            const postId = b.getAttribute('data-take');
+            const post = approved.find(function(p) { return p.id === postId; });
+            if (!post) return;
+            s.addPending({
+              kind: 'shift_take',
+              post_id: postId,
+              shift_id: post.shift_id,
+              taker_id: t.user_id,
+              taker_name: t.display_name,
+              poster_id: post.requester_id,
+              poster_name: post.requester_name,
+              date: post.date,
+              start: post.start,
+              end: post.end,
+              role: post.role,
+              post_type: post.post_type,
+              reason: post.reason,
+            });
+            s.toast('Take request submitted — admin will approve');
+            renderSwaps();
+          });
+        });
       }
+
+      // My swap activity: my posts + my take requests
+      function renderSwaps() {
+        const myPosts = s.getPending().filter(function(p) {
+          return p.kind === 'shift_post' && p.requester_id === t.user_id;
+        });
+        const myTakes = s.getPending().filter(function(p) {
+          return p.kind === 'shift_take' && p.taker_id === t.user_id;
+        });
+        const list = document.getElementById('swap-list');
+        if (myPosts.length === 0 && myTakes.length === 0) {
+          list.innerHTML = '<p class="empty">No swap activity yet.</p>';
+          return;
+        }
+        let html = '';
+        myPosts.forEach(function(p) {
+          html += '<div class="list-item" style="align-items:flex-start;padding:0.75rem 0;">' +
+            '<div style="flex:1;min-width:0;">' +
+              '<div class="who">You posted: ' + s.formatDate(p.date, {short: true}) + ' · ' + s.formatTime12(p.start) + '–' + s.formatTime12(p.end) + '</div>' +
+              '<div class="meta">' + (p.post_type === 'full' ? 'Full shift' : 'Custom hours') + ' · ' + (p.reason || '—') + '</div>' +
+            '</div>' +
+            '<span class="badge badge-' + p.status + '">' + p.status + '</span>' +
+          '</div>';
+        });
+        myTakes.forEach(function(p) {
+          html += '<div class="list-item" style="align-items:flex-start;padding:0.75rem 0;">' +
+            '<div style="flex:1;min-width:0;">' +
+              '<div class="who">You\'re taking: ' + s.formatDate(p.date, {short: true}) + ' · ' + s.formatTime12(p.start) + '–' + s.formatTime12(p.end) + '</div>' +
+              '<div class="meta">From ' + (p.poster_name || '?') + ' · ' + (p.reason || '—') + '</div>' +
+            '</div>' +
+            '<span class="badge badge-' + p.status + '">' + p.status + '</span>' +
+          '</div>';
+        });
+        list.innerHTML = html;
+      }
+
+      renderAvailable();
       renderSwaps();
     })();
   </script>
