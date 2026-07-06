@@ -124,7 +124,7 @@ window.shawarma = (function() {
   async function login(username, password, users) {
     const u = users.find(x => x.username === username);
     if (!u) return { ok: false, error: 'User not found' };
-    if (u.disabled) return { ok: false, error: 'Account is disabled. Contact an admin.' };
+    if (u.disabled && u.disabled !== 'false' && u.disabled !== false) return { ok: false, error: 'Account is disabled. Contact an admin.' };
     const hash = await sha256(password);
     if (hash !== u.password_hash) return { ok: false, error: 'Wrong password' };
     setToken(u);
