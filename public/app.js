@@ -5,6 +5,11 @@ window.shawarma = (function() {
   const TOKEN_KEY = 'shawarma.token';
   const PENDING_KEY = 'shawarma.pending';
 
+  // One-time wipe of stale localStorage on every page load.
+  // The Sheet is the source of truth — any cached pending data is wrong.
+  // (User said "never cache local" — so we clear it on every load.)
+  try { localStorage.removeItem(PENDING_KEY); } catch (e) {}
+
   // ============================================================
   // GOOGLE SHEET WEBHOOK (Apps Script Web App)
   // ------------------------------------------------------------
