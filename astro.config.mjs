@@ -1,4 +1,4 @@
-// Astro config for AndShawarma — static site hosted on GitHub Pages.
+// Astro config — static site, GitHub Pages, no adapter.
 import { defineConfig } from 'astro/config';
 
 export default defineConfig({

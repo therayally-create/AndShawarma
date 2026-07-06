@@ -8,7 +8,7 @@ import '../styles/global.css';
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#dc2626" />
   <title>&amp;Shawarma — Login</title>
-  <script is:inline src="/AndShawarma/app.js?v=20260706110300"></script>
+  <script is:inline src="/AndShawarma/app.js?v=20260706113500"></script>
   <script is:inline>
     // Clear any stale token + pending so login always requires fresh input.
     try { localStorage.removeItem('shawarma.pending'); } catch (e) {}
@@ -26,6 +26,10 @@ import '../styles/global.css';
       <div class="error" id="error"></div>
 
       <form id="login-form">
+        <div class="field">
+          <label for="api-url">API server <span style="color:var(--color-muted);font-weight:normal;">(your tunnel URL — paste the cloudflared URL)</span></label>
+          <input type="url" id="api-url" class="input" placeholder="https://and-shawarma-db.trycloudflare.com" autocomplete="off" />
+        </div>
         <div class="field">
           <label for="username">Username</label>
           <input type="text" id="username" class="input" autocomplete="username" required />
@@ -130,7 +134,7 @@ import '../styles/global.css';
           return;
         }
         // Log the "email" to console (mock — real send via /api/notify)
-        console.log('[PASSWORD RESET] To:', u.email, '| User:', u.username, '| Reset link: https://therayally-create.github.io/AndShawarma/reset?u=' + encodeURIComponent(u.username) + '&t=' + Date.now());
+        console.log('[PASSWORD RESET] To:', u.email, '| User:', u.username, '| Reset link: https://therayally-create.github.io/reset?u=' + encodeURIComponent(u.username) + '&t=' + Date.now());
         // For real deployment: fetch('/api/reset-password', { method: 'POST', body: JSON.stringify({ username: u.username, email: u.email }) })
         result.innerHTML = '<div class="error show" style="background:#dcfce7;color:#166534;">✅ If that username exists, a reset link has been sent to <strong>' + u.email + '</strong>. Check your inbox.</div>';
         s.toast('Reset link sent');
@@ -143,9 +147,21 @@ import '../styles/global.css';
       }
       const form = document.getElementById('login-form');
       const errorEl = document.getElementById('error');
+      // Pre-fill the API URL field with whatever was saved previously
+      const apiUrlInput = document.getElementById('api-url');
+      try { apiUrlInput.value = localStorage.getItem('shawarma.api_url') || ''; } catch (e) {}
       form.addEventListener('submit', async function(e) {
         e.preventDefault();
         errorEl.classList.remove('show');
+        // Save the API URL the user entered. If they cleared it, use same-origin.
+        const apiUrl = (apiUrlInput.value || '').trim().replace(/\/$/, '');
+        if (apiUrl) {
+          try { localStorage.setItem('shawarma.api_url', apiUrl); } catch (e) {}
+          window.__SHAWARMA_API_BASE = apiUrl;
+        } else {
+          try { localStorage.removeItem('shawarma.api_url'); } catch (e) {}
+          window.__SHAWARMA_API_BASE = '';
+        }
         const username = document.getElementById('username').value.trim();
         const password = document.getElementById('password').value;
         const btn = form.querySelector('button');
@@ -153,8 +169,7 @@ import '../styles/global.css';
         btn.textContent = 'Signing in...';
         let result;
         try {
-          const data = await s.loadData();
-          result = await s.login(username, password, data.users);
+          result = await s.login(username, password);
         } catch (err) {
           result = { ok: false, error: 'Network error: ' + err.message };
         }

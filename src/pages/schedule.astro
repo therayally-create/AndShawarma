@@ -38,6 +38,7 @@ import AppLayout from '../layouts/AppLayout.astro';
       const t = s.requireAuth();
       if (!t) return;
       const data = await s.loadData();
+      await s.ensurePendingLoaded();
       const today = s.todayISO();
       const isAdmin = (t.role === 'admin' || t.role === 'manager');
       // canEdit = instant save (admin/manager only)
@@ -53,22 +54,25 @@ import AppLayout from '../layouts/AppLayout.astro';
       viewDay = parseInt(today.slice(8, 10), 10);
 
       // Pending shift changes that touch THIS user's shifts (color them)
-      function myPendingShifts() {
-        return s.getPending().filter(function(p) {
+      // The render() loop pre-computes `pendingIds` once and passes it in.
+      let _pendingIds = new Set();
+      function shiftIsPending(shiftId) {
+        return _pendingIds.has(shiftId);
+      }
+      function refreshPendingIds() {
+        const all = s.getPending();
+        const mine = all.filter(function(p) {
           if (p.kind !== 'shift_change') return false;
           if (p.requester_id !== t.user_id) return false;
           if (p.action === 'delete' && p.before) return p.before.user_id === t.user_id;
           if (p.after) return p.after.user_id === t.user_id;
           return false;
         });
-      }
-      function shiftIsPending(shiftId) {
-        return myPendingShifts().some(function(p) {
-          return p.shift_id === shiftId && p.status === 'pending';
-        });
+        _pendingIds = new Set(mine.map(function(p) { return p.shift_id; }));
       }
 
       function render() {
+        refreshPendingIds();
         const container = document.getElementById('view-container');
         const label = document.getElementById('period-label');
 

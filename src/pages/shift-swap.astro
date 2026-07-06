@@ -51,6 +51,7 @@ import AppLayout from '../layouts/AppLayout.astro';
       const t = s.requireAuth();
       if (!t) return;
       const data = await s.loadData();
+      await s.ensurePendingLoaded();
       const today = s.todayISO();
       const myShifts = s.getShiftsForUser(data, t.user_id).filter(function(x) { return x.date >= today; });
 

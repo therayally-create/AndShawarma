@@ -95,10 +95,12 @@ import AppLayout from '../layouts/AppLayout.astro';
       const t = s.requireAuth(['admin', 'manager']);
       if (!t) return;
       const data = await s.loadData();
+      await s.ensurePendingLoaded();
 
       function renderApprovals() {
         const list = document.getElementById('approvals-list');
-        const pending = data.pending ? data.pending.filter(function(p) { return p.status === 'pending'; }) : [];
+        const all = s.getPending();
+        const pending = all.filter(function(p) { return p.status === 'pending'; });
         document.getElementById('pending-count').textContent = pending.length;
         if (pending.length === 0) {
           list.innerHTML =

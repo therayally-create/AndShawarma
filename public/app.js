@@ -1,123 +1,75 @@
-// &Shawarma shared client code — loaded as a plain <script src> tag.
+// &Shawarma shared client code — talks to the local Node/Express API.
+// The API base URL is injected at deploy time via window.SHAWARMA_API_URL
+// (default: '' → same-origin /api/*).
 // All shared functions on window.shawarma.
+
+(function() {
+  // Try to discover the API base. Order: window.SHAWARMA_API_URL →
+  // localStorage('shawarma.api_url') → meta tag → '' (same origin).
+  function discoverApiBase() {
+    if (typeof window.SHAWARMA_API_URL === 'string' && window.SHAWARMA_API_URL) {
+      return window.SHAWARMA_API_URL.replace(/\/$/, '');
+    }
+    try {
+      const stored = localStorage.getItem('shawarma.api_url');
+      if (stored) return stored.replace(/\/$/, '');
+    } catch (e) {}
+    const meta = document.querySelector('meta[name="shawarma-api-url"]');
+    if (meta && meta.content) return meta.content.replace(/\/$/, '');
+    return '';
+  }
+  window.__SHAWARMA_API_BASE = discoverApiBase();
+  // Allow user to set it at runtime from the login page if they want.
+  window.shawarmaSetApiUrl = function(url) {
+    try { localStorage.setItem('shawarma.api_url', url); } catch (e) {}
+    window.__SHAWARMA_API_BASE = url.replace(/\/$/, '');
+  };
+})();
 
 window.shawarma = (function() {
   const TOKEN_KEY = 'shawarma.token';
-  const PENDING_KEY = 'shawarma.pending';
+  const API = (path) => (window.__SHAWARMA_API_BASE || '') + (path.startsWith('/') ? path : '/' + path);
 
-  // One-time wipe of stale localStorage on every page load.
-  // The Sheet is the source of truth — any cached pending data is wrong.
-  // (User said "never cache local" — so we clear it on every load.)
-  try { localStorage.removeItem(PENDING_KEY); } catch (e) {}
-
-  // ============================================================
-  // GOOGLE SHEET WEBHOOK (Apps Script Web App)
-  // ------------------------------------------------------------
-  // The Sheet is the database. Reads on every page load, writes on
-  // every action. Paste your deployed Web App URL below.
-  // ============================================================
-  const SHEET_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbyPoW6Qo_NbLf9-39OAgtuBtOenEsN9M6XwQBsN9zBPvyDtIIOJjrePgyBcu74tb7GN6Q/exec';
-
-  // Find and update an existing row in the Sheet (matched by id field)
-  async function updateSheetRow(tab, idField, idValue, updates) {
-    if (!SHEET_WEBHOOK_URL) return null;
-    try {
-      const payload = { action: 'update', tab: tab, idField: idField, idValue: idValue, updates: updates };
-      const url = SHEET_WEBHOOK_URL + (SHEET_WEBHOOK_URL.indexOf('?') >= 0 ? '&' : '?') + 'callback=__usheet_' + Date.now() + '&_t=' + Date.now();
-      // Use form-encoded POST to avoid no-cors preflight issues
-      const body = 'payload=' + encodeURIComponent(JSON.stringify(payload));
-      await fetch(url, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: body,
-      });
-      return { ok: true };
-    } catch (e) {
-      console.warn('Sheet update failed:', e);
-      return null;
+  // ---- API helper ----
+  async function api(method, path, body) {
+    const opts = { method, headers: { 'Content-Type': 'application/json' } };
+    const t = getToken();
+    if (t) opts.headers['Authorization'] = 'Bearer ' + t._raw;
+    if (body !== undefined) opts.body = JSON.stringify(body);
+    const res = await fetch(API(path), opts);
+    let data = null;
+    try { data = await res.json(); } catch (e) {}
+    if (!res.ok) {
+      return { ok: false, error: (data && data.error) || ('HTTP ' + res.status) };
     }
+    return Object.assign({ ok: true }, data);
   }
 
-  async function callSheet(method, body) {
-    if (!SHEET_WEBHOOK_URL) return null;
-    try {
-      if (method === 'GET') {
-        // JSONP: Apps Script supports ?callback=foo to bypass CORS.
-        // The response is "foo({...data...})" which we eval.
-        return await new Promise(function(resolve) {
-          const cbName = 'sheetCallback_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
-          window[cbName] = function(data) {
-            delete window[cbName];
-            document.body.removeChild(script);
-            resolve(data);
-          };
-          const script = document.createElement('script');
-          script.src = SHEET_WEBHOOK_URL + (SHEET_WEBHOOK_URL.indexOf('?') >= 0 ? '&' : '?') + 'callback=' + cbName + '&_t=' + Date.now();
-          script.onerror = function() { delete window[cbName]; resolve(null); };
-          document.body.appendChild(script);
-          // Timeout fallback
-          setTimeout(function() { if (window[cbName]) { delete window[cbName]; resolve(null); } }, 10000);
-        });
-      } else {
-        // POST: use no-cors (response is opaque, that's OK for writes)
-        const url = SHEET_WEBHOOK_URL + (SHEET_WEBHOOK_URL.indexOf('?') >= 0 ? '&' : '?') + '_t=' + Date.now();
-        await fetch(url, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(body),
-        });
-        return { ok: true };
-      }
-    } catch (e) {
-      console.warn('Sheet call failed:', e);
-      return null;
-    }
-  }
-
-  async function sha256(text) {
-    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
-    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
-  }
-
+  // ---- Token (only thing we keep locally — auth, not data) ----
   function getToken() {
-    const t = localStorage.getItem(TOKEN_KEY);
-    if (!t) return null;
+    const raw = localStorage.getItem(TOKEN_KEY);
+    if (!raw) return null;
     try {
-      const payload = JSON.parse(atob(t));
+      const payload = JSON.parse(atob(raw));
       if (payload.exp && payload.exp < Math.floor(Date.now() / 1000)) {
         localStorage.removeItem(TOKEN_KEY);
         return null;
       }
+      payload._raw = raw;
       return payload;
     } catch { return null; }
   }
-
-  function setToken(user) {
-    const payload = {
-      user_id: user.id,
-      username: user.username,
-      role: user.role,
-      display_name: user.display_name,
-      exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 30,
-    };
-    localStorage.setItem(TOKEN_KEY, btoa(JSON.stringify(payload)));
-  }
-
+  function setToken(raw) { localStorage.setItem(TOKEN_KEY, raw); }
   function clearToken() { localStorage.removeItem(TOKEN_KEY); }
-
   function logout() {
     clearToken();
     window.location.href = '/AndShawarma/login/';
   }
-
   function baseUrl(path) {
-    if (!path) return '/AndShawarma/';
-    if (path.startsWith('/')) return '/AndShawarma' + path;
-    return '/AndShawarma/' + path;
+    if (!path) return '/';
+    if (path.startsWith('/')) return path;
+    return '/' + path;
   }
-
   function requireAuth(roles) {
     const t = getToken();
     if (!t) { window.location.href = baseUrl('/login'); return null; }
@@ -125,103 +77,110 @@ window.shawarma = (function() {
     return t;
   }
 
-  async function loadData() {
-    // The Google Sheet is the ONLY source of truth. No localStorage cache,
-    // no data.json fallback. If the Sheet is unreachable, the app shows
-    // an error instead of showing stale data.
-    window.__dataCache = null;
-    const result = await callSheet('GET');
-    if (result && result.ok && result.data) {
-      window.__dataCache = result.data;
-      return result.data;
+  // ---- Data (always live from server — no local cache) ----
+  let __dataCache = null;
+  let __dataCacheAt = 0;
+  const DATA_TTL_MS = 5000; // tiny de-dup window so rapid reads don't pound the API
+  async function loadData(opts) {
+    opts = opts || {};
+    const now = Date.now();
+    if (!opts.force && __dataCache && (now - __dataCacheAt) < DATA_TTL_MS) {
+      return __dataCache;
     }
-    // Sheet unreachable — return empty dataset so the app renders without crashing.
-    console.error('Sheet webhook failed:', result);
-    const empty = { users: [], shifts: [], time_off: [], swap_requests: [], pending: [] };
-    window.__dataCache = empty;
-    return empty;
+    const r = await api('GET', '/api/data');
+    if (r.ok) {
+      __dataCache = {
+        users: r.users || [],
+        shifts: r.shifts || [],
+        time_off: r.time_off || [],
+        swap_requests: r.swap_requests || [],
+        pending: r.pending || [],
+      };
+      __dataCacheAt = now;
+      return __dataCache;
+    }
+    throw new Error('Failed to load data: ' + (r.error || 'unknown'));
+  }
+  function invalidateData() { __dataCache = null; __dataCacheAt = 0; }
+
+  async function login(username, password) {
+    const r = await api('POST', '/api/auth/login', { username, password });
+    if (!r.ok) return { ok: false, error: r.error || 'Login failed' };
+    if (r.token) setToken(r.token);
+    invalidateData();
+    return { ok: true, user: r.user };
   }
 
-  async function login(username, password, users) {
-    const u = users.find(x => x.username === username);
-    if (!u) return { ok: false, error: 'User not found' };
-    // Accept any falsy representation: false, 0, '0', 'false', 'FALSE', 'no', empty string
-    var d = u.disabled;
-    var isDisabled = !(d === false || d === 0 || d === '0' || d === 'false' || d === 'FALSE' || d === 'no' || d === '' || d === null || d === undefined);
-    if (isDisabled) return { ok: false, error: 'Account is disabled. Contact an admin.' };
-    const hash = await sha256(password);
-    if (hash !== u.password_hash) return { ok: false, error: 'Wrong password' };
-    setToken(u);
-    return { ok: true, user: u };
+  // ---- Pending requests (in-memory cache, server is source of truth) ----
+  // The cache is hydrated once per page load via refreshPending() and refreshed
+  // automatically after every write. Reads are synchronous so existing call sites
+  // (s.getPending().filter(...)) keep working without changes.
+  let __pendingCache = [];
+  let __pendingReady = null; // Promise resolving when first hydration finishes
+
+  function getPending() { return __pendingCache; }
+  function setPending(arr) { __pendingCache = arr || []; }
+  function clearAllPending() { __pendingCache = []; invalidateData(); }
+
+  // Hydrate the cache from the server. Called on page load and after writes.
+  async function refreshPending() {
+    const r = await api('GET', '/api/pending');
+    if (r.ok && r.pending) __pendingCache = r.pending;
+    return __pendingCache;
+  }
+  // Kick off the initial hydration. Resolves once the first fetch completes.
+  function ensurePendingLoaded() {
+    if (!__pendingReady) __pendingReady = refreshPending();
+    return __pendingReady;
   }
 
-  // ---- Pending requests (also written to Sheet) ----
-  function getPending() {
-    try { return JSON.parse(localStorage.getItem(PENDING_KEY) || '[]'); }
-    catch { return []; }
+  async function addPending(req) {
+    const r = await api('POST', '/api/pending', req);
+    invalidateData();
+    if (r.ok && r.pending) __pendingCache = r.pending;
+    return r.item || req;
   }
-  // Async: fetch pending requests from the Google Sheet (source of truth).
-  // Returns array of pending entries with all fields.
-  async function getPendingFromSheet() {
-    const data = await loadData();
-    return (data && data.pending) ? data.pending : [];
+  async function resolvePending(id, decision) {
+    const r = await api('PATCH', '/api/pending', { id, decision });
+    invalidateData();
+    if (r.ok && r.pending) __pendingCache = r.pending;
+    return r.item || null;
   }
-  function setPending(arr) {
-    localStorage.setItem(PENDING_KEY, JSON.stringify(arr));
+  async function cancelPending(id) {
+    const r = await api('DELETE', '/api/pending/' + encodeURIComponent(id));
+    invalidateData();
+    if (r.ok && r.pending) __pendingCache = r.pending;
+    return r.ok;
   }
-  // Wipe all cached pending requests. Used once on page load to clear
-  // stale localStorage from before the Sheet webhook was wired.
-  function clearAllPending() {
-    localStorage.removeItem(PENDING_KEY);
-    window.__dataCache = null;
-  }
-  function findOrCreate(req) {
-    const all = getPending();
-    const key = (req.kind || '') + '|' + (req.requester_id || req.user_id || '') + '|' + (req.start_date || '') + '|' + (req.end_date || '') + '|' + (req.shift_id || '');
-    let existing = null;
-    for (let i = 0; i < all.length; i++) {
-      const k = (all[i].kind || '') + '|' + (all[i].requester_id || all[i].user_id || '') + '|' + (all[i].start_date || '') + '|' + (all[i].end_date || '') + '|' + (all[i].shift_id || '');
-      if (k === key) { existing = all[i]; break; }
-    }
-    if (existing) {
-      Object.assign(existing, req);
-      setPending(all);
-      return existing;
-    } else {
-      all.push(req);
-      setPending(all);
-      return req;
-    }
-  }
-  function addPending(req) {
-    const all = getPending();
-    req.id = 'p' + Date.now() + Math.random().toString(36).slice(2, 6);
-    req.created_at = new Date().toISOString();
-    req.status = req.status || 'pending';
-    all.push(req);
-    setPending(all);
-    callSheet('POST', req);  // log to Google Sheet
-    return req;
-  }
-  function resolvePending(id, decision) {
-    const all = getPending();
-    const req = all.find(r => r.id === id);
-    if (req) {
-      req.status = decision;
-      req.resolved_at = new Date().toISOString();
-    }
-    setPending(all);
-    if (req) callSheet('POST', req);  // log resolved state
-    return req;
-  }
-
-  // Submit a request. shift_post auto-approves; everything else is pending.
+  function findOrCreate(req) { return req; }
   function submitRequest(req) {
-    const autoApprove = req.kind === 'shift_post';
-    if (autoApprove) req.status = 'approved';
+    if (req.kind === 'shift_post') req.status = 'approved';
     return addPending(req);
   }
 
+  // ---- Shift writes ----
+  async function updateShift(id, updates) {
+    const r = await api('PATCH', '/api/shifts/' + encodeURIComponent(id), updates);
+    invalidateData();
+    return r;
+  }
+  async function createShift(shift) {
+    const r = await api('POST', '/api/shifts', shift);
+    invalidateData();
+    return r;
+  }
+  async function deleteShift(id) {
+    const r = await api('DELETE', '/api/shifts/' + encodeURIComponent(id));
+    invalidateData();
+    return r;
+  }
+  async function createTimeOff(t) {
+    const r = await api('POST', '/api/timeoff', t);
+    invalidateData();
+    return r;
+  }
+
+  // ---- Selectors ----
   function getUserById(d, id) { return d.users.find(u => u.id === id); }
   function getUserName(d, id) { const u = getUserById(d, id); return u ? u.display_name : 'Unknown'; }
   function getShiftsForUser(d, uid) {
@@ -246,13 +205,9 @@ window.shawarma = (function() {
     return d.swap_requests.filter(sw => sw.requester_id === uid || sw.target_user_id === uid)
       .sort((a, b) => b.created_at.localeCompare(a.created_at));
   }
-  // Read time-off blocks from the Sheet (data.time_off + data.pending
-  // with status='approved'). This is the source of truth — every browser
-  // sees the same time-off blocks on the schedule.
   function getTimeOffBlocks(data) {
     const blocks = [];
     if (!data) return blocks;
-    // Helper to expand a time-off entry into per-day blocks
     function addEntry(p) {
       if (!p.start_date || !p.end_date) return;
       const start = new Date(p.start_date + 'T00:00:00');
@@ -265,9 +220,7 @@ window.shawarma = (function() {
         });
       }
     }
-    // Confirmed time-off in the time_off tab
     (data.time_off || []).forEach(addEntry);
-    // Approved pending requests (admin already approved via the queue)
     (data.pending || []).forEach(function(p) {
       if (p.kind === 'time_off' && p.status === 'approved') addEntry(p);
     });
@@ -340,16 +293,16 @@ window.shawarma = (function() {
   window.__toast = toast;
 
   return {
-    sha256, getToken, setToken, clearToken, logout, baseUrl, requireAuth,
-    loadData, login,
-    getPending, setPending, addPending, resolvePending, findOrCreate, submitRequest,
+    api, getToken, setToken, clearToken, logout, baseUrl, requireAuth,
+    loadData, invalidateData,
+    getPending, setPending, addPending, resolvePending, cancelPending, findOrCreate, submitRequest, clearAllPending,
+    refreshPending, ensurePendingLoaded,
+    updateShift, createShift, deleteShift, createTimeOff,
     getUserById, getUserName, getShiftsForUser, getShiftsForDate, getShiftsInRange,
     getTimeOffForUser, getAllTimeOff, getSwapsForUser,
     getTimeOffBlocks, isBlocked,
     todayISO, getMondayOf, getWeekRange, getMonthRange,
     formatDate, formatDayHeader, formatTime12,
     toast,
-    SHEET_WEBHOOK_URL,
-    callSheet
   };
 })();

@@ -67,9 +67,9 @@ export function requireAuth(roles = null) {
   return t;
 }
 
-// Use the current site base (/AndShawarma)
+// Use the current site base (no prefix on Vercel)
 export function baseUrl(path) {
-  const base = '/AndShawarma';
+  const base = '';
   if (!path) return base + '/';
   if (path.startsWith('/')) return base + path;
   return base + '/' + path;

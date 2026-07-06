@@ -49,6 +49,7 @@ import AppLayout from '../layouts/AppLayout.astro';
       const t = s.requireAuth();
       if (!t) return;
       const data = await s.loadData();
+      await s.ensurePendingLoaded();
       const today = s.todayISO();
 
       document.getElementById('user-name').textContent = t.display_name;

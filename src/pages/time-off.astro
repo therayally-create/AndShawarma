@@ -38,6 +38,7 @@ import AppLayout from '../layouts/AppLayout.astro';
       const t = s.requireAuth();
       if (!t) return;
       const data = await s.loadData();
+      await s.ensurePendingLoaded();
 
       document.getElementById('request-form').addEventListener('submit', function(e) {
         e.preventDefault();
@@ -249,13 +250,12 @@ import AppLayout from '../layouts/AppLayout.astro';
       // Wire edit + cancel buttons after each render
       function wireActions() {
         myList.querySelectorAll('[data-cancel-to]').forEach(function(b) {
-          b.addEventListener('click', function() {
+          b.addEventListener('click', async function() {
             const id = b.getAttribute('data-cancel-to');
             if (!confirm('Cancel this time-off request?')) return;
-            const all = s.getPending().filter(function(x) { return x.id !== id; });
-            s.setPending(all);
+            await s.cancelPending(id);
             s.toast('Request cancelled');
-            window.__dataCache = null;
+            invalidateData();
             renderAll();
             renderUpcoming();
           });
