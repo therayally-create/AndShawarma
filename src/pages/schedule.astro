@@ -39,7 +39,11 @@ import AppLayout from '../layouts/AppLayout.astro';
       if (!t) return;
       const data = await s.loadData();
       const today = s.todayISO();
-      const canEdit = (t.role === 'admin' || t.role === 'manager');
+      const isAdmin = (t.role === 'admin' || t.role === 'manager');
+      // canEdit = instant save (admin/manager only)
+      // canRequest = can submit changes (everyone, but goes to approval queue)
+      const canEdit = isAdmin;
+      const canRequest = true;
 
       let view = 'month';
       let viewYear, viewMonth, viewDay;
@@ -47,6 +51,22 @@ import AppLayout from '../layouts/AppLayout.astro';
       viewYear = td.getFullYear();
       viewMonth = td.getMonth() + 1;
       viewDay = parseInt(today.slice(8, 10), 10);
+
+      // Pending shift changes that touch THIS user's shifts (color them)
+      function myPendingShifts() {
+        return s.getPending().filter(function(p) {
+          if (p.kind !== 'shift_change') return false;
+          if (p.requester_id !== t.user_id) return false;
+          if (p.action === 'delete' && p.before) return p.before.user_id === t.user_id;
+          if (p.after) return p.after.user_id === t.user_id;
+          return false;
+        });
+      }
+      function shiftIsPending(shiftId) {
+        return myPendingShifts().some(function(p) {
+          return p.shift_id === shiftId && p.status === 'pending';
+        });
+      }
 
       function render() {
         const container = document.getElementById('view-container');
@@ -56,28 +76,30 @@ import AppLayout from '../layouts/AppLayout.astro';
           const iso = viewYear + '-' + String(viewMonth).padStart(2,'0') + '-' + String(viewDay).padStart(2,'0');
           label.textContent = s.formatDate(iso);
           const shifts = s.getShiftsForDate(data, iso);
+          const addBtn = canEdit
+            ? '<button class="btn-primary" id="day-add">+ Add shift</button>'
+            : '<button class="btn-primary" id="day-add" style="background:var(--color-warning);">+ Request shift</button>';
           if (shifts.length === 0) {
-            container.innerHTML = '<div class="day-view"><p class="empty" style="text-align:center;padding:2rem;">No shifts on this day.</p>' +
-              (canEdit ? '<button class="btn-primary" id="day-add">+ Add shift</button>' : '') + '</div>';
+            container.innerHTML = '<div class="day-view"><p class="empty" style="text-align:center;padding:2rem;">No shifts on this day.</p>' + addBtn + '</div>';
           } else {
             container.innerHTML = '<div class="day-view">' +
               shifts.map(function(sh) {
-                const editBtn = canEdit ? '<button class="btn-secondary" data-edit="' + sh.id + '">Edit</button>' : '';
-                return '<div class="day-shift ' + sh.role.toLowerCase() + '">' +
+                const pending = shiftIsPending(sh.id);
+                const editLabel = canEdit ? 'Edit' : 'Request change';
+                const editBtn = '<button class="btn-secondary" data-edit="' + sh.id + '">' + editLabel + '</button>';
+                return '<div class="day-shift ' + sh.role.toLowerCase() + (pending ? ' pending' : '') + '">' +
                   '<div class="day-shift-main">' +
-                    '<div class="day-shift-name">' + s.getUserName(data, sh.user_id) + '</div>' +
+                    '<div class="day-shift-name">' + s.getUserName(data, sh.user_id) + (pending ? ' <span class="badge badge-pending" style="font-size:0.625rem;">pending</span>' : '') + '</div>' +
                     '<div class="day-shift-time">' + s.formatTime12(sh.start) + ' – ' + s.formatTime12(sh.end) + '</div>' +
                     '<div class="day-shift-role">' + sh.role + (sh.notes ? ' · ' + sh.notes : '') + '</div>' +
                   '</div>' +
                   '<div class="day-shift-actions">' + editBtn + '</div>' +
                 '</div>';
-              }).join('') +
-              (canEdit ? '<button class="btn-primary" id="day-add">+ Add shift</button>' : '') +
-              '</div>';
+              }).join('') + addBtn + '</div>';
           }
-          if (canEdit) {
-            const addBtn = container.querySelector('#day-add');
-            if (addBtn) addBtn.addEventListener('click', function() { openShiftEditor(iso, null); });
+          if (canRequest) {
+            const addBtn2 = container.querySelector('#day-add');
+            if (addBtn2) addBtn2.addEventListener('click', function() { openShiftEditor(iso, null); });
             container.querySelectorAll('[data-edit]').forEach(function(b) {
               b.addEventListener('click', function() { openShiftEditor(iso, b.getAttribute('data-edit')); });
             });
@@ -136,10 +158,12 @@ import AppLayout from '../layouts/AppLayout.astro';
         const shiftsHTML = dayShifts.length === 0
           ? '<p class="empty">No shifts scheduled.</p>'
           : dayShifts.map(function(sh) {
-              const editBtn = canEdit ? '<button class="btn-secondary" data-edit="' + sh.id + '">Edit</button>' : '';
-              return '<div class="day-shift ' + sh.role.toLowerCase() + '">' +
+              const pending = shiftIsPending(sh.id);
+              const editLabel = canEdit ? 'Edit' : 'Request change';
+              const editBtn = '<button class="btn-secondary" data-edit="' + sh.id + '">' + editLabel + '</button>';
+              return '<div class="day-shift ' + sh.role.toLowerCase() + (pending ? ' pending' : '') + '">' +
                 '<div class="day-shift-main">' +
-                  '<div class="day-shift-name">' + s.getUserName(data, sh.user_id) + '</div>' +
+                  '<div class="day-shift-name">' + s.getUserName(data, sh.user_id) + (pending ? ' <span class="badge badge-pending" style="font-size:0.625rem;">pending</span>' : '') + '</div>' +
                   '<div class="day-shift-time">' + s.formatTime12(sh.start) + ' – ' + s.formatTime12(sh.end) + '</div>' +
                   '<div class="day-shift-role">' + sh.role + (sh.notes ? ' · ' + sh.notes : '') + '</div>' +
                 '</div>' +
@@ -147,9 +171,11 @@ import AppLayout from '../layouts/AppLayout.astro';
               '</div>';
             }).join('');
         document.getElementById('modal-shifts').innerHTML = shiftsHTML;
-        const addBtn = canEdit ? '<button class="btn-primary" id="add-shift-btn" style="margin-top:0.75rem;">+ Add shift</button>' : '';
+        const addBtn = canEdit
+          ? '<button class="btn-primary" id="add-shift-btn" style="margin-top:0.75rem;">+ Add shift</button>'
+          : '<button class="btn-primary" id="add-shift-btn" style="margin-top:0.75rem;background:var(--color-warning);">+ Request shift</button>';
         document.getElementById('modal-actions').innerHTML = addBtn;
-        if (canEdit) {
+        if (canRequest) {
           document.getElementById('add-shift-btn').addEventListener('click', function() { openShiftEditor(iso, null); });
           document.querySelectorAll('[data-edit]').forEach(function(b) {
             b.addEventListener('click', function() { openShiftEditor(iso, b.getAttribute('data-edit')); });

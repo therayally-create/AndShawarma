@@ -41,6 +41,12 @@ import AppLayout from '../layouts/AppLayout.astro';
       <p style="color:var(--color-muted);font-size:0.875rem;">Everyone on the &amp;Shawarma crew and how to reach them.</p>
       <div class="roster-grid" id="roster-grid"><p class="empty">Loading...</p></div>
     </div>
+
+    <div class="card">
+      <h2>🔑 Demo Accounts (for testing)</h2>
+      <p style="color:var(--color-muted);font-size:0.875rem;">Tap to copy. Admins: <code style="background:var(--color-bg-soft);padding:0.125rem 0.375rem;border-radius:0.25rem;">admin</code> · Staff: <code style="background:var(--color-bg-soft);padding:0.125rem 0.375rem;border-radius:0.25rem;">staff2026</code></p>
+      <div class="demo-list" id="demo-list"></div>
+    </div>
   </div>
 
   <script>
@@ -91,6 +97,35 @@ import AppLayout from '../layouts/AppLayout.astro';
           '</div>' +
         '</div>';
       }).join('');
+
+      // Demo accounts list (tap to fill login form)
+      const demoCreds = [
+        { username: 'ray',    password: 'ray2026admin', name: 'Ray Ally',     role: 'admin' },
+        { username: 'azmeer', password: 'admin',        name: 'Azmeer',       role: 'admin' },
+        { username: 'badar',  password: 'admin',        name: 'Badar Khokar', role: 'admin' },
+        { username: 'jorge',  password: 'staff2026',    name: 'Jorge',        role: 'staff' },
+        { username: 'jeremy', password: 'staff2026',    name: 'Jeremy',       role: 'staff' },
+        { username: 'adnan',  password: 'staff2026',    name: 'Adnan',        role: 'staff' },
+        { username: 'david',  password: 'staff2026',    name: 'David',        role: 'staff' },
+        { username: 'albero', password: 'staff2026',    name: 'Albero',       role: 'staff' },
+        { username: 'john',   password: 'staff2026',    name: 'John',         role: 'staff' },
+        { username: 'sanaa',  password: 'staff2026',    name: 'Sanaa',        role: 'staff' },
+        { username: 'bhanu',  password: 'staff2026',    name: 'Bhanu',        role: 'staff' },
+      ];
+      document.getElementById('demo-list').innerHTML = demoCreds.map(function(d) {
+        return '<div class="demo-row" data-user="' + d.username + '" data-pass="' + d.password + '">' +
+          '<span class="badge badge-' + d.role + '">' + d.role + '</span>' +
+          '<span class="demo-name">' + d.name + '</span>' +
+          '<code class="demo-cred">' + d.username + ' / ' + d.password + '</code>' +
+        '</div>';
+      }).join('');
+      document.querySelectorAll('.demo-row').forEach(function(r) {
+        r.addEventListener('click', function() {
+          // Logout and prefill login
+          s.clearToken();
+          window.location.href = s.baseUrl('/login') + '?u=' + encodeURIComponent(r.getAttribute('data-user')) + '&p=' + encodeURIComponent(r.getAttribute('data-pass'));
+        });
+      });
     })();
   </script>
 </AppLayout>

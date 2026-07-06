@@ -45,6 +45,13 @@ import '../styles/global.css';
   <script>
     (function() {
       const s = window.shawarma;
+      // Prefill from query string (?u=username&p=password)
+      const params = new URLSearchParams(window.location.search);
+      const preUser = params.get('u');
+      const prePass = params.get('p');
+      if (preUser) document.getElementById('username').value = preUser;
+      if (prePass) document.getElementById('password').value = prePass;
+
       if (s.getToken()) {
         window.location.href = s.baseUrl('/schedule');
         return;
