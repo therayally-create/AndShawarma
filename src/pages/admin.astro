@@ -98,7 +98,7 @@ import AppLayout from '../layouts/AppLayout.astro';
 
       function renderApprovals() {
         const list = document.getElementById('approvals-list');
-        const pending = s.getPending().filter(function(p) { return p.status === 'pending'; });
+        const pending = data.pending ? data.pending.filter(function(p) { return p.status === 'pending'; }) : [];
         document.getElementById('pending-count').textContent = pending.length;
         if (pending.length === 0) {
           list.innerHTML =
@@ -153,17 +153,29 @@ import AppLayout from '../layouts/AppLayout.astro';
         }).join('');
 
         list.querySelectorAll('[data-approve]').forEach(function(b) {
-          b.addEventListener('click', function() {
-            s.resolvePending(b.getAttribute('data-approve'), 'approved');
+          b.addEventListener('click', async function() {
+            const id = b.getAttribute('data-approve');
+            // 1. Update the Sheet (the source of truth)
+            await s.updateSheetRow('pending', 'id', id, { status: 'approved' });
+            // 2. Update local cache + re-render
+            s.resolvePending(id, 'approved');
             s.toast('Approved');
+            await s.loadData();
             renderApprovals();
+            renderTimeOff();
           });
         });
         list.querySelectorAll('[data-deny]').forEach(function(b) {
-          b.addEventListener('click', function() {
-            s.resolvePending(b.getAttribute('data-deny'), 'denied');
+          b.addEventListener('click', async function() {
+            const id = b.getAttribute('data-deny');
+            const reason = prompt('Why are you denying this request? (shown to the staff member)');
+            if (reason === null) return;
+            await s.updateSheetRow('pending', 'id', id, { status: 'denied', denial_reason: reason || 'No reason given' });
+            s.resolvePending(id, 'denied');
             s.toast('Denied');
+            await s.loadData();
             renderApprovals();
+            renderTimeOff();
           });
         });
       }

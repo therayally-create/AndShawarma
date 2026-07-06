@@ -18,6 +18,27 @@ window.shawarma = (function() {
   // ============================================================
   const SHEET_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbyPoW6Qo_NbLf9-39OAgtuBtOenEsN9M6XwQBsN9zBPvyDtIIOJjrePgyBcu74tb7GN6Q/exec';
 
+  // Find and update an existing row in the Sheet (matched by id field)
+  async function updateSheetRow(tab, idField, idValue, updates) {
+    if (!SHEET_WEBHOOK_URL) return null;
+    try {
+      const payload = { action: 'update', tab: tab, idField: idField, idValue: idValue, updates: updates };
+      const url = SHEET_WEBHOOK_URL + (SHEET_WEBHOOK_URL.indexOf('?') >= 0 ? '&' : '?') + 'callback=__usheet_' + Date.now() + '&_t=' + Date.now();
+      // Use form-encoded POST to avoid no-cors preflight issues
+      const body = 'payload=' + encodeURIComponent(JSON.stringify(payload));
+      await fetch(url, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: body,
+      });
+      return { ok: true };
+    } catch (e) {
+      console.warn('Sheet update failed:', e);
+      return null;
+    }
+  }
+
   async function callSheet(method, body) {
     if (!SHEET_WEBHOOK_URL) return null;
     try {
@@ -138,6 +159,12 @@ window.shawarma = (function() {
   function getPending() {
     try { return JSON.parse(localStorage.getItem(PENDING_KEY) || '[]'); }
     catch { return []; }
+  }
+  // Async: fetch pending requests from the Google Sheet (source of truth).
+  // Returns array of pending entries with all fields.
+  async function getPendingFromSheet() {
+    const data = await loadData();
+    return (data && data.pending) ? data.pending : [];
   }
   function setPending(arr) {
     localStorage.setItem(PENDING_KEY, JSON.stringify(arr));
