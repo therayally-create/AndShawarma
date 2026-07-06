@@ -223,8 +223,9 @@ app.post('/api/timeoff', requireAuth, (req, res) => {
 app.use((req, res) => res.status(404).json({ error: 'Not found' }));
 
 const port = process.env.PORT || 3000;
-app.listen(port, () => {
-  console.log(`\n  &Shawarma API listening on http://localhost:${port}`);
+const host = process.env.HOST || '127.0.0.1';
+app.listen(port, host, () => {
+  console.log(`\n  &Shawarma API listening on http://${host}:${port}`);
   console.log(`  DB: ~/Documents/AndShawarmaDB/and-shawarma.db\n`);
   console.log(`  To expose to the web:`);
   console.log(`    cloudflared tunnel --url http://localhost:${port}`);
