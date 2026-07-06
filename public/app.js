@@ -124,7 +124,10 @@ window.shawarma = (function() {
   async function login(username, password, users) {
     const u = users.find(x => x.username === username);
     if (!u) return { ok: false, error: 'User not found' };
-    if (u.disabled && u.disabled !== 'false' && u.disabled !== false) return { ok: false, error: 'Account is disabled. Contact an admin.' };
+    // Accept any falsy representation: false, 0, '0', 'false', 'FALSE', 'no', empty string
+    var d = u.disabled;
+    var isDisabled = !(d === false || d === 0 || d === '0' || d === 'false' || d === 'FALSE' || d === 'no' || d === '' || d === null || d === undefined);
+    if (isDisabled) return { ok: false, error: 'Account is disabled. Contact an admin.' };
     const hash = await sha256(password);
     if (hash !== u.password_hash) return { ok: false, error: 'Wrong password' };
     setToken(u);
