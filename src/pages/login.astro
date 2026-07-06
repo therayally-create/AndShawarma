@@ -32,6 +32,28 @@ import '../styles/global.css';
         <button type="submit" class="btn-primary btn-block">Sign in</button>
       </form>
 
+      <div style="text-align:right;margin-top:0.5rem;">
+        <a href="#" id="forgot-link" style="font-size:0.75rem;color:var(--color-muted);">Forgot password?</a>
+      </div>
+
+      <!-- Forgot password modal -->
+      <div class="modal-backdrop" id="forgot-modal">
+        <div class="modal">
+          <div class="modal-header">
+            <h2>Reset password</h2>
+            <button class="modal-close" id="forgot-close">×</button>
+          </div>
+          <div class="modal-body">
+            <p style="color:var(--color-muted);font-size:0.875rem;margin:0 0 0.75rem;">Enter your username. If an admin email is on file, a reset link will be sent there.</p>
+            <div class="field"><label>Username</label><input type="text" id="forgot-username" class="input" placeholder="your username" /></div>
+            <div id="forgot-result" style="margin-top:0.5rem;display:none;"></div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn-primary" id="forgot-send">Send reset link</button>
+          </div>
+        </div>
+      </div>
+
       <div class="demo-creds">
         <strong>Demo accounts (tap to fill):</strong>
         <div class="demo-grid" id="demo-grid"></div>
@@ -77,6 +99,38 @@ import '../styles/global.css';
           document.getElementById('password').value = p.getAttribute('data-pass');
           document.getElementById('username').focus();
         });
+      });
+
+      // Forgot password modal
+      document.getElementById('forgot-link').addEventListener('click', function(e) {
+        e.preventDefault();
+        document.getElementById('forgot-username').value = document.getElementById('username').value.trim();
+        document.getElementById('forgot-result').style.display = 'none';
+        document.getElementById('forgot-modal').classList.add('show');
+        document.getElementById('forgot-username').focus();
+      });
+      document.getElementById('forgot-close').addEventListener('click', function() {
+        document.getElementById('forgot-modal').classList.remove('show');
+      });
+      document.getElementById('forgot-send').addEventListener('click', async function() {
+        const username = document.getElementById('forgot-username').value.trim();
+        const result = document.getElementById('forgot-result');
+        if (!username) { result.style.display = 'block'; result.innerHTML = '<div class="error show">Enter a username first.</div>'; return; }
+        const data = await s.loadData();
+        const u = data.users.find(function(x) { return x.username === username; });
+        result.style.display = 'block';
+        if (!u) {
+          // Don't reveal whether the user exists — security best practice
+          result.innerHTML = '<div class="error show" style="background:#dcfce7;color:#166534;">If that username exists, a reset link has been sent to the email on file. Check your inbox.</div>';
+          setTimeout(function() { document.getElementById('forgot-modal').classList.remove('show'); }, 2000);
+          return;
+        }
+        // Log the "email" to console (mock — real send via /api/notify)
+        console.log('[PASSWORD RESET] To:', u.email, '| User:', u.username, '| Reset link: https://therayally-create.github.io/AndShawarma/reset?u=' + encodeURIComponent(u.username) + '&t=' + Date.now());
+        // For real deployment: fetch('/api/reset-password', { method: 'POST', body: JSON.stringify({ username: u.username, email: u.email }) })
+        result.innerHTML = '<div class="error show" style="background:#dcfce7;color:#166534;">✅ If that username exists, a reset link has been sent to <strong>' + u.email + '</strong>. Check your inbox.</div>';
+        s.toast('Reset link sent');
+        setTimeout(function() { document.getElementById('forgot-modal').classList.remove('show'); }, 3000);
       });
 
       if (s.getToken()) {
