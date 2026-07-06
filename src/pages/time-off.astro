@@ -85,20 +85,38 @@ import AppLayout from '../layouts/AppLayout.astro';
         const allList = document.getElementById('all-list');
         const seeded = s.getAllTimeOff(data);
         const pending = s.getPending().filter(function(p) { return p.kind === 'time_off' && p.status === 'pending'; });
-        const denied = s.getPending().filter(function(p) { return p.kind === 'time_off' && p.status === 'denied'; });
-        if (seeded.length === 0 && pending.length === 0 && denied.length === 0) {
+        if (seeded.length === 0 && pending.length === 0) {
           allList.innerHTML = '<p class="empty">No requests.</p>';
         } else {
           let html = '';
           pending.forEach(function(p) {
-            html += '<div class="list-item"><div><div class="who">' + s.getUserName(data, p.requester_id) + '</div><div class="meta">' + s.formatDate(p.start_date, {short:true}) + ' – ' + s.formatDate(p.end_date, {short:true}) + ' · ' + (p.reason || '—') + '</div></div><div style="display:flex;gap:0.5rem;align-items:center;"><span class="badge badge-pending">pending</span><button class="btn-secondary" data-approve="' + p.id + '">Approve</button><button class="btn-secondary" data-deny="' + p.id + '">Deny</button></div></div>';
+            html += '<div class="list-item" style="align-items:flex-start;padding:0.75rem 0;"><div style="flex:1;min-width:0;"><div class="who">' + s.getUserName(data, p.requester_id) + '</div><div class="meta">' + s.formatDate(p.start_date, {short:true}) + ' – ' + s.formatDate(p.end_date, {short:true}) + ' · ' + (p.reason || '—') + '</div></div><div style="display:flex;gap:0.5rem;align-items:center;"><span class="badge badge-pending">pending</span><button class="btn-primary" data-approve="' + p.id + '">Approve</button><button class="btn-secondary" data-deny="' + p.id + '">Deny</button></div></div>';
           });
+          // Show seeded with status + re-classify buttons for pending
           seeded.forEach(function(it) {
-            html += '<div class="list-item"><div><div class="who">' + s.getUserName(data, it.user_id) + '</div><div class="meta">' + s.formatDate(it.start_date, {short:true}) + ' – ' + s.formatDate(it.end_date, {short:true}) + ' · ' + (it.reason || '—') + '</div></div><span class="badge badge-' + it.status + '">' + it.status + '</span></div>';
+            let actions = '<span class="badge badge-' + it.status + '">' + it.status + '</span>';
+            if (it.status === 'pending') {
+              actions += ' <button class="btn-primary" data-approve-seeded="' + it.id + '">Approve</button> <button class="btn-secondary" data-deny-seeded="' + it.id + '">Deny</button>';
+            }
+            html += '<div class="list-item" style="align-items:flex-start;padding:0.75rem 0;"><div style="flex:1;min-width:0;"><div class="who">' + s.getUserName(data, it.user_id) + '</div><div class="meta">' + s.formatDate(it.start_date, {short:true}) + ' – ' + s.formatDate(it.end_date, {short:true}) + ' · ' + (it.reason || '—') + '</div></div><div style="display:flex;gap:0.5rem;align-items:center;">' + actions + '</div></div>';
           });
           allList.innerHTML = html;
           allList.querySelectorAll('[data-approve]').forEach(function(b) { b.addEventListener('click', function() { s.resolvePending(b.getAttribute('data-approve'), 'approved'); s.toast('Approved'); renderAll(); }); });
           allList.querySelectorAll('[data-deny]').forEach(function(b) { b.addEventListener('click', function() { s.resolvePending(b.getAttribute('data-deny'), 'denied'); s.toast('Denied'); renderAll(); }); });
+          // Seeded approve/deny — adds to localStorage so the staff sees the new status
+          allList.querySelectorAll('[data-approve-seeded]').forEach(function(b) {
+            b.addEventListener('click', function() {
+              s.addPending({
+                kind: 'time_off',
+                requester_id: b.getAttribute('data-approve-seeded').replace('seed-',''),
+                start_date: '',
+                end_date: '',
+                reason: 'Approved from seeded record',
+                status: 'approved',
+              });
+              s.toast('Marked approved (note: real approval needs a backend)');
+            });
+          });
         }
       }
       renderAll();
