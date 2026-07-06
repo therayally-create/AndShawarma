@@ -27,8 +27,8 @@ import '../styles/global.css';
 
       <form id="login-form">
         <div class="field">
-          <label for="api-url">API server <span style="color:var(--color-muted);font-weight:normal;">(your tunnel URL — paste the cloudflared URL)</span></label>
-          <input type="url" id="api-url" class="input" placeholder="https://and-shawarma-db.trycloudflare.com" autocomplete="off" />
+          <label for="api-url">API server <span style="color:var(--color-muted);font-weight:normal;">(paste the tunnel URL from your Mac's terminal)</span></label>
+          <input type="url" id="api-url" class="input" placeholder="https://strong-dogs-sort.loca.lt" autocomplete="off" required />
         </div>
         <div class="field">
           <label for="username">Username</label>
@@ -153,15 +153,16 @@ import '../styles/global.css';
       form.addEventListener('submit', async function(e) {
         e.preventDefault();
         errorEl.classList.remove('show');
-        // Save the API URL the user entered. If they cleared it, use same-origin.
+        // Save the API URL the user entered. If they cleared it, error out.
         const apiUrl = (apiUrlInput.value || '').trim().replace(/\/$/, '');
-        if (apiUrl) {
-          try { localStorage.setItem('shawarma.api_url', apiUrl); } catch (e) {}
-          window.__SHAWARMA_API_BASE = apiUrl;
-        } else {
-          try { localStorage.removeItem('shawarma.api_url'); } catch (e) {}
-          window.__SHAWARMA_API_BASE = '';
+        if (!apiUrl) {
+          errorEl.textContent = 'Please paste the API server URL from your Mac terminal first.';
+          errorEl.classList.add('show');
+          apiUrlInput.focus();
+          return;
         }
+        try { localStorage.setItem('shawarma.api_url', apiUrl); } catch (e) {}
+        window.__SHAWARMA_API_BASE = apiUrl;
         const username = document.getElementById('username').value.trim();
         const password = document.getElementById('password').value;
         const btn = form.querySelector('button');
