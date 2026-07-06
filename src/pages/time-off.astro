@@ -74,13 +74,23 @@ import AppLayout from '../layouts/AppLayout.astro';
         } else {
           let html = '';
           myPending.forEach(function(p) {
-            html += '<div class="list-item"><div><div class="who">' + s.formatDate(p.start_date, {short:true}) + ' – ' + s.formatDate(p.end_date, {short:true}) + '</div><div class="meta">' + (p.reason || '—') + '</div></div><span class="badge badge-pending">pending review</span></div>';
+            html += '<div class="list-item" style="align-items:flex-start;padding:0.75rem 0;">' +
+              '<div style="flex:1;min-width:0;">' +
+                '<div class="who">' + s.formatDate(p.start_date, {short:true}) + ' – ' + s.formatDate(p.end_date, {short:true}) + '</div>' +
+                '<div class="meta">' + (p.reason || '—') + '</div>' +
+              '</div>' +
+              '<div style="display:flex;gap:0.375rem;align-items:center;">' +
+                '<span class="badge badge-pending">pending review</span>' +
+                '<button class="btn-secondary" data-edit-to="' + p.id + '" style="padding:0.25rem 0.5rem;font-size:0.75rem;">Edit</button>' +
+                '<button class="btn-secondary" data-cancel-to="' + p.id + '" style="padding:0.25rem 0.5rem;font-size:0.75rem;color:#991b1b;">Cancel</button>' +
+              '</div>' +
+            '</div>';
           });
           myResolved.forEach(function(p) {
             const denialHTML = p.status === 'denied' && p.denial_reason
               ? '<div class="meta" style="color:#991b1b;background:#fee2e2;padding:0.25rem 0.5rem;border-radius:0.25rem;margin-top:0.25rem;">Admin says: ' + p.denial_reason + '</div>'
               : '';
-            html += '<div class="list-item"><div><div class="who">' + s.formatDate(p.start_date, {short:true}) + ' – ' + s.formatDate(p.end_date, {short:true}) + '</div><div class="meta">' + (p.reason || '—') + '</div>' + denialHTML + '</div><span class="badge badge-' + p.status + '">' + p.status + '</span></div>';
+            html += '<div class="list-item"><div><div class="who">' + s.formatDate(p.start_date, {short:true}) + ' – ' + s.formatDate(p.end_date, {short:true}) + '</div><div class="meta">' + (p.reason || '—') + '</div>' + denialHTML + '</div><div style="display:flex;gap:0.375rem;align-items:center;"><span class="badge badge-' + p.status + '">' + p.status + '</span><button class="btn-secondary" data-cancel-to="' + p.id + '" style="padding:0.25rem 0.5rem;font-size:0.75rem;color:#991b1b;">Cancel</button></div></div>';
           });
           mine.forEach(function(it) {
             html += '<div class="list-item"><div><div class="who">' + s.formatDate(it.start_date, {short:true}) + ' – ' + s.formatDate(it.end_date, {short:true}) + '</div><div class="meta">' + (it.reason || '—') + '</div></div><span class="badge badge-' + it.status + '">' + it.status + '</span></div>';
@@ -211,6 +221,40 @@ import AppLayout from '../layouts/AppLayout.astro';
         const s = new Date(startISO + 'T00:00:00');
         const e = new Date(endISO + 'T00:00:00');
         return Math.round((e - s) / 86400000);
+      }
+
+      // Wire edit + cancel buttons after each render
+      function wireActions() {
+        myList.querySelectorAll('[data-cancel-to]').forEach(function(b) {
+          b.addEventListener('click', function() {
+            const id = b.getAttribute('data-cancel-to');
+            if (!confirm('Cancel this time-off request?')) return;
+            const all = s.getPending().filter(function(x) { return x.id !== id; });
+            s.setPending(all);
+            s.toast('Request cancelled');
+            window.__dataCache = null;
+            renderAll();
+            renderUpcoming();
+          });
+        });
+        myList.querySelectorAll('[data-edit-to]').forEach(function(b) {
+          b.addEventListener('click', function() {
+            const id = b.getAttribute('data-edit-to');
+            const all = s.getPending();
+            const entry = all.find(function(x) { return x.id === id; });
+            if (!entry) return;
+            // Pre-fill the form with current values and remove the old entry
+            document.getElementById('start_date').value = entry.start_date;
+            document.getElementById('end_date').value = entry.end_date;
+            document.getElementById('reason').value = entry.reason || '';
+            // Remove the old pending entry
+            s.setPending(all.filter(function(x) { return x.id !== id; }));
+            s.toast('Edit the dates and submit again');
+            window.__dataCache = null;
+            renderAll();
+            document.getElementById('reason').focus();
+          });
+        });
       }
 
       renderAll();

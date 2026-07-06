@@ -3,8 +3,8 @@
 :root {
   --color-primary: #dc2626;
   --color-primary-dark: #b91c1c;
-  --color-bg-soft: #fef3f2;
-  --color-border: #fecaca;
+  --color-bg-soft: #f5f5f4;
+  --color-border: #e7e5e4;
   --color-muted: #78716c;
   --color-ink: #1c1917;
   --color-ink-light: #57534e;
@@ -21,7 +21,8 @@ html, body {
   margin: 0;
   padding: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  background: var(--color-bg-soft);
+  background: linear-gradient(180deg, #fafafa 0%, #f5f5f4 100%);
+  background-attachment: fixed;
   color: var(--color-ink);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
@@ -184,7 +185,7 @@ label { display: block; font-size: 0.875rem; font-weight: 600; margin-bottom: 0.
   align-items: center;
   justify-content: center;
   padding: 1rem;
-  background: linear-gradient(135deg, #fef3f2 0%, #fee2e2 100%);
+  background: linear-gradient(135deg, #fafafa 0%, #e7e5e4 100%);
 }
 .login-card {
   background: #fff;
@@ -655,7 +656,7 @@ label { display: block; font-size: 0.875rem; font-weight: 600; margin-bottom: 0.
   font-weight: 600;
   font-size: 0.75rem;
 }
-.roster-cell.foh { background: #fef3f2; }
+.roster-cell.foh { background: #f5f5f4; }
 .roster-cell.boh { background: #eff6ff; }
 .roster-cell.off {
   color: var(--color-muted);
@@ -717,7 +718,7 @@ label { display: block; font-size: 0.875rem; font-weight: 600; margin-bottom: 0.
   cursor: pointer;
   transition: background 0.1s, border-color 0.1s;
 }
-.year-month:hover { background: #fef3f2; border-color: var(--color-primary); }
+.year-month:hover { background: #f5f5f4; border-color: var(--color-primary); }
 .year-month h3 {
   margin: 0 0 0.5rem 0;
   font-size: 0.875rem;
@@ -802,7 +803,7 @@ label { display: block; font-size: 0.875rem; font-weight: 600; margin-bottom: 0.
   overflow: visible;
   min-width: 0;
 }
-.calendar-day:hover { background: #fef3f2; }
+.calendar-day:hover { background: #f5f5f4; }
 .calendar-day.other-month { background: #fafaf9; color: var(--color-muted); }
 .calendar-day.today { background: #fff7ed; }
 .calendar-day.today .day-num { color: var(--color-primary); font-weight: 800; }

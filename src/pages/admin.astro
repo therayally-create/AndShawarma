@@ -85,11 +85,6 @@ import AppLayout from '../layouts/AppLayout.astro';
   </div>
 
   <div class="card">
-    <h2>📅 Shifts This Month</h2>
-    <div id="shifts-list"><p class="empty">Loading...</p></div>
-  </div>
-
-  <div class="card">
     <h2>🏖️ Time-Off</h2>
     <div id="timeoff-list"><p class="empty">Loading...</p></div>
   </div>
@@ -283,18 +278,6 @@ import AppLayout from '../layouts/AppLayout.astro';
         s.toast('User deleted');
         renderUsers();
       });
-
-      const monthStart = new Date(); monthStart.setDate(1);
-      const monthEnd = new Date(monthStart.getFullYear(), monthStart.getMonth() + 1, 0);
-      const msISO = monthStart.toISOString().slice(0,10);
-      const meISO = monthEnd.toISOString().slice(0,10);
-      const monthShifts = s.getShiftsInRange(data, msISO, meISO);
-      const shiftsList = document.getElementById('shifts-list');
-      shiftsList.innerHTML = '<p style="color:var(--color-muted);font-size:0.875rem;margin:0 0 0.5rem;">' + monthShifts.length + ' shifts in ' + s.formatDate(msISO, {monthYear:true}) + '</p>' +
-        monthShifts.slice(0, 20).map(function(sh) {
-          return '<div class="list-item"><div><div class="who">' + s.formatDate(sh.date, {short:true}) + ' · ' + s.formatTime12(sh.start) + '–' + s.formatTime12(sh.end) + '</div><div class="meta">' + s.getUserName(data, sh.user_id) + '</div></div><span class="badge badge-' + sh.role.toLowerCase() + '">' + sh.role + '</span></div>';
-        }).join('') +
-        (monthShifts.length > 20 ? '<p style="color:var(--color-muted);font-size:0.75rem;text-align:center;margin:0.5rem 0 0;">+ ' + (monthShifts.length - 20) + ' more (see Schedule page)</p>' : '');
 
       const toList = document.getElementById('timeoff-list');
       if (data.time_off.length === 0) {
