@@ -457,6 +457,121 @@ label { display: block; font-size: 0.875rem; font-weight: 600; margin-bottom: 0.
   color: #fff;
 }
 
+/* ----- Roster (staff x days grid) ----- */
+.roster-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--color-border);
+  border-radius: 0.75rem;
+  background: #fff;
+  -webkit-overflow-scrolling: touch;
+}
+.roster-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8125rem;
+  min-width: 50rem;
+}
+.roster-table th,
+.roster-table td {
+  padding: 0.5rem 0.375rem;
+  border-bottom: 1px solid var(--color-border);
+  border-right: 1px solid var(--color-border);
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: top;
+}
+.roster-table th:last-child,
+.roster-table td:last-child { border-right: none; }
+.roster-table thead th {
+  background: var(--color-bg-soft);
+  font-weight: 700;
+  color: var(--color-ink);
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+.roster-table thead th .roster-day {
+  display: block;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: var(--color-muted);
+  text-transform: uppercase;
+}
+.roster-table thead th .roster-date {
+  display: block;
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--color-ink);
+  text-transform: none;
+  margin-top: 2px;
+}
+.roster-table thead th.today .roster-date { color: var(--color-primary); }
+.roster-table tbody th {
+  background: #fff;
+  text-align: left;
+  font-weight: 600;
+  color: var(--color-ink);
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  min-width: 9rem;
+  padding: 0.5rem 0.625rem;
+}
+.roster-table tbody th .roster-name {
+  display: block;
+  font-weight: 700;
+  font-size: 0.875rem;
+}
+.roster-table tbody th .roster-role {
+  display: inline-block;
+  margin-top: 2px;
+  font-size: 0.625rem;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.roster-table tbody th .roster-role.role-admin { background: #1c1917; color: #fff; }
+.roster-table tbody th .roster-role.role-manager { background: var(--color-primary); color: #fff; }
+.roster-table tbody th .roster-role.role-staff { background: #e7e5e4; color: var(--color-ink); }
+.roster-cell {
+  display: block;
+  font-size: 0.6875rem;
+  line-height: 1.3;
+  color: var(--color-ink-light);
+}
+.roster-cell .roster-time {
+  display: block;
+  color: var(--color-ink);
+  font-weight: 600;
+  font-size: 0.75rem;
+}
+.roster-cell.foh { background: #fef3f2; }
+.roster-cell.boh { background: #eff6ff; }
+.roster-cell.off {
+  color: var(--color-muted);
+  font-style: italic;
+}
+.roster-cell .roster-shift-role {
+  display: inline-block;
+  font-size: 0.5625rem;
+  font-weight: 700;
+  margin-top: 1px;
+  padding: 0 4px;
+  border-radius: 2px;
+}
+.roster-cell.foh .roster-shift-role { color: var(--color-foh); }
+.roster-cell.boh .roster-shift-role { color: var(--color-boh); }
+
+@media (max-width: 480px) {
+  .roster-table { font-size: 0.6875rem; min-width: 40rem; }
+  .roster-table tbody th { min-width: 7rem; }
+}
+
 /* ----- Day view ----- */
 .day-view {
   display: flex;

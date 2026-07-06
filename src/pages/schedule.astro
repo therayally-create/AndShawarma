@@ -9,7 +9,7 @@ import AppLayout from '../layouts/AppLayout.astro';
     <div class="view-toggle" id="view-toggle">
       <button data-view="day">Day</button>
       <button data-view="month" class="active">Month</button>
-      <button data-view="year">Year</button>
+      <button data-view="roster">Roster</button>
     </div>
   </div>
 
@@ -49,19 +49,10 @@ import AppLayout from '../layouts/AppLayout.astro';
       viewMonth = td.getMonth() + 1;
       viewDay = parseInt(today.slice(8, 10), 10);
 
-      function shiftRange() {
-        if (view === 'day') {
-          const iso = viewYear + '-' + String(viewMonth).padStart(2,'0') + '-' + String(viewDay).padStart(2,'0');
-          return { start: iso, end: iso, days: [iso] };
-        }
-        if (view === 'month') return s.getMonthRange(viewYear, viewMonth);
-        // year: Jan 1 → Dec 31
-        return { start: viewYear + '-01-01', end: viewYear + '-12-31', days: null, year: viewYear };
-      }
-
       function render() {
         const container = document.getElementById('view-container');
         const label = document.getElementById('period-label');
+
         if (view === 'day') {
           const iso = viewYear + '-' + String(viewMonth).padStart(2,'0') + '-' + String(viewDay).padStart(2,'0');
           label.textContent = s.formatDate(iso);
@@ -86,13 +77,15 @@ import AppLayout from '../layouts/AppLayout.astro';
               '</div>';
           }
           if (canEdit) {
-            container.querySelector('#day-add').addEventListener('click', function() { openShiftEditor(iso, null); });
+            const addBtn = container.querySelector('#day-add');
+            if (addBtn) addBtn.addEventListener('click', function() { openShiftEditor(iso, null); });
             container.querySelectorAll('[data-edit]').forEach(function(b) {
               b.addEventListener('click', function() { openShiftEditor(iso, b.getAttribute('data-edit')); });
             });
           }
           return;
         }
+
         if (view === 'month') {
           label.textContent = s.formatDate(viewYear + '-' + String(viewMonth).padStart(2,'0') + '-01', { monthYear: true });
           const range = s.getMonthRange(viewYear, viewMonth);
@@ -113,7 +106,6 @@ import AppLayout from '../layouts/AppLayout.astro';
           const head = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(function(d) { return '<div class="calendar-head">' + d + '</div>'; }).join('');
           const body = cells.map(function(c) {
             const dayShifts = s.getShiftsForDate(data, c.iso);
-            // Show up to 3 shift lines with name + time, +N more
             const lines = dayShifts.slice(0, 3).map(function(sh) {
               const firstName = s.getUserName(data, sh.user_id).split(' ')[0];
               return '<div class="shift-line ' + sh.role.toLowerCase() + '"><strong>' + firstName + '</strong> ' + s.formatTime12(sh.start) + '–' + s.formatTime12(sh.end) + '</div>';
@@ -131,48 +123,40 @@ import AppLayout from '../layouts/AppLayout.astro';
           });
           return;
         }
-        // year
-        label.textContent = String(viewYear);
-        const months = [];
-        for (let m = 1; m <= 12; m++) months.push(s.getMonthRange(viewYear, m));
-        container.innerHTML = '<div class="year-grid">' + months.map(function(range, idx) {
-          const monthName = new Date(viewYear, idx, 1).toLocaleDateString('en-US', { month: 'short' });
-          const firstDate = new Date(viewYear, idx, 1);
-          const firstDow = firstDate.getDay();
-          const cells = [];
-          for (let i = 0; i < firstDow; i++) cells.push({ iso: null, other: true });
-          for (let i = 0; i < range.days.length; i++) {
-            const shifts = s.getShiftsForDate(data, range.days[i]);
-            let cls = '';
-            if (shifts.length > 0) {
-              const hasFOH = shifts.some(function(sh) { return sh.role === 'FOH'; });
-              const hasBOH = shifts.some(function(sh) { return sh.role === 'BOH'; });
-              cls = 'has-shift' + (hasFOH ? ' foh' : '') + (hasBOH ? ' boh' : '') + (hasFOH && hasBOH ? ' both' : '');
-            }
-            if (range.days[i] === today) cls += ' today';
-            cells.push({ iso: range.days[i], cls: cls });
-          }
-          const head = ['S','M','T','W','T','F','S'].map(function(d) { return '<div class="mini-head">' + d + '</div>'; }).join('');
-          const body = cells.map(function(c) {
-            if (c.other) return '<div class="mini-day other"></div>';
-            return '<div class="mini-day ' + c.cls + '">' + parseInt(c.iso.slice(8,10), 10) + '</div>';
-          }).join('');
-          const totalShifts = s.getShiftsInRange(data, range.start, range.end).length;
-          return '<div class="year-month" data-year="' + viewYear + '" data-month="' + (idx + 1) + '">' +
-            '<h3>' + monthName + '</h3>' +
-            '<div class="year-mini-grid">' + head + body + '</div>' +
-            '<div class="year-month-count">' + totalShifts + ' shift' + (totalShifts === 1 ? '' : 's') + '</div>' +
-          '</div>';
-        }).join('') + '</div>';
-        container.querySelectorAll('.year-month').forEach(function(el) {
-          el.addEventListener('click', function() {
-            view = 'month';
-            viewYear = parseInt(el.getAttribute('data-year'), 10);
-            viewMonth = parseInt(el.getAttribute('data-month'), 10);
-            updateToggle();
-            render();
+
+        if (view === 'roster') {
+          label.textContent = s.formatDate(viewYear + '-' + String(viewMonth).padStart(2,'0') + '-01', { monthYear: true });
+          const range = s.getMonthRange(viewYear, viewMonth);
+          const users = data.users.slice().sort(function(a, b) {
+            if (a.role === 'admin' && b.role !== 'admin') return -1;
+            if (b.role === 'admin' && a.role !== 'admin') return 1;
+            if (a.role === 'manager' && b.role !== 'manager') return -1;
+            if (b.role === 'manager' && a.role !== 'manager') return 1;
+            return a.display_name.localeCompare(b.display_name);
           });
-        });
+          const headHTML = '<thead><tr><th>Employee</th>' + range.days.map(function(iso) {
+            const d = new Date(iso + 'T00:00:00');
+            const dayName = d.toLocaleDateString('en-US', { weekday: 'short' });
+            const isToday = iso === today;
+            return '<th class="' + (isToday ? 'today' : '') + '"><span class="roster-day">' + dayName + '</span><span class="roster-date">' + d.getDate() + '</span></th>';
+          }).join('') + '</tr></thead>';
+          const bodyHTML = '<tbody>' + users.map(function(u) {
+            const roleClass = u.role === 'admin' ? 'role-admin' : u.role === 'manager' ? 'role-manager' : 'role-staff';
+            const cells = range.days.map(function(iso) {
+              const dayShifts = s.getShiftsForDate(data, iso).filter(function(sh) { return sh.user_id === u.id; });
+              if (dayShifts.length === 0) return '<td><span class="roster-cell off">OFF</span></td>';
+              return '<td>' + dayShifts.map(function(sh) {
+                return '<span class="roster-cell ' + sh.role.toLowerCase() + '">' +
+                  '<span class="roster-time">' + s.formatTime12(sh.start) + '–' + s.formatTime12(sh.end) + '</span>' +
+                  '<span class="roster-shift-role">' + sh.role + '</span>' +
+                '</span>';
+              }).join('') + '</td>';
+            }).join('');
+            return '<tr><th scope="row"><span class="roster-name">' + u.display_name + '</span><span class="roster-role ' + roleClass + '">' + u.role + '</span></th>' + cells + '</tr>';
+          }).join('') + '</tbody>';
+          container.innerHTML = '<div class="roster-wrap"><table class="roster-table">' + headHTML + bodyHTML + '</table></div>';
+          return;
+        }
       }
 
       function updateToggle() {
@@ -284,16 +268,14 @@ import AppLayout from '../layouts/AppLayout.astro';
         });
       });
 
-      // Prev/Next depends on view
+      // Prev/Next
       document.getElementById('prev-period').addEventListener('click', function() {
         if (view === 'day') {
           const d = new Date(viewYear, viewMonth - 1, viewDay);
           d.setDate(d.getDate() - 1);
           viewYear = d.getFullYear(); viewMonth = d.getMonth() + 1; viewDay = d.getDate();
-        } else if (view === 'month') {
-          viewMonth--; if (viewMonth < 1) { viewMonth = 12; viewYear--; }
         } else {
-          viewYear--;
+          viewMonth--; if (viewMonth < 1) { viewMonth = 12; viewYear--; }
         }
         render();
       });
@@ -302,10 +284,8 @@ import AppLayout from '../layouts/AppLayout.astro';
           const d = new Date(viewYear, viewMonth - 1, viewDay);
           d.setDate(d.getDate() + 1);
           viewYear = d.getFullYear(); viewMonth = d.getMonth() + 1; viewDay = d.getDate();
-        } else if (view === 'month') {
-          viewMonth++; if (viewMonth > 12) { viewMonth = 1; viewYear++; }
         } else {
-          viewYear++;
+          viewMonth++; if (viewMonth > 12) { viewMonth = 1; viewYear++; }
         }
         render();
       });
