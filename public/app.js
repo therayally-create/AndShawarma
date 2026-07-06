@@ -21,17 +21,34 @@ window.shawarma = (function() {
   async function callSheet(method, body) {
     if (!SHEET_WEBHOOK_URL) return null;
     try {
-      // Append a cache-bust query param so the browser never serves stale data
-      const url = SHEET_WEBHOOK_URL + (SHEET_WEBHOOK_URL.indexOf('?') >= 0 ? '&' : '?') + '_t=' + Date.now();
-      const opts = {
-        method: method,
-        headers: { 'Content-Type': 'application/json' },
-        cache: 'no-store',
-        redirect: 'follow',
-      };
-      if (body) opts.body = JSON.stringify(body);
-      const res = await fetch(url, opts);
-      return await res.json();
+      if (method === 'GET') {
+        // JSONP: Apps Script supports ?callback=foo to bypass CORS.
+        // The response is "foo({...data...})" which we eval.
+        return await new Promise(function(resolve) {
+          const cbName = 'sheetCallback_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
+          window[cbName] = function(data) {
+            delete window[cbName];
+            document.body.removeChild(script);
+            resolve(data);
+          };
+          const script = document.createElement('script');
+          script.src = SHEET_WEBHOOK_URL + (SHEET_WEBHOOK_URL.indexOf('?') >= 0 ? '&' : '?') + 'callback=' + cbName + '&_t=' + Date.now();
+          script.onerror = function() { delete window[cbName]; resolve(null); };
+          document.body.appendChild(script);
+          // Timeout fallback
+          setTimeout(function() { if (window[cbName]) { delete window[cbName]; resolve(null); } }, 10000);
+        });
+      } else {
+        // POST: use no-cors (response is opaque, that's OK for writes)
+        const url = SHEET_WEBHOOK_URL + (SHEET_WEBHOOK_URL.indexOf('?') >= 0 ? '&' : '?') + '_t=' + Date.now();
+        await fetch(url, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+        });
+        return { ok: true };
+      }
     } catch (e) {
       console.warn('Sheet call failed:', e);
       return null;
