@@ -294,7 +294,7 @@ window.shawarma = (function() {
 
   return {
     api, getToken, setToken, clearToken, logout, baseUrl, requireAuth,
-    loadData, invalidateData,
+    login, loadData, invalidateData,
     getPending, setPending, addPending, resolvePending, cancelPending, findOrCreate, submitRequest, clearAllPending,
     refreshPending, ensurePendingLoaded,
     updateShift, createShift, deleteShift, createTimeOff,
