@@ -9,6 +9,12 @@ import AppLayout from '../layouts/AppLayout.astro';
   </div>
 
   <div class="card">
+    <h2>👥 Team — see who you're swapping with</h2>
+    <p style="color:var(--color-muted);font-size:0.875rem;">All crew members and their next shift. Tap "Request swap" on a shift above, then enter the username.</p>
+    <div class="roster-grid" id="roster-grid"><p class="empty">Loading...</p></div>
+  </div>
+
+  <div class="card">
     <h2>📋 Swap Requests</h2>
     <div id="swap-list"><p class="empty">Loading...</p></div>
   </div>
@@ -48,6 +54,29 @@ import AppLayout from '../layouts/AppLayout.astro';
           });
         });
       }
+
+      // Team roster
+      const sorted = data.users.slice().sort(function(a, b) {
+        if (a.role === 'admin' && b.role !== 'admin') return -1;
+        if (b.role === 'admin' && a.role !== 'admin') return 1;
+        if (a.role === 'manager' && b.role !== 'manager') return -1;
+        if (b.role === 'manager' && a.role !== 'manager') return 1;
+        return a.display_name.localeCompare(b.display_name);
+      });
+      document.getElementById('roster-grid').innerHTML = sorted.map(function(u) {
+        const next = s.getShiftsForUser(data, u.id).filter(function(x) { return x.date >= today; })[0];
+        const roleClass = u.role === 'admin' ? 'role-admin' : u.role === 'manager' ? 'role-manager' : 'role-staff';
+        const nextHTML = next
+          ? '<div class="roster-card-next">' + s.formatDate(next.date, {short: true}) + ' · ' + s.formatTime12(next.start) + '–' + s.formatTime12(next.end) + ' <span class="roster-card-next-role ' + next.role.toLowerCase() + '">' + next.role + '</span></div>'
+          : '<div class="roster-card-next off">No upcoming shifts</div>';
+        return '<div class="roster-card">' +
+          '<div class="roster-card-head">' +
+            '<div class="roster-card-name">' + u.display_name + '</div>' +
+            '<span class="roster-card-role ' + roleClass + '">' + u.role + '</span>' +
+          '</div>' +
+          nextHTML +
+        '</div>';
+      }).join('');
 
       function renderSwaps() {
         const seedSwaps = s.getSwapsForUser(data, t.user_id);
