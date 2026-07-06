@@ -7,7 +7,8 @@
       "role": "admin",
       "display_name": "Ray Ally",
       "email": "theRayally@gmail.com",
-      "phone": "+12624499088"
+      "phone": "+12624499088",
+      "disabled": false
     },
     {
       "id": "u2",
@@ -16,79 +17,88 @@
       "role": "manager",
       "display_name": "Azmeer",
       "email": "azmeer@andshawarma.example",
-      "phone": "+15551234567"
+      "phone": "+15551234567",
+      "disabled": false
     },
     {
       "id": "u3",
-      "username": "staff1",
+      "username": "jorge",
       "password_hash": "7448477c642e607e214fc8f12e1e68389c59f142459fea8c074b324acb553100",
       "role": "staff",
-      "display_name": "Staff 1",
-      "email": "staff1@andshawarma.example",
-      "phone": "+15551234568"
+      "display_name": "Jorge",
+      "email": "jorge@andshawarma.example",
+      "phone": "+15551230003",
+      "disabled": false
     },
     {
       "id": "u4",
-      "username": "staff2",
+      "username": "jeremy",
       "password_hash": "7448477c642e607e214fc8f12e1e68389c59f142459fea8c074b324acb553100",
       "role": "staff",
-      "display_name": "Staff 2",
-      "email": "staff2@andshawarma.example",
-      "phone": "+15551234569"
+      "display_name": "Jeremy",
+      "email": "jeremy@andshawarma.example",
+      "phone": "+15551230004",
+      "disabled": false
     },
     {
       "id": "u5",
-      "username": "staff3",
+      "username": "adnan",
       "password_hash": "7448477c642e607e214fc8f12e1e68389c59f142459fea8c074b324acb553100",
       "role": "staff",
-      "display_name": "Staff 3",
-      "email": "staff3@andshawarma.example",
-      "phone": "+15551234570"
+      "display_name": "Adnan",
+      "email": "adnan@andshawarma.example",
+      "phone": "+15551230005",
+      "disabled": false
     },
     {
       "id": "u6",
-      "username": "staff4",
+      "username": "david",
       "password_hash": "7448477c642e607e214fc8f12e1e68389c59f142459fea8c074b324acb553100",
       "role": "staff",
-      "display_name": "Staff 4",
-      "email": "staff4@andshawarma.example",
-      "phone": "+15551234571"
+      "display_name": "David",
+      "email": "david@andshawarma.example",
+      "phone": "+15551230006",
+      "disabled": false
     },
     {
       "id": "u7",
-      "username": "staff5",
+      "username": "albero",
       "password_hash": "7448477c642e607e214fc8f12e1e68389c59f142459fea8c074b324acb553100",
       "role": "staff",
-      "display_name": "Staff 5",
-      "email": "staff5@andshawarma.example",
-      "phone": "+15551234572"
+      "display_name": "Albero",
+      "email": "albero@andshawarma.example",
+      "phone": "+15551230007",
+      "disabled": false
     },
     {
       "id": "u8",
-      "username": "staff6",
+      "username": "john",
       "password_hash": "7448477c642e607e214fc8f12e1e68389c59f142459fea8c074b324acb553100",
       "role": "staff",
-      "display_name": "Staff 6",
-      "email": "staff6@andshawarma.example",
-      "phone": "+15551234573"
+      "display_name": "John",
+      "email": "john@andshawarma.example",
+      "phone": "+15551230008",
+      "disabled": false
     },
     {
       "id": "u9",
-      "username": "staff7",
+      "username": "sanaa",
       "password_hash": "7448477c642e607e214fc8f12e1e68389c59f142459fea8c074b324acb553100",
       "role": "staff",
-      "display_name": "Staff 7",
-      "email": "staff7@andshawarma.example",
-      "phone": "+15551234574"
+      "display_name": "Sanaa",
+      "email": "sanaa@andshawarma.example",
+      "phone": "+15551230009",
+      "disabled": false
     },
     {
       "id": "u10",
-      "username": "staff8",
+      "username": "bhanu",
       "password_hash": "7448477c642e607e214fc8f12e1e68389c59f142459fea8c074b324acb553100",
       "role": "staff",
-      "display_name": "Staff 8",
-      "email": "staff8@andshawarma.example",
-      "phone": "+15551234575"
+      "display_name": "Bhanu",
+      "email": "bhanu@andshawarma.example",
+      "phone": "+15551230010",
+      "disabled": false
     }
   ],
   "shifts": [

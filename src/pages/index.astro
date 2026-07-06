@@ -70,7 +70,7 @@ import AppLayout from '../layouts/AppLayout.astro';
         }).join('');
       }
 
-      // Team roster with phone + email
+      // Team roster — info only (name, role, phone, email), no shift times
       const sorted = data.users.slice().sort(function(a, b) {
         if (a.role === 'admin' && b.role !== 'admin') return -1;
         if (b.role === 'admin' && a.role !== 'admin') return 1;
@@ -79,17 +79,12 @@ import AppLayout from '../layouts/AppLayout.astro';
         return a.display_name.localeCompare(b.display_name);
       });
       document.getElementById('roster-grid').innerHTML = sorted.map(function(u) {
-        const next = s.getShiftsForUser(data, u.id).filter(function(x) { return x.date >= today; })[0];
         const roleClass = u.role === 'admin' ? 'role-admin' : u.role === 'manager' ? 'role-manager' : 'role-staff';
-        const nextHTML = next
-          ? '<div class="roster-card-next">' + s.formatDate(next.date, {short: true}) + ' · ' + s.formatTime12(next.start) + '–' + s.formatTime12(next.end) + ' <span class="roster-card-next-role ' + next.role.toLowerCase() + '">' + next.role + '</span></div>'
-          : '<div class="roster-card-next off">No upcoming shifts</div>';
         return '<div class="roster-card">' +
           '<div class="roster-card-head">' +
             '<div class="roster-card-name">' + u.display_name + '</div>' +
             '<span class="roster-card-role ' + roleClass + '">' + u.role + '</span>' +
           '</div>' +
-          nextHTML +
           '<div class="roster-card-contact">' +
             '<a href="tel:' + u.phone + '">📞 ' + u.phone + '</a>' +
             '<a href="mailto:' + u.email + '">✉️ ' + u.email + '</a>' +
