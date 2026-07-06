@@ -485,13 +485,15 @@ label { display: block; font-size: 0.875rem; font-weight: 600; margin-bottom: 0.
 .roster-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
-  gap: 0.5rem;
+  gap: 1rem;
+  padding: 0.25rem;
 }
 .roster-card {
-  background: var(--color-bg-soft);
-  border: 1px solid var(--color-border);
+  background: #fff;
+  border: 1px solid #d6d3d1;
   border-radius: 0.625rem;
-  padding: 0.625rem 0.75rem;
+  padding: 0.75rem;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
 }
 .roster-card-head {
   display: flex;
