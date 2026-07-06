@@ -3,8 +3,8 @@ import AppLayout from '../layouts/AppLayout.astro';
 ---
 <AppLayout title="&Shawarma — Shift Swap" active="swap">
   <div class="card">
-    <h2>📜 Pending Shift Swaps</h2>
-    <p style="color:var(--color-muted);font-size:0.875rem;">All swap activity from the team. Anyone can see who's posted a shift and who's volunteered. Admin/manager must approve before changes take effect.</p>
+    <h2>🤝 Swap a shift with me</h2>
+    <p style="color:var(--color-muted);font-size:0.875rem;">Anyone can volunteer to take a posted shift. Admin/manager must approve before it takes effect.</p>
     <div id="swap-log"><p class="empty">Loading...</p></div>
   </div>
 
@@ -207,7 +207,8 @@ import AppLayout from '../layouts/AppLayout.astro';
         list.innerHTML = html;
       }
 
-      // Public swap log — every post + every take request, visible to all
+      // "Swap a shift with me" log — every post + every take request, with
+      // "I'll take it" voting buttons on every open post
       function renderLog() {
         const log = document.getElementById('swap-log');
         const all = s.getPending().filter(function(p) {
@@ -221,29 +222,71 @@ import AppLayout from '../layouts/AppLayout.astro';
         all.sort(function(a, b) { return b.created_at.localeCompare(a.created_at); });
         log.innerHTML = all.map(function(p) {
           const dateStr = s.formatDate(p.date, {short: true}) + ' · ' + s.formatTime12(p.start) + '–' + s.formatTime12(p.end);
-          let who, what;
+          // Find existing take requests for this post
+          const takers = all.filter(function(x) {
+            return x.kind === 'shift_take' && x.post_id === p.id;
+          });
+          const takersHTML = takers.length > 0
+            ? '<div class="takers-list">' + takers.map(function(t) {
+                return '<span class="taker-pill">' + t.taker_name + ' <span class="badge badge-' + t.status + '" style="margin-left:0.25rem;">' + t.status + '</span></span>';
+              }).join('') + '</div>'
+            : '';
+          // Show "I'll take it" button if: it's a post, approved, no current take by me
+          let voteBtn = '';
+          if (p.kind === 'shift_post' && p.status === 'approved' && p.requester_id !== t.user_id) {
+            const myTake = takers.find(function(x) { return x.taker_id === t.user_id; });
+            if (!myTake) {
+              voteBtn = '<button class="btn-primary" data-volunteer="' + p.id + '" style="margin-top:0.5rem;">🙋 I\'ll take it</button>';
+            } else {
+              voteBtn = '<span class="badge badge-pending" style="margin-top:0.5rem;">You volunteered</span>';
+            }
+          }
           if (p.kind === 'shift_post') {
-            who = p.requester_name;
-            what = p.post_type === 'full' ? 'posted their full shift' : 'posted custom hours';
-            return '<div class="list-item" style="align-items:flex-start;padding:0.75rem 0;">' +
+            return '<div class="list-item shift-post" style="align-items:flex-start;padding:0.75rem 0;">' +
               '<div style="flex:1;min-width:0;">' +
-                '<div class="who">📢 <strong>' + who + '</strong> ' + what + '</div>' +
+                '<div class="who">📢 <strong>' + p.requester_name + '</strong> needs someone to cover</div>' +
                 '<div class="meta">' + dateStr + ' · ' + p.role + ' · ' + (p.reason || '—') + '</div>' +
+                takersHTML + voteBtn +
               '</div>' +
               '<span class="badge badge-' + p.status + '">' + p.status + '</span>' +
             '</div>';
           } else {
-            who = p.taker_name;
-            const poster = p.poster_name || '?';
-            return '<div class="list-item" style="align-items:flex-start;padding:0.75rem 0;">' +
+            return '<div class="list-item shift-take" style="align-items:flex-start;padding:0.5rem 0 0.5rem 1.5rem;">' +
               '<div style="flex:1;min-width:0;">' +
-                '<div class="who">🙋 <strong>' + who + '</strong> volunteered to take ' + poster + '\'s shift</div>' +
-                '<div class="meta">' + dateStr + ' · ' + p.role + '</div>' +
+                '<div class="who">🙋 <strong>' + p.taker_name + '</strong> volunteered</div>' +
               '</div>' +
               '<span class="badge badge-' + p.status + '">' + p.status + '</span>' +
             '</div>';
           }
         }).join('');
+
+        // Wire up "I'll take it" buttons
+        log.querySelectorAll('[data-volunteer]').forEach(function(btn) {
+          btn.addEventListener('click', function() {
+            const postId = btn.getAttribute('data-volunteer');
+            const post = all.find(function(x) { return x.id === postId; });
+            if (!post) return;
+            s.addPending({
+              kind: 'shift_take',
+              post_id: postId,
+              shift_id: post.shift_id,
+              taker_id: t.user_id,
+              taker_name: t.display_name,
+              poster_id: post.requester_id,
+              poster_name: post.requester_name,
+              date: post.date,
+              start: post.start,
+              end: post.end,
+              role: post.role,
+              post_type: post.post_type,
+              reason: post.reason,
+            });
+            s.toast('Volunteered — admin will approve');
+            renderLog();
+            renderAvailable();
+            renderSwaps();
+          });
+        });
       }
 
       renderAvailable();

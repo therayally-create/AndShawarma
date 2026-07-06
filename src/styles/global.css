@@ -851,6 +851,18 @@ label { display: block; font-size: 0.875rem; font-weight: 600; margin-bottom: 0.
 .day-shift.foh { border-left: 4px solid var(--color-foh); }
 .day-shift.boh { border-left: 4px solid var(--color-boh); }
 .day-shift-actions { display: flex; gap: 0.25rem; }
+.shift-post { background: #fffbeb; border-radius: 0.5rem; padding: 0.625rem; }
+.takers-list { display: flex; flex-wrap: wrap; gap: 0.375rem; margin-top: 0.5rem; }
+.taker-pill {
+  display: inline-flex;
+  align-items: center;
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: 9999px;
+  padding: 0.125rem 0.5rem;
+  font-size: 0.75rem;
+  color: var(--color-ink);
+}
 
 /* ----- Empty state ----- */
 .empty {
