@@ -38,7 +38,7 @@ import AppLayout from '../layouts/AppLayout.astro';
 
     <div class="card">
       <h2>👥 Team Roster</h2>
-      <p style="color:var(--color-muted);font-size:0.875rem;">Everyone on the &amp;Shawarma crew and their next shift.</p>
+      <p style="color:var(--color-muted);font-size:0.875rem;">Everyone on the &amp;Shawarma crew and how to reach them.</p>
       <div class="roster-grid" id="roster-grid"><p class="empty">Loading...</p></div>
     </div>
   </div>
@@ -70,7 +70,7 @@ import AppLayout from '../layouts/AppLayout.astro';
         }).join('');
       }
 
-      // Team roster
+      // Team roster with phone + email
       const sorted = data.users.slice().sort(function(a, b) {
         if (a.role === 'admin' && b.role !== 'admin') return -1;
         if (b.role === 'admin' && a.role !== 'admin') return 1;
@@ -90,6 +90,10 @@ import AppLayout from '../layouts/AppLayout.astro';
             '<span class="roster-card-role ' + roleClass + '">' + u.role + '</span>' +
           '</div>' +
           nextHTML +
+          '<div class="roster-card-contact">' +
+            '<a href="tel:' + u.phone + '">📞 ' + u.phone + '</a>' +
+            '<a href="mailto:' + u.email + '">✉️ ' + u.email + '</a>' +
+          '</div>' +
         '</div>';
       }).join('');
     })();
