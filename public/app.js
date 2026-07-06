@@ -7,6 +7,7 @@
   // Try to discover the API base. Order: window.SHAWARMA_API_URL →
   // localStorage('shawarma.api_url') → meta tag → '' (same origin).
   function discoverApiBase() {
+    // Same-origin by default — the app and API are both on Vercel.
     if (typeof window.SHAWARMA_API_URL === 'string' && window.SHAWARMA_API_URL) {
       return window.SHAWARMA_API_URL.replace(/\/$/, '');
     }

@@ -11,11 +11,6 @@ const { title = '&Shawarma — My Shifts', active = '' } = Astro.props;
   <meta name="theme-color" content="#dc2626" />
   <title>{title}</title>
   <script is:inline>
-    // Pre-configured API server. Set this to your tunnel URL when deploying.
-    // (See README — search "SHAWARMA_API_URL")
-    window.SHAWARMA_API_URL = "https://free-ghosts-argue.loca.lt";
-  </script>
-  <script is:inline>
     // Route guard: send unauthenticated users to /login (except on /login itself).
     // Runs in <head> so it fires before page content paints.
     (function() {

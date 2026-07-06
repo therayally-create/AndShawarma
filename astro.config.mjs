@@ -1,11 +1,10 @@
-// Astro config — static site, GitHub Pages, no adapter.
+// Astro config for AndShawarma — Vercel deployment (frontend + API together).
 import { defineConfig } from 'astro/config';
+import vercel from '@astrojs/vercel';
 
 export default defineConfig({
-  site: 'https://therayally-create.github.io',
-  base: '/AndShawarma',
-  output: 'static',
-  build: {
-    format: 'directory',
-  },
+  site: 'https://and-shawarma-v2.vercel.app',
+  output: 'server',
+  adapter: vercel(),
+  build: { format: 'directory' },
 });
