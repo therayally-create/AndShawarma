@@ -895,6 +895,8 @@ label { display: block; font-size: 0.875rem; font-weight: 600; margin-bottom: 0.
 .day-shift .when { color: var(--color-muted); font-size: 0.75rem; }
 .day-shift.foh { border-left: 4px solid var(--color-foh); }
 .day-shift.boh { border-left: 4px solid var(--color-boh); }
+.day-shift.off-shift { border-left: 4px solid #a8a29e; background: #f5f5f4; opacity: 0.7; }
+.day-shift.off-shift .day-shift-name { color: var(--color-ink-light); }
 .day-shift-actions { display: flex; gap: 0.25rem; }
 .shift-post { background: #fffbeb; border-radius: 0.5rem; padding: 0.625rem; }
 .takers-list { display: flex; flex-wrap: wrap; gap: 0.375rem; margin-top: 0.5rem; }
