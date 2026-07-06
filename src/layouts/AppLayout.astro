@@ -48,27 +48,22 @@ const { title = '&Shawarma — My Shifts', active = '' } = Astro.props;
 
   <div class="toast" id="toast"></div>
 
+  <script is:inline src="/AndShawarma/app.js"></script>
   <script>
-    import { getToken, logout } from '../lib/auth.js';
-    const t = getToken();
-    if (t) {
-      document.getElementById('user-pill').textContent = t.display_name + ' · ' + t.role;
-      document.getElementById('logout-btn').style.display = 'inline-block';
-      if (t.role === 'admin' || t.role === 'manager') {
-        document.getElementById('admin-link').style.display = 'flex';
+    (function() {
+      const s = window.shawarma;
+      const t = s.getToken();
+      if (t) {
+        document.getElementById('user-pill').textContent = t.display_name + ' · ' + t.role;
+        document.getElementById('logout-btn').style.display = 'inline-block';
+        if (t.role === 'admin' || t.role === 'manager') {
+          document.getElementById('admin-link').style.display = 'flex';
+        }
       }
-    }
-    document.getElementById('logout-btn').addEventListener('click', () => {
-      logout();
-    });
-
-    // Toast helper
-    window.__toast = (msg) => {
-      const el = document.getElementById('toast');
-      el.textContent = msg;
-      el.classList.add('show');
-      setTimeout(() => el.classList.remove('show'), 2500);
-    };
+      document.getElementById('logout-btn').addEventListener('click', function() {
+        s.logout();
+      });
+    })();
   </script>
 </body>
 </html>

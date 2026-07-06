@@ -9,7 +9,7 @@ import AppLayout from '../layouts/AppLayout.astro';
 
   <div class="card">
     <h2>📅 All Shifts</h2>
-    <p style="color:var(--color-muted);font-size:0.875rem;">All shifts in the system. <strong>${'{'}data.shifts.length{'}'}</strong> total.</p>
+    <p style="color:var(--color-muted);font-size:0.875rem;">All shifts in the system.</p>
     <div id="shifts-list"><p class="empty">Loading...</p></div>
   </div>
 
@@ -18,62 +18,37 @@ import AppLayout from '../layouts/AppLayout.astro';
     <div id="timeoff-list"><p class="empty">Loading...</p></div>
   </div>
 
-  <script type="module">
-    import { requireAuth } from '../lib/auth.js';
-    import { loadData, getUserName, formatDate, formatTime12 } from '../lib/data.js';
+  <script>
+    (async function() {
+      const s = window.shawarma;
+      const t = s.requireAuth(['admin', 'manager']);
+      if (!t) return;
+      const data = await s.loadData();
 
-    const t = requireAuth(['admin', 'manager']);
-    if (!t) throw new Error('not authed');
+      const usersList = document.getElementById('users-list');
+      usersList.innerHTML = data.users.map(function(u) {
+        const initials = u.display_name.split(' ').map(function(p) { return p[0]; }).join('').slice(0, 2).toUpperCase();
+        return '<div class="user-row"><div class="avatar">' + initials + '</div><div class="info"><div class="name">' + u.display_name + '</div><div class="username">@' + u.username + '</div></div><span class="badge badge-' + u.role + '">' + u.role + '</span></div>';
+      }).join('');
 
-    const data = await loadData();
+      const shiftsSorted = data.shifts.slice().sort(function(a, b) { return (a.date + a.start).localeCompare(b.date + b.start); });
+      const shiftsList = document.getElementById('shifts-list');
+      if (shiftsSorted.length === 0) {
+        shiftsList.innerHTML = '<p class="empty">No shifts scheduled.</p>';
+      } else {
+        shiftsList.innerHTML = shiftsSorted.map(function(sh) {
+          return '<div class="list-item"><div><div class="who">' + s.formatDate(sh.date, {short: true}) + ' · ' + s.formatTime12(sh.start) + ' – ' + s.formatTime12(sh.end) + '</div><div class="meta">' + s.getUserName(data, sh.user_id) + '</div></div><span class="badge badge-' + sh.role.toLowerCase() + '">' + sh.role + '</span></div>';
+        }).join('');
+      }
 
-    // Users
-    const usersList = document.getElementById('users-list');
-    usersList.innerHTML = data.users.map(u => {
-      const initials = u.display_name.split(' ').map(p => p[0]).join('').slice(0,2).toUpperCase();
-      return `
-        <div class="user-row">
-          <div class="avatar">${initials}</div>
-          <div class="info">
-            <div class="name">${u.display_name}</div>
-            <div class="username">@${u.username}</div>
-          </div>
-          <span class="badge badge-${u.role}">${u.role}</span>
-        </div>
-      `;
-    }).join('');
-
-    // Shifts (sorted by date, then time)
-    const shiftsSorted = [...data.shifts].sort((a, b) => (a.date + a.start).localeCompare(b.date + b.start));
-    const shiftsList = document.getElementById('shifts-list');
-    if (shiftsSorted.length === 0) {
-      shiftsList.innerHTML = '<p class="empty">No shifts scheduled.</p>';
-    } else {
-      shiftsList.innerHTML = shiftsSorted.map(s => `
-        <div class="list-item">
-          <div>
-            <div class="who">${formatDate(s.date, {short: true})} · ${formatTime12(s.start)} – ${formatTime12(s.end)}</div>
-            <div class="meta">${getUserName(data, s.user_id)}</div>
-          </div>
-          <span class="badge badge-${s.role.toLowerCase()}">${s.role}</span>
-        </div>
-      `).join('');
-    }
-
-    // Time-off
-    const toList = document.getElementById('timeoff-list');
-    if (data.time_off.length === 0) {
-      toList.innerHTML = '<p class="empty">No requests.</p>';
-    } else {
-      toList.innerHTML = data.time_off.map(it => `
-        <div class="list-item">
-          <div>
-            <div class="who">${getUserName(data, it.user_id)}</div>
-            <div class="meta">${formatDate(it.start_date, {short: true})} – ${formatDate(it.end_date, {short: true})} · ${it.reason || '—'}</div>
-          </div>
-          <span class="badge badge-${it.status}">${it.status}</span>
-        </div>
-      `).join('');
-    }
+      const toList = document.getElementById('timeoff-list');
+      if (data.time_off.length === 0) {
+        toList.innerHTML = '<p class="empty">No requests.</p>';
+      } else {
+        toList.innerHTML = data.time_off.map(function(it) {
+          return '<div class="list-item"><div><div class="who">' + s.getUserName(data, it.user_id) + '</div><div class="meta">' + s.formatDate(it.start_date, {short: true}) + ' – ' + s.formatDate(it.end_date, {short: true}) + ' · ' + (it.reason || '—') + '</div></div><span class="badge badge-' + it.status + '">' + it.status + '</span></div>';
+        }).join('');
+      }
+    })();
   </script>
 </AppLayout>

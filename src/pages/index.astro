@@ -37,38 +37,29 @@ import AppLayout from '../layouts/AppLayout.astro';
     </div>
   </div>
 
-  <script type="module">
-    import { getToken, requireAuth, baseUrl } from '../lib/auth.js';
-    import { loadData, getShiftsForUser, getUserName, todayISO, formatDate, formatTime12 } from '../lib/data.js';
-
-    const t = requireAuth();
-    if (!t) throw new Error('not authed');
-
-    document.getElementById('user-name').textContent = t.display_name;
-    const roleEl = document.getElementById('user-role');
-    roleEl.textContent = t.role;
-    roleEl.className = 'badge badge-' + t.role;
-
-    if (t.role === 'admin' || t.role === 'manager') {
-      document.getElementById('admin-tile').style.display = 'block';
-    }
-
-    const data = await loadData();
-    const today = todayISO();
-    const myShifts = getShiftsForUser(data, t.user_id).filter(s => s.date >= today).slice(0, 5);
-    const list = document.getElementById('shifts-list');
-    if (myShifts.length === 0) {
-      list.innerHTML = '<p class="empty">No upcoming shifts scheduled.</p>';
-    } else {
-      list.innerHTML = myShifts.map(s => `
-        <div class="list-item">
-          <div>
-            <div class="who">${formatDate(s.date, { short: true })}</div>
-            <div class="meta">${formatTime12(s.start)} – ${formatTime12(s.end)} · ${s.role}</div>
-          </div>
-          <span class="badge badge-${s.role.toLowerCase()}">${s.role}</span>
-        </div>
-      `).join('');
-    }
+  <script>
+    (async function() {
+      const s = window.shawarma;
+      const t = s.requireAuth();
+      if (!t) return;
+      document.getElementById('user-name').textContent = t.display_name;
+      const roleEl = document.getElementById('user-role');
+      roleEl.textContent = t.role;
+      roleEl.className = 'badge badge-' + t.role;
+      if (t.role === 'admin' || t.role === 'manager') {
+        document.getElementById('admin-tile').style.display = 'block';
+      }
+      const data = await s.loadData();
+      const today = s.todayISO();
+      const myShifts = s.getShiftsForUser(data, t.user_id).filter(function(x) { return x.date >= today; }).slice(0, 5);
+      const list = document.getElementById('shifts-list');
+      if (myShifts.length === 0) {
+        list.innerHTML = '<p class="empty">No upcoming shifts scheduled.</p>';
+      } else {
+        list.innerHTML = myShifts.map(function(sh) {
+          return '<div class="list-item"><div><div class="who">' + s.formatDate(sh.date, {short: true}) + '</div><div class="meta">' + s.formatTime12(sh.start) + ' – ' + s.formatTime12(sh.end) + ' · ' + sh.role + '</div></div><span class="badge badge-' + sh.role.toLowerCase() + '">' + sh.role + '</span></div>';
+        }).join('');
+      }
+    })();
   </script>
 </AppLayout>

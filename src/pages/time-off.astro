@@ -31,69 +31,47 @@ import AppLayout from '../layouts/AppLayout.astro';
     <div id="all-list"><p class="empty">Loading...</p></div>
   </div>
 
-  <script type="module">
-    import { requireAuth } from '../lib/auth.js';
-    import { loadData, getTimeOffForUser, getAllTimeOff, getUserName, formatDate } from '../lib/data.js';
+  <script>
+    (async function() {
+      const s = window.shawarma;
+      const t = s.requireAuth();
+      if (!t) return;
+      const data = await s.loadData();
 
-    const t = requireAuth();
-    if (!t) throw new Error('not authed');
+      document.getElementById('request-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        s.toast('Coming soon — backend not connected in v1');
+      });
 
-    const data = await loadData();
-
-    document.getElementById('request-form').addEventListener('submit', (e) => {
-      e.preventDefault();
-      window.__toast('Coming soon — backend not connected in v1');
-    });
-
-    function renderMy() {
-      const list = document.getElementById('my-list');
-      const items = getTimeOffForUser(data, t.user_id);
-      if (items.length === 0) {
-        list.innerHTML = '<p class="empty">No requests yet.</p>';
-        return;
+      const myItems = s.getTimeOffForUser(data, t.user_id);
+      const myList = document.getElementById('my-list');
+      if (myItems.length === 0) {
+        myList.innerHTML = '<p class="empty">No requests yet.</p>';
+      } else {
+        myList.innerHTML = myItems.map(function(it) {
+          return '<div class="list-item"><div><div class="who">' + s.formatDate(it.start_date, {short: true}) + ' – ' + s.formatDate(it.end_date, {short: true}) + '</div><div class="meta">' + (it.reason || '—') + '</div></div><span class="badge badge-' + it.status + '">' + it.status + '</span></div>';
+        }).join('');
       }
-      list.innerHTML = items.map(it => `
-        <div class="list-item">
-          <div>
-            <div class="who">${formatDate(it.start_date, {short: true})} – ${formatDate(it.end_date, {short: true})}</div>
-            <div class="meta">${it.reason || '—'}</div>
-          </div>
-          <span class="badge badge-${it.status}">${it.status}</span>
-        </div>
-      `).join('');
-    }
 
-    function renderAll() {
-      const card = document.getElementById('all-card');
-      if (t.role !== 'manager' && t.role !== 'admin') return;
-      card.style.display = 'block';
-      const list = document.getElementById('all-list');
-      const items = getAllTimeOff(data);
-      if (items.length === 0) {
-        list.innerHTML = '<p class="empty">No requests.</p>';
-        return;
+      if (t.role === 'manager' || t.role === 'admin') {
+        const card = document.getElementById('all-card');
+        card.style.display = 'block';
+        const allList = document.getElementById('all-list');
+        const items = s.getAllTimeOff(data);
+        if (items.length === 0) {
+          allList.innerHTML = '<p class="empty">No requests.</p>';
+        } else {
+          allList.innerHTML = items.map(function(it) {
+            let actions = '';
+            if (it.status === 'pending') {
+              actions = '<button class="btn-secondary" data-approve="' + it.id + '">Approve</button> <button class="btn-secondary" data-deny="' + it.id + '">Deny</button>';
+            }
+            return '<div class="list-item"><div><div class="who">' + s.getUserName(data, it.user_id) + '</div><div class="meta">' + s.formatDate(it.start_date, {short: true}) + ' – ' + s.formatDate(it.end_date, {short: true}) + ' · ' + (it.reason || '—') + '</div></div><div style="display:flex;gap:0.5rem;align-items:center;"><span class="badge badge-' + it.status + '">' + it.status + '</span>' + actions + '</div></div>';
+          }).join('');
+          allList.querySelectorAll('[data-approve]').forEach(function(b) { b.addEventListener('click', function() { s.toast('Coming soon'); }); });
+          allList.querySelectorAll('[data-deny]').forEach(function(b) { b.addEventListener('click', function() { s.toast('Coming soon'); }); });
+        }
       }
-      list.innerHTML = items.map(it => `
-        <div class="list-item">
-          <div>
-            <div class="who">${getUserName(data, it.user_id)}</div>
-            <div class="meta">${formatDate(it.start_date, {short: true})} – ${formatDate(it.end_date, {short: true})} · ${it.reason || '—'}</div>
-          </div>
-          <div style="display:flex;gap:0.5rem;align-items:center;">
-            <span class="badge badge-${it.status}">${it.status}</span>
-            ${it.status === 'pending' ? `
-              <button class="btn-secondary" data-approve="${it.id}">Approve</button>
-              <button class="btn-secondary" data-deny="${it.id}">Deny</button>
-            ` : ''}
-          </div>
-        </div>
-      `).join('');
-
-      list.querySelectorAll('[data-approve]').forEach(b => b.addEventListener('click', () => window.__toast('Coming soon')));
-      list.querySelectorAll('[data-deny]').forEach(b => b.addEventListener('click', () => window.__toast('Coming soon')));
-    }
-
-    renderMy();
-    renderAll();
+    })();
   </script>
 </AppLayout>

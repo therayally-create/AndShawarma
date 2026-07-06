@@ -41,36 +41,41 @@ import '../styles/global.css';
     </div>
   </div>
 
-  <script type="module">
-    import { login, getToken, baseUrl } from '../lib/auth.js';
-    import { loadData } from '../lib/data.js';
-
-    if (getToken()) {
-      window.location.href = baseUrl('/');
-    }
-
-    const form = document.getElementById('login-form');
-    const errorEl = document.getElementById('error');
-    const data = await loadData();
-
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      errorEl.classList.remove('show');
-      const username = document.getElementById('username').value.trim();
-      const password = document.getElementById('password').value;
-      const btn = form.querySelector('button');
-      btn.disabled = true;
-      btn.textContent = 'Signing in...';
-      const r = await login(username, password, data.users);
-      btn.disabled = false;
-      btn.textContent = 'Sign in';
-      if (!r.ok) {
-        errorEl.textContent = r.error;
-        errorEl.classList.add('show');
+  <script is:inline src="/AndShawarma/app.js"></script>
+  <script>
+    (function() {
+      const s = window.shawarma;
+      if (s.getToken()) {
+        window.location.href = s.baseUrl('/');
         return;
       }
-      window.location.href = baseUrl('/');
-    });
+      const form = document.getElementById('login-form');
+      const errorEl = document.getElementById('error');
+      form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        errorEl.classList.remove('show');
+        const username = document.getElementById('username').value.trim();
+        const password = document.getElementById('password').value;
+        const btn = form.querySelector('button');
+        btn.disabled = true;
+        btn.textContent = 'Signing in...';
+        let result;
+        try {
+          const data = await s.loadData();
+          result = await s.login(username, password, data.users);
+        } catch (err) {
+          result = { ok: false, error: 'Network error: ' + err.message };
+        }
+        btn.disabled = false;
+        btn.textContent = 'Sign in';
+        if (!result.ok) {
+          errorEl.textContent = result.error;
+          errorEl.classList.add('show');
+          return;
+        }
+        window.location.href = s.baseUrl('/');
+      });
+    })();
   </script>
 </body>
 </html>
