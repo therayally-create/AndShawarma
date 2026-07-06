@@ -10,6 +10,26 @@ const { title = '&Shawarma — My Shifts', active = '' } = Astro.props;
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#dc2626" />
   <title>{title}</title>
+  <script is:inline>
+    // Route guard: send unauthenticated users to /login (except on /login itself).
+    // Runs in <head> so it fires before page content paints.
+    (function() {
+      try {
+        var p = location.pathname;
+        var onLogin = /\/login\/?$/.test(p);
+        if (onLogin) return;
+        // Only enforce on the bare home and protected routes
+        var protectedRoute = /^\/AndShawarma\/(schedule|shift-swap|time-off|admin)?\/?$/.test(p);
+        if (!protectedRoute) return;
+        var raw = localStorage.getItem('shawarma_token');
+        if (!raw) { location.replace('/AndShawarma/login/'); return; }
+        var t = JSON.parse(raw);
+        if (!t || !t.user_id) { location.replace('/AndShawarma/login/'); return; }
+      } catch (e) {
+        location.replace('/AndShawarma/login/');
+      }
+    })();
+  </script>
 </head>
 <body>
   <header class="site-header">
@@ -48,7 +68,7 @@ const { title = '&Shawarma — My Shifts', active = '' } = Astro.props;
 
   <div class="toast" id="toast"></div>
 
-  <script is:inline src="/AndShawarma/app.js?v=20260706104657"></script>
+  <script is:inline src="/AndShawarma/app.js?v=20260706110300"></script>
   <script>
     (function() {
       const s = window.shawarma;

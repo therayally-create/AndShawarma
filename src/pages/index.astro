@@ -1,15 +1,6 @@
 ---
 import AppLayout from '../layouts/AppLayout.astro';
 ---
-<script is:inline>
-  // Always send users to login first. If they have a valid token, the
-  // login page will redirect them to the schedule.
-  (function() {
-    if (!/login\/?$/.test(location.pathname)) {
-      location.replace('/AndShawarma/login/');
-    }
-  })();
-</script>
 <AppLayout title="&Shawarma — My Shifts" active="home">
   <div id="app-content">
     <div class="card">
