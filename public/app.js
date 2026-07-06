@@ -54,19 +54,29 @@ window.shawarma = (function() {
     return t;
   }
 
-  // Apply approved time-off by removing the user from any shifts in the date range
-  async function applyTimeOff(data, p) {
-    if (!p.start_date || !p.end_date) return;
-    // Find which shifts this user has in the date range
-    const blocked = data.shifts.filter(function(sh) {
-      return sh.user_id === p.requester_id && sh.date >= p.start_date && sh.date <= p.end_date;
+  // Apply approved time-off: keep the staff on their shifts BUT flag the date
+  // range as "blocked" so the calendar can render a time-off overlay on top
+  // of those days. Returns the set of (date, user_id) blocked ranges.
+  function getTimeOffBlocks(data) {
+    const blocks = [];
+    const approved = getPending().filter(function(p) {
+      return p.kind === 'time_off' && p.status === 'approved' && p.start_date && p.end_date;
     });
-    // Remove them (block off = unassigned)
-    if (blocked.length > 0) {
-      data.shifts = data.shifts.filter(function(sh) {
-        return !(sh.user_id === p.requester_id && sh.date >= p.start_date && sh.date <= p.end_date);
-      });
-    }
+    approved.forEach(function(p) {
+      const start = new Date(p.start_date + 'T00:00:00');
+      const end = new Date(p.end_date + 'T00:00:00');
+      for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+        blocks.push({
+          date: d.toISOString().slice(0, 10),
+          user_id: p.requester_id,
+          reason: p.reason || '',
+        });
+      }
+    });
+    return blocks;
+  }
+  function isBlocked(blocks, date, userId) {
+    return blocks.some(function(b) { return b.date === date && b.user_id === userId; });
   }
 
   async function loadData() {
@@ -106,7 +116,9 @@ window.shawarma = (function() {
           sh.notes = p.after.notes || '';
         }
       } else if (p.kind === 'time_off' && p.start_date && p.end_date) {
-        await applyTimeOff(data, p);
+        // time-off blocks are computed on the fly via getTimeOffBlocks()
+        // — schedule shifts stay intact, the time-off is just rendered
+        // as an overlay on the calendar.
       }
     }
     window.__dataCache = data;
@@ -284,6 +296,7 @@ window.shawarma = (function() {
     getPending, setPending, addPending, resolvePending, submitRequest, notifyApprovalNeeded,
     getUserById, getUserName, getShiftsForUser, getShiftsForDate, getShiftsInRange,
     getTimeOffForUser, getAllTimeOff, getSwapsForUser,
+    getTimeOffBlocks, isBlocked,
     todayISO, getMondayOf, getWeekRange, getMonthRange,
     formatDate, formatDayHeader, formatTime12,
     toast

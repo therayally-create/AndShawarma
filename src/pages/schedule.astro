@@ -110,6 +110,7 @@ import AppLayout from '../layouts/AppLayout.astro';
         if (view === 'month') {
           label.textContent = s.formatDate(viewYear + '-' + String(viewMonth).padStart(2,'0') + '-01', { monthYear: true });
           const range = s.getMonthRange(viewYear, viewMonth);
+          const blocks = s.getTimeOffBlocks(data);
           const firstDate = new Date(viewYear, viewMonth - 1, 1);
           const firstDow = firstDate.getDay();
           const cells = [];
@@ -127,15 +128,20 @@ import AppLayout from '../layouts/AppLayout.astro';
           const head = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(function(d) { return '<div class="calendar-head">' + d + '</div>'; }).join('');
           const body = cells.map(function(c) {
             const dayShifts = s.getShiftsForDate(data, c.iso);
+            const dayBlocks = blocks.filter(function(b) { return b.date === c.iso; });
             const lines = dayShifts.slice(0, 3).map(function(sh) {
+              const blocked = s.isBlocked(blocks, c.iso, sh.user_id);
               const firstName = s.getUserName(data, sh.user_id).split(' ')[0];
-              return '<div class="shift-line ' + sh.role.toLowerCase() + '"><strong>' + firstName + '</strong> ' + s.formatTime12(sh.start) + '–' + s.formatTime12(sh.end) + '</div>';
+              return '<div class="shift-line ' + sh.role.toLowerCase() + (blocked ? ' on-leave' : '') + '"><strong>' + firstName + '</strong> ' + s.formatTime12(sh.start) + '–' + s.formatTime12(sh.end) + (blocked ? ' 🏖️' : '') + '</div>';
             }).join('');
             const more = dayShifts.length > 3 ? '<div class="shift-line">+' + (dayShifts.length - 3) + ' more</div>' : '';
+            const blockHTML = dayBlocks.length > 0
+              ? '<div class="time-off-block" title="' + dayBlocks[0].reason + '">🏖️ ' + dayBlocks.length + ' on leave</div>'
+              : '';
             const isToday = c.iso === today;
-            return '<div class="calendar-day' + (c.other ? ' other-month' : '') + (isToday ? ' today' : '') + '" data-iso="' + c.iso + '">' +
+            return '<div class="calendar-day' + (c.other ? ' other-month' : '') + (isToday ? ' today' : '') + (dayBlocks.length > 0 ? ' has-timeoff' : '') + '" data-iso="' + c.iso + '">' +
               '<span class="day-num">' + parseInt(c.iso.slice(8,10), 10) + '</span>' +
-              lines + more +
+              lines + more + blockHTML +
             '</div>';
           }).join('');
           container.innerHTML = '<div class="calendar-grid">' + head + body + '</div>';

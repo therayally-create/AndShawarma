@@ -826,6 +826,23 @@ label { display: block; font-size: 0.875rem; font-weight: 600; margin-bottom: 0.
 .calendar-day .shift-line.foh { color: var(--color-foh); }
 .calendar-day .shift-line.boh { color: var(--color-boh); }
 .calendar-day .shift-line strong { color: var(--color-ink); font-weight: 700; }
+.calendar-day .shift-line.on-leave {
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+.calendar-day.has-timeoff { background: linear-gradient(135deg, #fff7ed 0%, #fef3c7 100%); }
+.time-off-block {
+  margin-top: 0.25rem;
+  padding: 0.125rem 0.375rem;
+  background: #fbbf24;
+  color: #78350f;
+  font-size: 0.625rem;
+  font-weight: 700;
+  border-radius: 0.25rem;
+  display: block;
+  text-align: center;
+  letter-spacing: 0.02em;
+}
 
 @media (max-width: 480px) {
   .calendar-day { min-height: 5rem; padding: 0.375rem 0.25rem; }

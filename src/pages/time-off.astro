@@ -71,7 +71,10 @@ import AppLayout from '../layouts/AppLayout.astro';
             html += '<div class="list-item"><div><div class="who">' + s.formatDate(p.start_date, {short:true}) + ' – ' + s.formatDate(p.end_date, {short:true}) + '</div><div class="meta">' + (p.reason || '—') + '</div></div><span class="badge badge-pending">pending review</span></div>';
           });
           myResolved.forEach(function(p) {
-            html += '<div class="list-item"><div><div class="who">' + s.formatDate(p.start_date, {short:true}) + ' – ' + s.formatDate(p.end_date, {short:true}) + '</div><div class="meta">' + (p.reason || '—') + '</div></div><span class="badge badge-' + p.status + '">' + p.status + '</span></div>';
+            const denialHTML = p.status === 'denied' && p.denial_reason
+              ? '<div class="meta" style="color:#991b1b;background:#fee2e2;padding:0.25rem 0.5rem;border-radius:0.25rem;margin-top:0.25rem;">Admin says: ' + p.denial_reason + '</div>'
+              : '';
+            html += '<div class="list-item"><div><div class="who">' + s.formatDate(p.start_date, {short:true}) + ' – ' + s.formatDate(p.end_date, {short:true}) + '</div><div class="meta">' + (p.reason || '—') + '</div>' + denialHTML + '</div><span class="badge badge-' + p.status + '">' + p.status + '</span></div>';
           });
           mine.forEach(function(it) {
             html += '<div class="list-item"><div><div class="who">' + s.formatDate(it.start_date, {short:true}) + ' – ' + s.formatDate(it.end_date, {short:true}) + '</div><div class="meta">' + (it.reason || '—') + '</div></div><span class="badge badge-' + it.status + '">' + it.status + '</span></div>';
@@ -112,8 +115,19 @@ import AppLayout from '../layouts/AppLayout.astro';
           });
           allList.querySelectorAll('[data-deny]').forEach(function(b) {
             b.addEventListener('click', function() {
-              s.resolvePending(b.getAttribute('data-deny'), 'denied');
-              s.toast('Denied');
+              const id = b.getAttribute('data-deny');
+              const reason = prompt('Why are you denying this time-off request? (shown to the staff member)');
+              if (reason === null) return; // cancelled
+              s.resolvePending(id, 'denied');
+              // Attach denial reason by updating the pending entry
+              const all = s.getPending();
+              const entry = all.find(function(x) { return x.id === id; });
+              if (entry) {
+                entry.denial_reason = reason || 'No reason given';
+                s.setPending(all);
+              }
+              s.toast('Denied — staff will see your reason');
+              window.__dataCache = null;
               renderAll();
             });
           });
@@ -143,6 +157,8 @@ import AppLayout from '../layouts/AppLayout.astro';
               const seedId = b.getAttribute('data-deny-seeded');
               const it = seeded.find(function(x) { return x.id === seedId; });
               if (!it) return;
+              const reason = prompt('Why are you denying this time-off request? (shown to the staff member)');
+              if (reason === null) return;
               s.addPending({
                 kind: 'time_off',
                 requester_id: it.user_id,
@@ -151,6 +167,7 @@ import AppLayout from '../layouts/AppLayout.astro';
                 end_date: it.end_date,
                 reason: it.reason,
                 status: 'denied',
+                denial_reason: reason || 'No reason given',
               });
               s.toast('Denied');
               window.__dataCache = null;
